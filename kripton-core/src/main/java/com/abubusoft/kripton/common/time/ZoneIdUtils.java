@@ -3,19 +3,15 @@ package com.abubusoft.kripton.common.time;
 import java.time.ZoneId;
 
 public abstract class ZoneIdUtils {
-  private ZoneIdUtils() {
 
-  }
+    private ZoneIdUtils() {
+    }
 
-  public static ZoneId read(String value) {
-    if (value == null) return null;
+    public static ZoneId read(String value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-    return ZoneId.of(value);
-  }
-
-  public static String write(ZoneId value) {
-    if (value == null) return null;
-
-    return value.toString();
-  }
+    public static String write(ZoneId value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

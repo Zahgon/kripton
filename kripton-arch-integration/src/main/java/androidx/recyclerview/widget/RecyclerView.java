@@ -59,6 +59,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 /**
  * A flexible view for providing a limited window into a large data set.
  *
@@ -173,13 +174,19 @@ import java.util.List;
  *
  * {@link androidx.recyclerview.R.attr#layoutManager}
  */
-public class RecyclerView extends ViewGroup  {
+public class RecyclerView extends ViewGroup {
+
     static final String TAG = "RecyclerView";
+
     static final boolean DEBUG = false;
+
     static final boolean VERBOSE_TRACING = false;
-    private static final int[]  NESTED_SCROLLING_ATTRS =
-            {16843830 /* android.R.attr.nestedScrollingEnabled */};
-    private static final int[] CLIP_TO_PADDING_ATTR = {android.R.attr.clipToPadding};
+
+    private static final int[] NESTED_SCROLLING_ATTRS = { 16843830 /* android.R.attr.nestedScrollingEnabled */
+    };
+
+    private static final int[] CLIP_TO_PADDING_ATTR = { android.R.attr.clipToPadding };
+
     /**
      * On Kitkat and JB MR2, there is a bug which prevents DisplayList from being invalidated if
      * a View is two levels deep(wrt to ViewHolder.itemView). DisplayList can be invalidated by
@@ -187,25 +194,29 @@ public class RecyclerView extends ViewGroup  {
      * recursively traverses itemView and invalidates display list for each ViewGroup that matches
      * this criteria.
      */
-    static final boolean FORCE_INVALIDATE_DISPLAY_LIST = Build.VERSION.SDK_INT == 18
-            || Build.VERSION.SDK_INT == 19 || Build.VERSION.SDK_INT == 20;
+    static final boolean FORCE_INVALIDATE_DISPLAY_LIST = Build.VERSION.SDK_INT == 18 || Build.VERSION.SDK_INT == 19 || Build.VERSION.SDK_INT == 20;
+
     /**
      * On M+, an unspecified measure spec may include a hint which we can use. On older platforms,
      * this value might be garbage. To save LayoutManagers from it, RecyclerView sets the size to
      * 0 when mode is unspecified.
      */
     static final boolean ALLOW_SIZE_IN_UNSPECIFIED_SPEC = Build.VERSION.SDK_INT >= 23;
+
     static final boolean POST_UPDATES_ON_ANIMATION = Build.VERSION.SDK_INT >= 16;
+
     /**
      * On L+, with RenderThread, the UI thread has idle time after it has passed a frame off to
      * RenderThread but before the next frame begins. We schedule prefetch work in this window.
      */
     static final boolean ALLOW_THREAD_GAP_WORK = Build.VERSION.SDK_INT >= 21;
+
     /**
      * FocusFinder#findNextFocus is broken on ICS MR1 and older for View.FOCUS_BACKWARD direction.
      * We convert it to an absolute direction such as FOCUS_DOWN or FOCUS_LEFT.
      */
     private static final boolean FORCE_ABS_FOCUS_SEARCH_DIRECTION = Build.VERSION.SDK_INT <= 15;
+
     /**
      * on API 15-, a focused child can still be considered a focused child of RV even after
      * it's being removed or its focusable flag is set to false. This is because when this focused
@@ -215,34 +226,47 @@ public class RecyclerView extends ViewGroup  {
      * side-effect.
      */
     private static final boolean IGNORE_DETACHED_FOCUSED_CHILD = Build.VERSION.SDK_INT <= 15;
-   
-    public @interface Orientation {}
+
+    public @interface Orientation {
+    }
+
     public static final int HORIZONTAL = LinearLayout.HORIZONTAL;
+
     public static final int VERTICAL = LinearLayout.VERTICAL;
+
     static final int DEFAULT_ORIENTATION = VERTICAL;
+
     public static final int NO_POSITION = -1;
+
     public static final long NO_ID = -1;
+
     public static final int INVALID_TYPE = -1;
+
     /**
      * Constant for use with {@link #setScrollingTouchSlop(int)}. Indicates
      * that the RecyclerView should use the standard touch slop for smooth,
      * continuous scrolling.
      */
     public static final int TOUCH_SLOP_DEFAULT = 0;
+
     /**
      * Constant for use with {@link #setScrollingTouchSlop(int)}. Indicates
      * that the RecyclerView should use the standard touch slop for scrolling
      * widgets that snap to a page or other coarse-grained barrier.
      */
     public static final int TOUCH_SLOP_PAGING = 1;
+
     static final int UNDEFINED_DURATION = Integer.MIN_VALUE;
+
     static final int MAX_SCROLL_DURATION = 2000;
+
     /**
      * RecyclerView is calculating a scroll.
      * If there are too many of these in Systrace, some Views inside RecyclerView might be causing
      * it. Try to avoid using EditText, focusable views or handle them with care.
      */
     static final String TRACE_SCROLL_TAG = "RV Scroll";
+
     /**
      * OnLayout has been called by the View system.
      * If this shows up too many times in Systrace, make sure the children of RecyclerView do not
@@ -250,6 +274,7 @@ public class RecyclerView extends ViewGroup  {
      * Adapter notifyItemChanged, RecyclerView can avoid full layout calculation.
      */
     private static final String TRACE_ON_LAYOUT_TAG = "RV OnLayout";
+
     /**
      * NotifyDataSetChanged or equal has been called.
      * If this is taking a long time, try sending granular notify adapter changes instead of just
@@ -257,6 +282,7 @@ public class RecyclerView extends ViewGroup  {
      * might help.
      */
     private static final String TRACE_ON_DATA_SET_CHANGE_LAYOUT_TAG = "RV FullInvalidate";
+
     /**
      * RecyclerView is doing a layout for partial adapter updates (we know what has changed)
      * If this is taking a long time, you may have dispatched too many Adapter updates causing too
@@ -264,21 +290,25 @@ public class RecyclerView extends ViewGroup  {
      * methods.
      */
     private static final String TRACE_HANDLE_ADAPTER_UPDATES_TAG = "RV PartialInvalidate";
+
     /**
      * RecyclerView is rebinding a View.
      * If this is taking a lot of time, consider optimizing your layout or make sure you are not
      * doing extra operations in onBindViewHolder call.
      */
     static final String TRACE_BIND_VIEW_TAG = "RV OnBindView";
+
     /**
      * RecyclerView is attempting to pre-populate off screen views.
      */
     static final String TRACE_PREFETCH_TAG = "RV Prefetch";
+
     /**
      * RecyclerView is attempting to pre-populate off screen itemviews within an off screen
      * RecyclerView.
      */
     static final String TRACE_NESTED_PREFETCH_TAG = "RV Nested Prefetch";
+
     /**
      * RecyclerView is creating a new View.
      * If too many of these present in Systrace:
@@ -293,16 +323,19 @@ public class RecyclerView extends ViewGroup  {
      * >Try increasing your pool size and item cache size.
      */
     static final String TRACE_CREATE_VIEW_TAG = "RV CreateView";
-    private static final Class<?>[] LAYOUT_MANAGER_CONSTRUCTOR_SIGNATURE =
-            new Class[]{Context.class, AttributeSet.class, int.class, int.class};
+
+    private static final Class<?>[] LAYOUT_MANAGER_CONSTRUCTOR_SIGNATURE = new Class[] { Context.class, AttributeSet.class, int.class, int.class };
+
     private final RecyclerViewDataObserver mObserver = new RecyclerViewDataObserver();
+
     final Recycler mRecycler = new Recycler();
- 
+
     /**
      * Prior to L, there is no way to query this variable which is why we override the setter and
      * track it here.
      */
     boolean mClipToPadding;
+
     /**
      * Note: this Runnable is only ever posted if:
      * 1) We've been through first layout
@@ -310,37 +343,37 @@ public class RecyclerView extends ViewGroup  {
      * 3) We're attached
      */
     final Runnable mUpdateChildViewsRunnable = new Runnable() {
+
         @Override
         public void run() {
-            if (!mFirstLayoutComplete || isLayoutRequested()) {
-                // a layout request will happen, we should not do layout here.
-                return;
-            }
-            if (!mIsAttached) {
-                requestLayout();
-                // if we are not attached yet, mark us as requiring layout and skip
-                return;
-            }
-            if (mLayoutSuppressed) {
-                mLayoutWasDefered = true;
-                return; //we'll process updates when ice age ends.
-            }
-            consumePendingUpdateOperations();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     };
+
     final Rect mTempRect = new Rect();
+
     private final Rect mTempRect2 = new Rect();
+
     final RectF mTempRectF = new RectF();
+
     Adapter mAdapter;
+
     RecyclerListener mRecyclerListener;
+
     final ArrayList<ItemDecoration> mItemDecorations = new ArrayList<>();
-    private final ArrayList<OnItemTouchListener> mOnItemTouchListeners =
-            new ArrayList<>();
+
+    private final ArrayList<OnItemTouchListener> mOnItemTouchListeners = new ArrayList<>();
+
     private OnItemTouchListener mInterceptingOnItemTouchListener;
+
     boolean mIsAttached;
+
     boolean mHasFixedSize;
+
     boolean mEnableFastScroller;
+
     boolean mFirstLayoutComplete;
+
     /**
      * The current depth of nested calls to {@link #startInterceptRequestLayout()} (number of
      * calls to {@link #startInterceptRequestLayout()} - number of calls to
@@ -349,18 +382,26 @@ public class RecyclerView extends ViewGroup  {
      * {@link RecyclerView}.
      */
     private int mInterceptRequestLayoutDepth = 0;
+
     /**
      * True if a call to requestLayout was intercepted and prevented from executing like normal and
      * we plan on continuing with normal execution later.
      */
     boolean mLayoutWasDefered;
+
     boolean mLayoutSuppressed;
+
     private boolean mIgnoreMotionEventTillDown;
+
     // binary OR of change events that were eaten during a layout or scroll.
     private int mEatenAccessibilityChangeFlags;
+
     boolean mAdapterUpdateDuringMeasure;
+
     private final AccessibilityManager mAccessibilityManager;
+
     private List<OnChildAttachStateChangeListener> mOnChildAttachStateListeners;
+
     /**
      * True after an event occurs that signals that the entire data set has changed. In that case,
      * we cannot run any animations since we don't know what happened until layout.
@@ -374,6 +415,7 @@ public class RecyclerView extends ViewGroup  {
      * @see #processDataSetCompletelyChanged(boolean)
      */
     boolean mDataSetHasChangedAfterLayout = false;
+
     /**
      * True after the data set has completely changed and
      * {@link LayoutManager#onItemsChanged(RecyclerView)} should be called during the subsequent
@@ -382,6 +424,7 @@ public class RecyclerView extends ViewGroup  {
      * @see #processDataSetCompletelyChanged(boolean)
      */
     boolean mDispatchItemsChangedEvent = false;
+
     /**
      * This variable is incremented during a dispatchLayout and/or scroll.
      * Some methods should not be called during these periods (e.g. adapter data change).
@@ -391,6 +434,7 @@ public class RecyclerView extends ViewGroup  {
      * @see #assertNotInLayoutOrScroll(String)
      */
     private int mLayoutOrScrollCounter = 0;
+
     /**
      * Similar to mLayoutOrScrollCounter but logs a warning instead of throwing an exception
      * (for API compatibility).
@@ -399,73 +443,104 @@ public class RecyclerView extends ViewGroup  {
      * potentially called during a layout.
      */
     private int mDispatchScrollCounter = 0;
-    
+
     private EdgeEffect mLeftGlow, mTopGlow, mRightGlow, mBottomGlow;
-    
+
     private static final int INVALID_POINTER = -1;
+
     /**
      * The RecyclerView is not currently scrolling.
      * @see #getScrollState()
      */
     public static final int SCROLL_STATE_IDLE = 0;
+
     /**
      * The RecyclerView is currently being dragged by outside input such as user touch input.
      * @see #getScrollState()
      */
     public static final int SCROLL_STATE_DRAGGING = 1;
+
     /**
      * The RecyclerView is currently animating to a final position while not under
      * outside control.
      * @see #getScrollState()
      */
     public static final int SCROLL_STATE_SETTLING = 2;
+
     static final long FOREVER_NS = Long.MAX_VALUE;
+
     // Touch/scrolling handling
     private int mScrollState = SCROLL_STATE_IDLE;
+
     private int mScrollPointerId = INVALID_POINTER;
+
     private VelocityTracker mVelocityTracker;
+
     private int mInitialTouchX;
+
     private int mInitialTouchY;
+
     private int mLastTouchX;
+
     private int mLastTouchY;
+
     private int mTouchSlop;
+
     private OnFlingListener mOnFlingListener;
+
     private final int mMinFlingVelocity;
+
     private final int mMaxFlingVelocity;
+
     // This value is used when handling rotary encoder generic motion events.
     private float mScaledHorizontalScrollFactor = Float.MIN_VALUE;
+
     private float mScaledVerticalScrollFactor = Float.MIN_VALUE;
+
     private boolean mPreserveFocusAfterLayout = true;
+
     final State mState = new State();
+
     private OnScrollListener mScrollListener;
+
     private List<OnScrollListener> mScrollListeners;
+
     // For use in item animations
     boolean mItemsAddedOrRemoved = false;
+
     boolean mItemsChanged = false;
+
     boolean mPostedAnimatorRunner = false;
-    
+
     private ChildDrawingOrderCallback mChildDrawingOrderCallback;
+
     // simple array to keep min and max child position during a layout calculation
     // preserved not to create a new one in each layout pass
     private final int[] mMinMaxLayoutPositions = new int[2];
-    
+
     private final int[] mScrollOffset = new int[2];
+
     private final int[] mNestedOffsets = new int[2];
+
     // Reusable int array to be passed to method calls that mutate it in order to "return" two ints.
     final int[] mReusableIntPair = new int[2];
+
     static final Interpolator sQuinticInterpolator = new Interpolator() {
+
         @Override
         public float getInterpolation(float t) {
-            t -= 1.0f;
-            return t * t * t * t * t + 1.0f;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     };
-    public RecyclerView( Context context) {
+
+    public RecyclerView(Context context) {
         this(context, null);
     }
-    public RecyclerView( Context context, AttributeSet attrs) {
+
+    public RecyclerView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
+
     public RecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         if (attrs != null) {
@@ -482,27 +557,21 @@ public class RecyclerView extends ViewGroup  {
         mMinFlingVelocity = vc.getScaledMinimumFlingVelocity();
         mMaxFlingVelocity = vc.getScaledMaximumFlingVelocity();
         setWillNotDraw(getOverScrollMode() == View.OVER_SCROLL_NEVER);
-        
         initAdapterManager();
         initChildrenHelper();
         initAutofill();
         // If not explicitly specified this view is important for accessibility.
-        mAccessibilityManager = (AccessibilityManager) getContext()
-                .getSystemService(Context.ACCESSIBILITY_SERVICE);
+        mAccessibilityManager = (AccessibilityManager) getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
         // Create the layoutManager if specified.
         boolean nestedScrollingEnabled = true;
         // Re-set whether nested scrolling is enabled so that it is set on all API levels
         setNestedScrollingEnabled(nestedScrollingEnabled);
     }
-    /**
-     * Label appended to all public exception strings, used to help find which RV in an app is
-     * hitting an exception.
-     */
+
     String exceptionLabel() {
-        return " " + super.toString()
-                + ", adapter:" + mAdapter
-                + ", context:" + getContext();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * If not explicitly specified, this view and its children don't support autofill.
      * <p>
@@ -511,21 +580,20 @@ public class RecyclerView extends ViewGroup  {
      */
     @SuppressLint("InlinedApi")
     private void initAutofill() {
-        
     }
+
     /**
      * Instantiate and set a LayoutManager, if specified in the attributes.
      */
-    private void createLayoutManager(Context context, String className, AttributeSet attrs,
-            int defStyleAttr, int defStyleRes) {
+    private void createLayoutManager(Context context, String className, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         if (className != null) {
             className = className.trim();
             if (!className.isEmpty()) {
                 className = getFullClassName(context, className);
-                
             }
         }
     }
+
     private String getFullClassName(Context context, String className) {
         if (className.charAt(0) == '.') {
             return context.getPackageName() + className;
@@ -535,135 +603,48 @@ public class RecyclerView extends ViewGroup  {
         }
         return RecyclerView.class.getPackage().getName() + '.' + className;
     }
+
     private void initChildrenHelper() {
-       
     }
+
     void initAdapterManager() {
-       
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * RecyclerView can perform several optimizations if it can know in advance that RecyclerView's
-     * size is not affected by the adapter contents. RecyclerView can still change its size based
-     * on other factors (e.g. its parent's size) but this size calculation cannot depend on the
-     * size of its children or contents of its adapter (except the number of items in the adapter).
-     * <p>
-     * If your use of RecyclerView falls into this category, set this to {@code true}. It will allow
-     * RecyclerView to avoid invalidating the whole layout when its adapter contents change.
-     *
-     * @param hasFixedSize true if adapter changes cannot affect the size of the RecyclerView.
-     */
+
     public void setHasFixedSize(boolean hasFixedSize) {
-        mHasFixedSize = hasFixedSize;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * @return true if the app has specified that changes in adapter content cannot change
-     * the size of the RecyclerView itself.
-     */
+
     public boolean hasFixedSize() {
-        return mHasFixedSize;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public void setClipToPadding(boolean clipToPadding) {
-        if (clipToPadding != mClipToPadding) {
-            invalidateGlows();
-        }
-        mClipToPadding = clipToPadding;
-        super.setClipToPadding(clipToPadding);
-        if (mFirstLayoutComplete) {
-            requestLayout();
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Returns whether this RecyclerView will clip its children to its padding, and resize (but
-     * not clip) any EdgeEffect to the padded region, if padding is present.
-     * <p>
-     * By default, children are clipped to the padding of their parent
-     * RecyclerView. This clipping behavior is only enabled if padding is non-zero.
-     *
-     * @return true if this RecyclerView clips children to its padding and resizes (but doesn't
-     *         clip) any EdgeEffect to the padded region, false otherwise.
-     *
-     * @attr name android:clipToPadding
-     */
+
     @Override
     public boolean getClipToPadding() {
-        return mClipToPadding;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Configure the scrolling touch slop for a specific use case.
-     *
-     * Set up the RecyclerView's scrolling motion threshold based on common usages.
-     * Valid arguments are {@link #TOUCH_SLOP_DEFAULT} and {@link #TOUCH_SLOP_PAGING}.
-     *
-     * @param slopConstant One of the <code>TOUCH_SLOP_</code> constants representing
-     *                     the intended usage of this RecyclerView
-     */
+
     public void setScrollingTouchSlop(int slopConstant) {
-        final ViewConfiguration vc = ViewConfiguration.get(getContext());
-        switch (slopConstant) {
-            default:
-                Log.w(TAG, "setScrollingTouchSlop(): bad argument constant "
-                        + slopConstant + "; using default value");
-                // fall-through
-            case TOUCH_SLOP_DEFAULT:
-                mTouchSlop = vc.getScaledTouchSlop();
-                break;
-            case TOUCH_SLOP_PAGING:
-                mTouchSlop = vc.getScaledPagingTouchSlop();
-                break;
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Swaps the current adapter with the provided one. It is similar to
-     * {@link #setAdapter(Adapter)} but assumes existing adapter and the new adapter uses the same
-     * {@link ViewHolder} and does not clear the RecycledViewPool.
-     * <p>
-     * Note that it still calls onAdapterChanged callbacks.
-     *
-     * @param adapter The new adapter to set, or null to set no adapter.
-     * @param removeAndRecycleExistingViews If set to true, RecyclerView will recycle all existing
-     *                                      Views. If adapters have stable ids and/or you want to
-     *                                      animate the disappearing views, you may prefer to set
-     *                                      this to false.
-     * @see #setAdapter(Adapter)
-     */
-    public void swapAdapter( Adapter adapter, boolean removeAndRecycleExistingViews) {
-        // bail out if layout is frozen
-        setLayoutFrozen(false);
-        setAdapterInternal(adapter, true, removeAndRecycleExistingViews);
-        processDataSetCompletelyChanged(true);
-        requestLayout();
+
+    public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Set a new adapter to provide child views on demand.
-     * <p>
-     * When adapter is changed, all existing views are recycled back to the pool. If the pool has
-     * only one adapter, it will be cleared.
-     *
-     * @param adapter The new adapter to set, or null to set no adapter.
-     * @see #swapAdapter(Adapter, boolean)
-     */
-    public void setAdapter( Adapter adapter) {
-        // bail out if layout is frozen
-        setLayoutFrozen(false);
-        setAdapterInternal(adapter, false, true);
-        processDataSetCompletelyChanged(false);
-        requestLayout();
+
+    public void setAdapter(Adapter adapter) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Removes and recycles all views - both those currently attached, and those in the Recycler.
-     */
+
     void removeAndRecycleViews() {
-        // end all running animations
-        
-        // Since animations are ended, mLayout.children should be equal to
-        // recyclerView.children. This may not be true if item animator's end does not work as
-        // expected. (e.g. not release children instantly). It is safer to use mLayout's child
-        // count.
-        
-        // we should clear it here before adapters are swapped to ensure correct callbacks.
-        mRecycler.clear();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Replaces the current adapter with the new one and triggers listeners.
      * @param adapter The new adapter
@@ -673,126 +654,68 @@ public class RecyclerView extends ViewGroup  {
      * @param removeAndRecycleViews  If true, we'll remove and recycle all existing views. If
      *                               compatibleWithPrevious is false, this parameter is ignored.
      */
-    private void setAdapterInternal( Adapter adapter, boolean compatibleWithPrevious,
-            boolean removeAndRecycleViews) {
-       
+    private void setAdapterInternal(Adapter adapter, boolean compatibleWithPrevious, boolean removeAndRecycleViews) {
     }
+
     /**
      * Retrieves the previously set adapter or null if no adapter is set.
      *
      * @return The previously set adapter
      * @see #setAdapter(Adapter)
      */
-    
     public Adapter getAdapter() {
-        return mAdapter;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Register a listener that will be notified whenever a child view is recycled.
-     *
-     * <p>This listener will be called when a LayoutManager or the RecyclerView decides
-     * that a child view is no longer needed. If an application associates expensive
-     * or heavyweight data with item views, this may be a good place to release
-     * or free those resources.</p>
-     *
-     * @param listener Listener to register, or null to clear
-     */
-    public void setRecyclerListener( RecyclerListener listener) {
-        mRecyclerListener = listener;
+
+    public void setRecyclerListener(RecyclerListener listener) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * <p>Return the offset of the RecyclerView's text baseline from the its top
-     * boundary. If the LayoutManager of this RecyclerView does not support baseline alignment,
-     * this method returns -1.</p>
-     *
-     * @return the offset of the baseline within the RecyclerView's bounds or -1
-     *         if baseline alignment is not supported
-     */
+
     @Override
     public int getBaseline() {
-      return 0;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Register a listener that will be notified whenever a child view is attached to or detached
-     * from RecyclerView.
-     *
-     * <p>This listener will be called when a LayoutManager or the RecyclerView decides
-     * that a child view is no longer needed. If an application associates expensive
-     * or heavyweight data with item views, this may be a good place to release
-     * or free those resources.</p>
-     *
-     * @param listener Listener to register
-     */
-    public void addOnChildAttachStateChangeListener(
-             OnChildAttachStateChangeListener listener) {
-        if (mOnChildAttachStateListeners == null) {
-            mOnChildAttachStateListeners = new ArrayList<>();
-        }
-        mOnChildAttachStateListeners.add(listener);
+
+    public void addOnChildAttachStateChangeListener(OnChildAttachStateChangeListener listener) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Removes the provided listener from child attached state listeners list.
-     *
-     * @param listener Listener to unregister
-     */
-    public void removeOnChildAttachStateChangeListener(
-             OnChildAttachStateChangeListener listener) {
-        if (mOnChildAttachStateListeners == null) {
-            return;
-        }
-        mOnChildAttachStateListeners.remove(listener);
+
+    public void removeOnChildAttachStateChangeListener(OnChildAttachStateChangeListener listener) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Removes all listeners that were added via
-     * {@link #addOnChildAttachStateChangeListener(OnChildAttachStateChangeListener)}.
-     */
+
     public void clearOnChildAttachStateChangeListeners() {
-        if (mOnChildAttachStateListeners != null) {
-            mOnChildAttachStateListeners.clear();
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-   
-    /**
-     * Set a {@link OnFlingListener} for this {@link RecyclerView}.
-     * <p>
-     * If the {@link OnFlingListener} is set then it will receive
-     * calls to {@link #fling(int,int)} and will be able to intercept them.
-     *
-     * @param onFlingListener The {@link OnFlingListener} instance.
-     */
+
     public void setOnFlingListener(OnFlingListener onFlingListener) {
-        mOnFlingListener = onFlingListener;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Get the current {@link OnFlingListener} from this {@link RecyclerView}.
-     *
-     * @return The {@link OnFlingListener} instance currently set (can be null).
-     */
+
     public OnFlingListener getOnFlingListener() {
-        return mOnFlingListener;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     protected Parcelable onSaveInstanceState() {
-        return null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Override to prevent freezing of any views created by the adapter.
-     */
+
     @Override
     protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
-        dispatchFreezeSelfOnly(container);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Override to prevent thawing of any views created by the adapter.
-     */
+
     @Override
     protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
-        dispatchThawSelfOnly(container);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Adds a view to the animatingViews list.
      * mAnimatingViews holds the child views that are currently being kept around
@@ -802,17 +725,12 @@ public class RecyclerView extends ViewGroup  {
      * @param viewHolder The ViewHolder to be removed
      */
     private void addAnimatingView(ViewHolder viewHolder) {
-       
     }
-    /**
-     * Removes a view from the animatingViews list.
-     * @param view The view to be removed
-     * @see #addAnimatingView(RecyclerView.ViewHolder)
-     * @return true if an animating view is removed
-     */
+
     boolean removeAnimatingView(View view) {
-       return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Retrieve this RecyclerView's {@link RecycledViewPool}. This method will never return null;
      * if no pool is set for this view a new one will be created. See
@@ -821,82 +739,34 @@ public class RecyclerView extends ViewGroup  {
      * @return The pool used to store recycled item views for reuse.
      * @see #setRecycledViewPool(RecycledViewPool)
      */
-    
     public RecycledViewPool getRecycledViewPool() {
-    	return null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Recycled view pools allow multiple RecyclerViews to share a common pool of scrap views.
-     * This can be useful if you have multiple RecyclerViews with adapters that use the same
-     * view types, for example if you have several data sets with the same kinds of item views
-     * displayed by a {@link androidx.viewpager.widget.ViewPager}.
-     *
-     * @param pool Pool to set. If this parameter is null a new pool will be created and used.
-     */
-    public void setRecycledViewPool( RecycledViewPool pool) {
+
+    public void setRecycledViewPool(RecycledViewPool pool) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Sets a new {@link ViewCacheExtension} to be used by the Recycler.
-     *
-     * @param extension ViewCacheExtension to be used or null if you want to clear the existing one.
-     *
-     * @see ViewCacheExtension#getViewForPositionAndType(Recycler, int, int)
-     */
-    public void setViewCacheExtension( ViewCacheExtension extension) {
+
+    public void setViewCacheExtension(ViewCacheExtension extension) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Set the number of offscreen views to retain before adding them to the potentially shared
-     * {@link #getRecycledViewPool() recycled view pool}.
-     *
-     * <p>The offscreen view cache stays aware of changes in the attached adapter, allowing
-     * a LayoutManager to reuse those views unmodified without needing to return to the adapter
-     * to rebind them.</p>
-     *
-     * @param size Number of views to cache offscreen before returning them to the general
-     *             recycled view pool
-     */
+
     public void setItemViewCacheSize(int size) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Return the current scrolling state of the RecyclerView.
-     *
-     * @return {@link #SCROLL_STATE_IDLE}, {@link #SCROLL_STATE_DRAGGING} or
-     * {@link #SCROLL_STATE_SETTLING}
-     */
+
     public int getScrollState() {
-        return mScrollState;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Add an {@link ItemDecoration} to this RecyclerView. Item decorations can
-     * affect both measurement and drawing of individual item views.
-     *
-     * <p>Item decorations are ordered. Decorations placed earlier in the list will
-     * be run/queried/drawn first for their effects on item views. Padding added to views
-     * will be nested; a padding added by an earlier decoration will mean further
-     * item decorations in the list will be asked to draw/pad within the previous decoration's
-     * given area.</p>
-     *
-     * @param decor Decoration to add
-     * @param index Position in the decoration chain to insert this decoration at. If this value
-     *              is negative the decoration will be added at the end.
-     */
-    public void addItemDecoration( ItemDecoration decor, int index) {
+
+    public void addItemDecoration(ItemDecoration decor, int index) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Add an {@link ItemDecoration} to this RecyclerView. Item decorations can
-     * affect both measurement and drawing of individual item views.
-     *
-     * <p>Item decorations are ordered. Decorations placed earlier in the list will
-     * be run/queried/drawn first for their effects on item views. Padding added to views
-     * will be nested; a padding added by an earlier decoration will mean further
-     * item decorations in the list will be asked to draw/pad within the previous decoration's
-     * given area.</p>
-     *
-     * @param decor Decoration to add
-     */
-    public void addItemDecoration( ItemDecoration decor) {
-        addItemDecoration(decor, -1);
+
+    public void addItemDecoration(ItemDecoration decor) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Returns an {@link ItemDecoration} previously added to this RecyclerView.
      *
@@ -904,65 +774,26 @@ public class RecyclerView extends ViewGroup  {
      * @return the ItemDecoration at index position
      * @throws IndexOutOfBoundsException on invalid index
      */
-    
     public ItemDecoration getItemDecorationAt(int index) {
-        final int size = getItemDecorationCount();
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(index + " is an invalid index for size " + size);
-        }
-        return mItemDecorations.get(index);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Returns the number of {@link ItemDecoration} currently added to this RecyclerView.
-     *
-     * @return number of ItemDecorations currently added added to this RecyclerView.
-     */
+
     public int getItemDecorationCount() {
-        return mItemDecorations.size();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Removes the {@link ItemDecoration} associated with the supplied index position.
-     *
-     * @param index The index position of the ItemDecoration to be removed.
-     */
+
     public void removeItemDecorationAt(int index) {
-        final int size = getItemDecorationCount();
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(index + " is an invalid index for size " + size);
-        }
-        removeItemDecoration(getItemDecorationAt(index));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Remove an {@link ItemDecoration} from this RecyclerView.
-     *
-     * <p>The given decoration will no longer impact the measurement and drawing of
-     * item views.</p>
-     *
-     * @param decor Decoration to remove
-     * @see #addItemDecoration(ItemDecoration)
-     */
-    public void removeItemDecoration( ItemDecoration decor) {
+
+    public void removeItemDecoration(ItemDecoration decor) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Sets the {@link ChildDrawingOrderCallback} to be used for drawing children.
-     * <p>
-     * See {@link ViewGroup#getChildDrawingOrder(int, int)} for details. Calling this method will
-     * always call {@link ViewGroup#setChildrenDrawingOrderEnabled(boolean)}. The parameter will be
-     * true if childDrawingOrderCallback is not null, false otherwise.
-     * <p>
-     * Note that child drawing order may be overridden by View's elevation.
-     *
-     * @param childDrawingOrderCallback The ChildDrawingOrderCallback to be used by the drawing
-     *                                  system.
-     */
-    public void setChildDrawingOrderCallback(
-             ChildDrawingOrderCallback childDrawingOrderCallback) {
-        if (childDrawingOrderCallback == mChildDrawingOrderCallback) {
-            return;
-        }
-        mChildDrawingOrderCallback = childDrawingOrderCallback;
-        setChildrenDrawingOrderEnabled(mChildDrawingOrderCallback != null);
+
+    public void setChildDrawingOrderCallback(ChildDrawingOrderCallback childDrawingOrderCallback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Set a listener that will be notified of any changes in scroll state or position.
      *
@@ -972,332 +803,109 @@ public class RecyclerView extends ViewGroup  {
      *             {@link #removeOnScrollListener(OnScrollListener)}
      */
     @Deprecated
-    public void setOnScrollListener( OnScrollListener listener) {
+    public void setOnScrollListener(OnScrollListener listener) {
         mScrollListener = listener;
     }
-    /**
-     * Add a listener that will be notified of any changes in scroll state or position.
-     *
-     * <p>Components that add a listener should take care to remove it when finished.
-     * Other components that take ownership of a view may call {@link #clearOnScrollListeners()}
-     * to remove all attached listeners.</p>
-     *
-     * @param listener listener to set
-     */
-    public void addOnScrollListener( OnScrollListener listener) {
-        if (mScrollListeners == null) {
-            mScrollListeners = new ArrayList<>();
-        }
-        mScrollListeners.add(listener);
+
+    public void addOnScrollListener(OnScrollListener listener) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Remove a listener that was notified of any changes in scroll state or position.
-     *
-     * @param listener listener to set or null to clear
-     */
-    public void removeOnScrollListener( OnScrollListener listener) {
-        if (mScrollListeners != null) {
-            mScrollListeners.remove(listener);
-        }
+
+    public void removeOnScrollListener(OnScrollListener listener) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Remove all secondary listener that were notified of any changes in scroll state or position.
-     */
+
     public void clearOnScrollListeners() {
-        if (mScrollListeners != null) {
-            mScrollListeners.clear();
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Convenience method to scroll to a certain position.
-     *
-     * RecyclerView does not implement scrolling logic, rather forwards the call to
-     * {@link RecyclerView.LayoutManager#scrollToPosition(int)}
-     * @param position Scroll to this adapter position
-     * @see RecyclerView.LayoutManager#scrollToPosition(int)
-     */
+
     public void scrollToPosition(int position) {
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void jumpToPositionForSmoothScroller(int position) {
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Starts a smooth scroll to an adapter position.
-     * <p>
-     * To support smooth scrolling, you must override
-     * {@link LayoutManager#smoothScrollToPosition(RecyclerView, State, int)} and create a
-     * {@link SmoothScroller}.
-     * <p>
-     * {@link LayoutManager} is responsible for creating the actual scroll action. If you want to
-     * provide a custom smooth scroll logic, override
-     * {@link LayoutManager#smoothScrollToPosition(RecyclerView, State, int)} in your
-     * LayoutManager.
-     *
-     * @param position The adapter position to scroll to
-     * @see LayoutManager#smoothScrollToPosition(RecyclerView, State, int)
-     */
+
     public void smoothScrollToPosition(int position) {
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public void scrollTo(int x, int y) {
-        Log.w(TAG, "RecyclerView does not support scrolling to an absolute position. "
-                + "Use scrollToPosition instead");
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public void scrollBy(int x, int y) {
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Scrolls the RV by 'dx' and 'dy' via calls to
-     * {@link LayoutManager#scrollHorizontallyBy(int, Recycler, State)} and
-     * {@link LayoutManager#scrollVerticallyBy(int, Recycler, State)}.
-     *
-     * Also sets how much of the scroll was actually consumed in 'consumed' parameter (indexes 0 and
-     * 1 for the x axis and y axis, respectively).
-     *
-     * This method should only be called in the context of an existing scroll operation such that
-     * any other necessary operations (such as a call to {@link #consumePendingUpdateOperations()})
-     * is already handled.
-     */
-    void scrollStep(int dx, int dy,  int[] consumed) {
-        
+
+    void scrollStep(int dx, int dy, int[] consumed) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Helper method reflect data changes to the state.
-     * <p>
-     * Adapter changes during a scroll may trigger a crash because scroll assumes no data change
-     * but data actually changed.
-     * <p>
-     * This method consumes all deferred changes to avoid that case.
-     */
+
     void consumePendingUpdateOperations() {
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * @return True if an existing view holder needs to be updated
      */
     private boolean hasUpdatedView() {
-        
         return false;
     }
-    /**
-     * Does not perform bounds checking. Used by internal methods that have already validated input.
-     * <p>
-     * It also reports any unused scroll request to the related EdgeEffect.
-     *
-     * @param x The amount of horizontal scroll request
-     * @param y The amount of vertical scroll request
-     * @param ev The originating MotionEvent, or null if not from a touch event.
-     *
-     * @return Whether any scroll was consumed in either direction.
-     */
+
     boolean scrollByInternal(int x, int y, MotionEvent ev) {
-        
-        return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * <p>Compute the horizontal offset of the horizontal scrollbar's thumb within the horizontal
-     * range. This value is used to compute the length of the thumb within the scrollbar's track.
-     * </p>
-     *
-     * <p>The range is expressed in arbitrary units that must be the same as the units used by
-     * {@link #computeHorizontalScrollRange()} and {@link #computeHorizontalScrollExtent()}.</p>
-     *
-     * <p>Default implementation returns 0.</p>
-     *
-     * <p>If you want to support scroll bars, override
-     * {@link RecyclerView.LayoutManager#computeHorizontalScrollOffset(RecyclerView.State)} in your
-     * LayoutManager. </p>
-     *
-     * @return The horizontal offset of the scrollbar's thumb
-     * @see RecyclerView.LayoutManager#computeHorizontalScrollOffset
-     * (RecyclerView.State)
-     */
+
     @Override
     public int computeHorizontalScrollOffset() {
-        
-            return 0;
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * <p>Compute the horizontal extent of the horizontal scrollbar's thumb within the
-     * horizontal range. This value is used to compute the length of the thumb within the
-     * scrollbar's track.</p>
-     *
-     * <p>The range is expressed in arbitrary units that must be the same as the units used by
-     * {@link #computeHorizontalScrollRange()} and {@link #computeHorizontalScrollOffset()}.</p>
-     *
-     * <p>Default implementation returns 0.</p>
-     *
-     * <p>If you want to support scroll bars, override
-     * {@link RecyclerView.LayoutManager#computeHorizontalScrollExtent(RecyclerView.State)} in your
-     * LayoutManager.</p>
-     *
-     * @return The horizontal extent of the scrollbar's thumb
-     * @see RecyclerView.LayoutManager#computeHorizontalScrollExtent(RecyclerView.State)
-     */
+
     @Override
     public int computeHorizontalScrollExtent() {
-        
-            return 0;
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * <p>Compute the horizontal range that the horizontal scrollbar represents.</p>
-     *
-     * <p>The range is expressed in arbitrary units that must be the same as the units used by
-     * {@link #computeHorizontalScrollExtent()} and {@link #computeHorizontalScrollOffset()}.</p>
-     *
-     * <p>Default implementation returns 0.</p>
-     *
-     * <p>If you want to support scroll bars, override
-     * {@link RecyclerView.LayoutManager#computeHorizontalScrollRange(RecyclerView.State)} in your
-     * LayoutManager.</p>
-     *
-     * @return The total horizontal range represented by the vertical scrollbar
-     * @see RecyclerView.LayoutManager#computeHorizontalScrollRange(RecyclerView.State)
-     */
+
     @Override
     public int computeHorizontalScrollRange() {
-        
-            return 0;
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * <p>Compute the vertical offset of the vertical scrollbar's thumb within the vertical range.
-     * This value is used to compute the length of the thumb within the scrollbar's track. </p>
-     *
-     * <p>The range is expressed in arbitrary units that must be the same as the units used by
-     * {@link #computeVerticalScrollRange()} and {@link #computeVerticalScrollExtent()}.</p>
-     *
-     * <p>Default implementation returns 0.</p>
-     *
-     * <p>If you want to support scroll bars, override
-     * {@link RecyclerView.LayoutManager#computeVerticalScrollOffset(RecyclerView.State)} in your
-     * LayoutManager.</p>
-     *
-     * @return The vertical offset of the scrollbar's thumb
-     * @see RecyclerView.LayoutManager#computeVerticalScrollOffset
-     * (RecyclerView.State)
-     */
+
     @Override
     public int computeVerticalScrollOffset() {
-        
-            return 0;
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * <p>Compute the vertical extent of the vertical scrollbar's thumb within the vertical range.
-     * This value is used to compute the length of the thumb within the scrollbar's track.</p>
-     *
-     * <p>The range is expressed in arbitrary units that must be the same as the units used by
-     * {@link #computeVerticalScrollRange()} and {@link #computeVerticalScrollOffset()}.</p>
-     *
-     * <p>Default implementation returns 0.</p>
-     *
-     * <p>If you want to support scroll bars, override
-     * {@link RecyclerView.LayoutManager#computeVerticalScrollExtent(RecyclerView.State)} in your
-     * LayoutManager.</p>
-     *
-     * @return The vertical extent of the scrollbar's thumb
-     * @see RecyclerView.LayoutManager#computeVerticalScrollExtent(RecyclerView.State)
-     */
+
     @Override
     public int computeVerticalScrollExtent() {
-        
-            return 0;
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * <p>Compute the vertical range that the vertical scrollbar represents.</p>
-     *
-     * <p>The range is expressed in arbitrary units that must be the same as the units used by
-     * {@link #computeVerticalScrollExtent()} and {@link #computeVerticalScrollOffset()}.</p>
-     *
-     * <p>Default implementation returns 0.</p>
-     *
-     * <p>If you want to support scroll bars, override
-     * {@link RecyclerView.LayoutManager#computeVerticalScrollRange(RecyclerView.State)} in your
-     * LayoutManager.</p>
-     *
-     * @return The total vertical range represented by the vertical scrollbar
-     * @see RecyclerView.LayoutManager#computeVerticalScrollRange(RecyclerView.State)
-     */
+
     @Override
     public int computeVerticalScrollRange() {
-        
-            return 0;
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * This method should be called before any code that may trigger a child view to cause a call to
-     * {@link RecyclerView#requestLayout()}.  Doing so enables {@link RecyclerView} to avoid
-     * reacting to additional redundant calls to {@link #requestLayout()}.
-     * <p>
-     * A call to this method must always be accompanied by a call to
-     * {@link #stopInterceptRequestLayout(boolean)} that follows the code that may trigger a
-     * child View to cause a call to {@link RecyclerView#requestLayout()}.
-     *
-     * @see #stopInterceptRequestLayout(boolean)
-     */
+
     void startInterceptRequestLayout() {
-        mInterceptRequestLayoutDepth++;
-        if (mInterceptRequestLayoutDepth == 1 && !mLayoutSuppressed) {
-            mLayoutWasDefered = false;
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * This method should be called after any code that may trigger a child view to cause a call to
-     * {@link RecyclerView#requestLayout()}.
-     * <p>
-     * A call to this method must always be accompanied by a call to
-     * {@link #startInterceptRequestLayout()} that precedes the code that may trigger a child
-     * View to cause a call to {@link RecyclerView#requestLayout()}.
-     *
-     * @see #startInterceptRequestLayout()
-     */
+
     void stopInterceptRequestLayout(boolean performLayoutChildren) {
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Tells this RecyclerView to suppress all layout and scroll calls until layout
-     * suppression is disabled with a later call to suppressLayout(false).
-     * When layout suppression is disabled, a requestLayout() call is sent
-     * if requestLayout() was attempted while layout was being suppressed.
-     * <p>
-     * In addition to the layout suppression {@link #smoothScrollBy(int, int)},
-     * {@link #scrollBy(int, int)}, {@link #scrollToPosition(int)} and
-     * {@link #smoothScrollToPosition(int)} are dropped; TouchEvents and GenericMotionEvents are
-     * dropped; {@link LayoutManager#onFocusSearchFailed(View, int, Recycler, State)} will not be
-     * called.
-     *
-     * <p>
-     * <code>suppressLayout(true)</code> does not prevent app from directly calling {@link
-     * LayoutManager#scrollToPosition(int)}, {@link LayoutManager#smoothScrollToPosition(
-     * RecyclerView, State, int)}.
-     * <p>
-     * {@link #setAdapter(Adapter)} and {@link #swapAdapter(Adapter, boolean)} will automatically
-     * stop suppressing.
-     * <p>
-     * Note: Running ItemAnimator is not stopped automatically,  it's caller's
-     * responsibility to call ItemAnimator.end().
-     *
-     * @param suppress true to suppress layout and scroll, false to re-enable.
-     */
+
     public final void suppressLayout(boolean suppress) {
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Returns whether layout and scroll calls on this container are currently being
-     * suppressed, due to an earlier call to {@link #suppressLayout(boolean)}.
-     *
-     * @return true if layout and scroll are currently suppressed, false otherwise.
-     */
+
     public final boolean isLayoutSuppressed() {
-        return mLayoutSuppressed;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Enable or disable layout and scroll.  After <code>setLayoutFrozen(true)</code> is called,
      * Layout requests will be postponed until <code>setLayoutFrozen(false)</code> is called;
@@ -1326,6 +934,7 @@ public class RecyclerView extends ViewGroup  {
     public void setLayoutFrozen(boolean frozen) {
         suppressLayout(frozen);
     }
+
     /**
      * @return true if layout and scroll are frozen
      *
@@ -1335,6 +944,7 @@ public class RecyclerView extends ViewGroup  {
     public boolean isLayoutFrozen() {
         return isLayoutSuppressed();
     }
+
     /**
      * @deprecated Use {@link #setItemAnimator(ItemAnimator)} ()}.
      */
@@ -1344,76 +954,42 @@ public class RecyclerView extends ViewGroup  {
         if (transition == null) {
             super.setLayoutTransition(null);
         } else {
-            throw new IllegalArgumentException("Providing a LayoutTransition into RecyclerView is "
-                    + "not supported. Please use setItemAnimator() instead for animating changes "
-                    + "to the items in this RecyclerView");
+            throw new IllegalArgumentException("Providing a LayoutTransition into RecyclerView is " + "not supported. Please use setItemAnimator() instead for animating changes " + "to the items in this RecyclerView");
         }
     }
-    /**
-     * Animate a scroll by the given amount of pixels along either axis.
-     *
-     * @param dx Pixels to scroll horizontally
-     * @param dy Pixels to scroll vertically
-     */
-    public void smoothScrollBy( int dx,  int dy) {
-        smoothScrollBy(dx, dy, null);
+
+    public void smoothScrollBy(int dx, int dy) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Animate a scroll by the given amount of pixels along either axis.
-     *
-     * @param dx Pixels to scroll horizontally
-     * @param dy Pixels to scroll vertically
-     * @param interpolator {@link Interpolator} to be used for scrolling. If it is
-     *                     {@code null}, RecyclerView is going to use the default interpolator.
-     */
-    public void smoothScrollBy( int dx,  int dy,  Interpolator interpolator) {
-        
+
+    public void smoothScrollBy(int dx, int dy, Interpolator interpolator) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Begin a standard fling with an initial velocity along each axis in pixels per second.
-     * If the velocity given is below the system-defined minimum this method will return false
-     * and no fling will occur.
-     *
-     * @param velocityX Initial horizontal velocity in pixels per second
-     * @param velocityY Initial vertical velocity in pixels per second
-     * @return true if the fling was started, false if the velocity was too low to fling or
-     * LayoutManager does not support scrolling in the axis fling is issued.
-     *
-     * @see LayoutManager#canScrollVertically()
-     * @see LayoutManager#canScrollHorizontally()
-     */
+
     public boolean fling(int velocityX, int velocityY) {
-            return false;
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Similar to {@link #stopScroll()} but does not set the state.
      */
     private void stopScrollersInternal() {
-        
     }
-    /**
-     * Returns the minimum velocity to start a fling.
-     *
-     * @return The minimum velocity to start a fling
-     */
+
     public int getMinFlingVelocity() {
-        return mMinFlingVelocity;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Returns the maximum fling velocity used by this RecyclerView.
-     *
-     * @return The maximum fling velocity used by this RecyclerView.
-     */
+
     public int getMaxFlingVelocity() {
-        return mMaxFlingVelocity;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Apply a pull to relevant overscroll glow effects
      */
     private void pullGlows(float x, float overscrollX, float y, float overscrollY) {
-        
     }
+
     private void releaseGlows() {
         boolean needsInvalidate = false;
         if (mLeftGlow != null) {
@@ -1433,110 +1009,42 @@ public class RecyclerView extends ViewGroup  {
             needsInvalidate |= mBottomGlow.isFinished();
         }
         if (needsInvalidate) {
-           
         }
     }
+
     void considerReleasingGlowsOnScroll(int dx, int dy) {
-        boolean needsInvalidate = false;
-        if (mLeftGlow != null && !mLeftGlow.isFinished() && dx > 0) {
-            mLeftGlow.onRelease();
-            needsInvalidate = mLeftGlow.isFinished();
-        }
-        if (mRightGlow != null && !mRightGlow.isFinished() && dx < 0) {
-            mRightGlow.onRelease();
-            needsInvalidate |= mRightGlow.isFinished();
-        }
-        if (mTopGlow != null && !mTopGlow.isFinished() && dy > 0) {
-            mTopGlow.onRelease();
-            needsInvalidate |= mTopGlow.isFinished();
-        }
-        if (mBottomGlow != null && !mBottomGlow.isFinished() && dy < 0) {
-            mBottomGlow.onRelease();
-            needsInvalidate |= mBottomGlow.isFinished();
-        }
-        if (needsInvalidate) {
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void absorbGlows(int velocityX, int velocityY) {
-        if (velocityX < 0) {
-            ensureLeftGlow();
-            if (mLeftGlow.isFinished()) {
-                mLeftGlow.onAbsorb(-velocityX);
-            }
-        } else if (velocityX > 0) {
-            ensureRightGlow();
-            if (mRightGlow.isFinished()) {
-                mRightGlow.onAbsorb(velocityX);
-            }
-        }
-        if (velocityY < 0) {
-            ensureTopGlow();
-            if (mTopGlow.isFinished()) {
-                mTopGlow.onAbsorb(-velocityY);
-            }
-        } else if (velocityY > 0) {
-            ensureBottomGlow();
-            if (mBottomGlow.isFinished()) {
-                mBottomGlow.onAbsorb(velocityY);
-            }
-        }
-        if (velocityX != 0 || velocityY != 0) {
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void ensureLeftGlow() {
-        if (mLeftGlow != null) {
-            return;
-        }
-        if (mClipToPadding) {
-            mLeftGlow.setSize(getMeasuredHeight() - getPaddingTop() - getPaddingBottom(),
-                    getMeasuredWidth() - getPaddingLeft() - getPaddingRight());
-        } else {
-            mLeftGlow.setSize(getMeasuredHeight(), getMeasuredWidth());
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void ensureRightGlow() {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void ensureTopGlow() {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void ensureBottomGlow() {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void invalidateGlows() {
-        mLeftGlow = mRightGlow = mTopGlow = mBottomGlow = null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Since RecyclerView is a collection ViewGroup that includes virtual children (items that are
-     * in the Adapter but not visible in the UI), it employs a more involved focus search strategy
-     * that differs from other ViewGroups.
-     * <p>
-     * It first does a focus search within the RecyclerView. If this search finds a View that is in
-     * the focus direction with respect to the currently focused View, RecyclerView returns that
-     * child as the next focus target. When it cannot find such child, it calls
-     * {@link LayoutManager#onFocusSearchFailed(View, int, Recycler, State)} to layout more Views
-     * in the focus search direction. If LayoutManager adds a View that matches the
-     * focus search criteria, it will be returned as the focus search result. Otherwise,
-     * RecyclerView will call parent to handle the focus search like a regular ViewGroup.
-     * <p>
-     * When the direction is {@link View#FOCUS_FORWARD} or {@link View#FOCUS_BACKWARD}, a View that
-     * is not in the focus direction is still valid focus target which may not be the desired
-     * behavior if the Adapter has more children in the focus direction. To handle this case,
-     * RecyclerView converts the focus direction to an absolute direction and makes a preliminary
-     * focus search in that direction. If there are no Views to gain focus, it will call
-     * {@link LayoutManager#onFocusSearchFailed(View, int, Recycler, State)} before running a
-     * focus search with the original (relative) direction. This allows RecyclerView to provide
-     * better candidates to the focus search while still allowing the view system to take focus from
-     * the RecyclerView and give it to a more suitable child if such child exists.
-     *
-     * @param focused The view that currently has focus
-     * @param direction One of {@link View#FOCUS_UP}, {@link View#FOCUS_DOWN},
-     * {@link View#FOCUS_LEFT}, {@link View#FOCUS_RIGHT}, {@link View#FOCUS_FORWARD},
-     * {@link View#FOCUS_BACKWARD} or 0 for not applicable.
-     *
-     * @return A new View that can be the next focus after the focused View
-     */
+
     @Override
     public View focusSearch(View focused, int direction) {
-       return null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Checks if the new focus candidate is a good enough candidate such that RecyclerView will
      * assign it as the next focus View instead of letting view hierarchy decide.
@@ -1546,12 +1054,14 @@ public class RecyclerView extends ViewGroup  {
      * same View may still get the focus as a result of that search.
      */
     private boolean isPreferredNextFocus(View focused, View next, int direction) {
-    	return false;
+        return false;
     }
+
     @Override
     public void requestChildFocus(View child, View focused) {
-       
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Requests that the given child of the RecyclerView be positioned onto the screen. This method
      * can be called for both unfocusable and focusable child views. For unfocusable child views,
@@ -1561,109 +1071,55 @@ public class RecyclerView extends ViewGroup  {
      * @param focused The descendant view that actually has the focus if child is focusable, null
      *                otherwise.
      */
-    private void requestChildOnScreen( View child,  View focused) {
-       
+    private void requestChildOnScreen(View child, View focused) {
     }
+
     @Override
     public boolean requestChildRectangleOnScreen(View child, Rect rect, boolean immediate) {
-    	return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public void addFocusables(ArrayList<View> views, int direction, int focusableMode) {
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     protected boolean onRequestFocusInDescendants(int direction, Rect previouslyFocusedRect) {
-        if (isComputingLayout()) {
-            // if we are in the middle of a layout calculation, don't let any child take focus.
-            // RV will handle it after layout calculation is finished.
-            return false;
-        }
-        return super.onRequestFocusInDescendants(direction, previouslyFocusedRect);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     protected void onAttachedToWindow() {
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-       
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Returns true if RecyclerView is attached to window.
-     */
+
     @Override
     public boolean isAttachedToWindow() {
-        return mIsAttached;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Checks if RecyclerView is in the middle of a layout or scroll and throws an
-     * {@link IllegalStateException} if it <b>is not</b>.
-     *
-     * @param message The message for the exception. Can be null.
-     * @see #assertNotInLayoutOrScroll(String)
-     */
+
     void assertInLayoutOrScroll(String message) {
-        if (!isComputingLayout()) {
-            if (message == null) {
-                throw new IllegalStateException("Cannot call this method unless RecyclerView is "
-                        + "computing a layout or scrolling" + exceptionLabel());
-            }
-            throw new IllegalStateException(message + exceptionLabel());
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Checks if RecyclerView is in the middle of a layout or scroll and throws an
-     * {@link IllegalStateException} if it <b>is</b>.
-     *
-     * @param message The message for the exception. Can be null.
-     * @see #assertInLayoutOrScroll(String)
-     */
+
     void assertNotInLayoutOrScroll(String message) {
-        if (isComputingLayout()) {
-            if (message == null) {
-                throw new IllegalStateException("Cannot call this method while RecyclerView is "
-                        + "computing a layout or scrolling" + exceptionLabel());
-            }
-            throw new IllegalStateException(message);
-        }
-        if (mDispatchScrollCounter > 0) {
-            Log.w(TAG, "Cannot call this method in a scroll callback. Scroll callbacks might"
-                            + "be run during a measure & layout pass where you cannot change the"
-                            + "RecyclerView data. Any method call that might change the structure"
-                            + "of the RecyclerView or the adapter contents should be postponed to"
-                            + "the next frame.",
-                    new IllegalStateException("" + exceptionLabel()));
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Add an {@link OnItemTouchListener} to intercept touch events before they are dispatched
-     * to child views or this view's standard scrolling behavior.
-     *
-     * <p>Client code may use listeners to implement item manipulation behavior. Once a listener
-     * returns true from
-     * {@link OnItemTouchListener#onInterceptTouchEvent(RecyclerView, MotionEvent)} its
-     * {@link OnItemTouchListener#onTouchEvent(RecyclerView, MotionEvent)} method will be called
-     * for each incoming MotionEvent until the end of the gesture.</p>
-     *
-     * @param listener Listener to add
-     * @see SimpleOnItemTouchListener
-     */
-    public void addOnItemTouchListener( OnItemTouchListener listener) {
-        mOnItemTouchListeners.add(listener);
+
+    public void addOnItemTouchListener(OnItemTouchListener listener) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Remove an {@link OnItemTouchListener}. It will no longer be able to intercept touch events.
-     *
-     * @param listener Listener to remove
-     */
-    public void removeOnItemTouchListener( OnItemTouchListener listener) {
-        mOnItemTouchListeners.remove(listener);
-        if (mInterceptingOnItemTouchListener == listener) {
-            mInterceptingOnItemTouchListener = null;
-        }
+
+    public void removeOnItemTouchListener(OnItemTouchListener listener) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Dispatches the motion event to the intercepting OnItemTouchListener or provides opportunity
      * for OnItemTouchListeners to intercept.
@@ -1699,6 +1155,7 @@ public class RecyclerView extends ViewGroup  {
             return true;
         }
     }
+
     /**
      * Looks for an OnItemTouchListener that wants to intercept.
      *
@@ -1715,37 +1172,36 @@ public class RecyclerView extends ViewGroup  {
         final int listenerCount = mOnItemTouchListeners.size();
         for (int i = 0; i < listenerCount; i++) {
             final OnItemTouchListener listener = mOnItemTouchListeners.get(i);
-            if (listener.onInterceptTouchEvent(this, e)
-                    && action != MotionEvent.ACTION_UP && action != MotionEvent.ACTION_CANCEL) {
+            if (listener.onInterceptTouchEvent(this, e) && action != MotionEvent.ACTION_UP && action != MotionEvent.ACTION_CANCEL) {
                 mInterceptingOnItemTouchListener = listener;
                 return true;
             }
         }
         return false;
     }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
-       return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-        final int listenerCount = mOnItemTouchListeners.size();
-        for (int i = 0; i < listenerCount; i++) {
-            final OnItemTouchListener listener = mOnItemTouchListeners.get(i);
-            listener.onRequestDisallowInterceptTouchEvent(disallowIntercept);
-        }
-        super.requestDisallowInterceptTouchEvent(disallowIntercept);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-    	return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     private void resetScroll() {
         if (mVelocityTracker != null) {
             mVelocityTracker.clear();
         }
         releaseGlows();
     }
+
     private void onPointerUp(MotionEvent e) {
         final int actionIndex = e.getActionIndex();
         if (e.getPointerId(actionIndex) == mScrollPointerId) {
@@ -1756,50 +1212,42 @@ public class RecyclerView extends ViewGroup  {
             mInitialTouchY = mLastTouchY = (int) (e.getY(newIndex) + 0.5f);
         }
     }
+
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
-    	return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
-       
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * An implementation of {@link View#onMeasure(int, int)} to fall back to in various scenarios
-     * where this RecyclerView is otherwise lacking better information.
-     */
+
     void defaultOnMeasure(int widthSpec, int heightSpec) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        if (w != oldw || h != oldh) {
-            invalidateGlows();
-            // layout's w/h are updated during measure/layout steps.
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Sets the {@link ItemAnimator} that will handle animations involving changes
-     * to the items in this RecyclerView. By default, RecyclerView instantiates and
-     * uses an instance of {@link DefaultItemAnimator}. Whether item animations are
-     * enabled for the RecyclerView depends on the ItemAnimator and whether
-     * the LayoutManager {@link LayoutManager#supportsPredictiveItemAnimations()
-     * supports item animations}.
-     *
-     * @param animator The ItemAnimator being set. If null, no animations will occur
-     * when changes occur to the items in this RecyclerView.
-     */
+
     void onEnterLayoutOrScroll() {
-        mLayoutOrScrollCounter++;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void onExitLayoutOrScroll() {
-        onExitLayoutOrScroll(true);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void onExitLayoutOrScroll(boolean enableChangeEvents) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     boolean isAccessibilityEnabled() {
-        return mAccessibilityManager != null && mAccessibilityManager.isEnabled();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     private void dispatchContentChangedIfNecessary() {
         final int flags = mEatenAccessibilityChangeFlags;
         mEatenAccessibilityChangeFlags = 0;
@@ -1809,46 +1257,20 @@ public class RecyclerView extends ViewGroup  {
             sendAccessibilityEventUnchecked(event);
         }
     }
-    /**
-     * Returns whether RecyclerView is currently computing a layout.
-     * <p>
-     * If this method returns true, it means that RecyclerView is in a lockdown state and any
-     * attempt to update adapter contents will result in an exception because adapter contents
-     * cannot be changed while RecyclerView is trying to compute the layout.
-     * <p>
-     * It is very unlikely that your code will be running during this state as it is
-     * called by the framework when a layout traversal happens or RecyclerView starts to scroll
-     * in response to system events (touch, accessibility etc).
-     * <p>
-     * This case may happen if you have some custom logic to change adapter contents in
-     * response to a View callback (e.g. focus change callback) which might be triggered during a
-     * layout calculation. In these cases, you should just postpone the change using a Handler or a
-     * similar mechanism.
-     *
-     * @return <code>true</code> if RecyclerView is currently computing a layout, <code>false</code>
-     *         otherwise
-     */
+
     public boolean isComputingLayout() {
-        return mLayoutOrScrollCounter > 0;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Returns true if an accessibility event should not be dispatched now. This happens when an
-     * accessibility request arrives while RecyclerView does not have a stable state which is very
-     * hard to handle for a LayoutManager. Instead, this method records necessary information about
-     * the event and dispatches a window change event after the critical section is finished.
-     *
-     * @return True if the accessibility event should be postponed.
-     */
+
     boolean shouldDeferAccessibilityEvent(AccessibilityEvent event) {
-        return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public void sendAccessibilityEventUnchecked(AccessibilityEvent event) {
-        if (shouldDeferAccessibilityEvent(event)) {
-            return;
-        }
-        super.sendAccessibilityEventUnchecked(event);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Consumes adapter updates and calculates which type of animations we want to run.
      * Called in onMeasure and dispatchLayout.
@@ -1857,33 +1279,11 @@ public class RecyclerView extends ViewGroup  {
      */
     private void processAdapterUpdatesAndSetAnimationFlags() {
     }
-    /**
-     * Wrapper around layoutChildren() that handles animating changes caused by layout.
-     * Animations work on the assumption that there are five different kinds of items
-     * in play:
-     * PERSISTENT: items are visible before and after layout
-     * REMOVED: items were visible before layout and were removed by the app
-     * ADDED: items did not exist before layout and were added by the app
-     * DISAPPEARING: items exist in the data set before/after, but changed from
-     * visible to non-visible in the process of layout (they were moved off
-     * screen as a side-effect of other changes)
-     * APPEARING: items exist in the data set before/after, but changed from
-     * non-visible to visible in the process of layout (they were moved on
-     * screen as a side-effect of other changes)
-     * The overall approach figures out what items exist before/after layout and
-     * infers one of the five above states for each of the items. Then the animations
-     * are set up accordingly:
-     * PERSISTENT views are animated via
-     * {@link ItemAnimator#animatePersistence(ViewHolder, ItemHolderInfo, ItemHolderInfo)}
-     * DISAPPEARING views are animated via
-     * {@link ItemAnimator#animateDisappearance(ViewHolder, ItemHolderInfo, ItemHolderInfo)}
-     * APPEARING views are animated via
-     * {@link ItemAnimator#animateAppearance(ViewHolder, ItemHolderInfo, ItemHolderInfo)}
-     * and changed views are animated via
-     * {@link ItemAnimator#animateChange(ViewHolder, ViewHolder, ItemHolderInfo, ItemHolderInfo)}.
-     */
+
     void dispatchLayout() {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     private void saveFocusInfo() {
         View child = null;
         if (mPreserveFocusAfterLayout && hasFocus() && mAdapter != null) {
@@ -1897,17 +1297,17 @@ public class RecyclerView extends ViewGroup  {
             // mFocusedItemPosition should hold the current adapter position of the previously
             // focused item. If the item is removed, we store the previous adapter position of the
             // removed item.
-            mState.mFocusedItemPosition = mDataSetHasChangedAfterLayout ? NO_POSITION
-                    : (focusedVh.isRemoved() ? focusedVh.mOldPosition
-                            : focusedVh.getAdapterPosition());
+            mState.mFocusedItemPosition = mDataSetHasChangedAfterLayout ? NO_POSITION : (focusedVh.isRemoved() ? focusedVh.mOldPosition : focusedVh.getAdapterPosition());
             mState.mFocusedSubChildId = getDeepestFocusedViewWithId(focusedVh.itemView);
         }
     }
+
     private void resetFocusInfo() {
         mState.mFocusedItemId = NO_ID;
         mState.mFocusedItemPosition = NO_POSITION;
         mState.mFocusedSubChildId = View.NO_ID;
     }
+
     private int getDeepestFocusedViewWithId(View view) {
         int lastKnownId = view.getId();
         while (!view.isFocused() && view instanceof ViewGroup && view.hasFocus()) {
@@ -1919,179 +1319,111 @@ public class RecyclerView extends ViewGroup  {
         }
         return lastKnownId;
     }
+
     private boolean didChildRangeChange(int minPositionPreLayout, int maxPositionPreLayout) {
-    	return false;
+        return false;
     }
+
     @Override
     protected void removeDetachedView(View child, boolean animate) {
-        ViewHolder vh = getChildViewHolderInt(child);
-        if (vh != null) {
-            if (vh.isTmpDetached()) {
-                vh.clearTmpDetachFlag();
-            } else if (!vh.shouldIgnore()) {
-                throw new IllegalArgumentException("Called removeDetachedView with a view which"
-                        + " is not flagged as tmp detached." + vh + exceptionLabel());
-            }
-        }
-        // Clear any android.view.animation.Animation that may prevent the item from
-        // detaching when being removed. If a child is re-added before the
-        // lazy detach occurs, it will receive invalid attach/detach sequencing.
-        child.clearAnimation();
-        dispatchChildDetached(child);
-        super.removeDetachedView(child, animate);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Returns a unique key to be used while handling change animations.
-     * It might be child's position or stable id depending on the adapter type.
-     */
+
     long getChangedHolderKey(ViewHolder holder) {
-        return mAdapter.hasStableIds() ? holder.getItemId() : holder.mPosition;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        dispatchLayout();
-        mFirstLayoutComplete = true;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public void requestLayout() {
-        if (mInterceptRequestLayoutDepth == 0 && !mLayoutSuppressed) {
-            super.requestLayout();
-        } else {
-            mLayoutWasDefered = true;
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void markItemDecorInsetsDirty() {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public void onDraw(Canvas c) {
-        super.onDraw(c);
-        final int count = mItemDecorations.size();
-        for (int i = 0; i < count; i++) {
-            mItemDecorations.get(i).onDraw(c, this, mState);
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
-    	return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
-    	return null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
-        return null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
-    	return null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Returns true if RecyclerView is currently running some animations.
-     * <p>
-     * If you want to be notified when animations are finished, use
-     * {@link ItemAnimator#isRunning(ItemAnimator.ItemAnimatorFinishedListener)}.
-     *
-     * @return True if there are some item animations currently running or waiting to be started.
-     */
+
     public boolean isAnimating() {
-    	return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void saveOldPositions() {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void clearOldPositions() {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void offsetPositionRecordsForMove(int from, int to) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    void offsetPositionRecordsForRemove(int positionStart, int itemCount,
-            boolean applyToPreLayout) {
+
+    void offsetPositionRecordsForRemove(int positionStart, int itemCount, boolean applyToPreLayout) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Rebind existing views for the given range, or create as needed.
-     *
-     * @param positionStart Adapter position to start at
-     * @param itemCount Number of views that must explicitly be rebound
-     */
+
     void viewRangeUpdate(int positionStart, int itemCount, Object payload) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     boolean canReuseUpdatedViewHolder(ViewHolder viewHolder) {
-       return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Processes the fact that, as far as we can tell, the data set has completely changed.
-     *
-     * <ul>
-     *   <li>Once layout occurs, all attached items should be discarded or animated.
-     *   <li>Attached items are labeled as invalid.
-     *   <li>Because items may still be prefetched between a "data set completely changed"
-     *       event and a layout event, all cached items are discarded.
-     * </ul>
-     *
-     * @param dispatchItemsChanged Whether to call
-     * {@link LayoutManager#onItemsChanged(RecyclerView)} during measure/layout.
-     */
+
     void processDataSetCompletelyChanged(boolean dispatchItemsChanged) {
-        mDispatchItemsChangedEvent |= dispatchItemsChanged;
-        mDataSetHasChangedAfterLayout = true;
-        markKnownViewsInvalid();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Mark all known views as invalid. Used in response to a, "the whole world might have changed"
-     * data change event.
-     */
+
     void markKnownViewsInvalid() {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Invalidates all ItemDecorations. If RecyclerView has item decorations, calling this method
-     * will trigger a {@link #requestLayout()} call.
-     */
+
     public void invalidateItemDecorations() {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Returns true if the RecyclerView should attempt to preserve currently focused Adapter Item's
-     * focus even if the View representing the Item is replaced during a layout calculation.
-     * <p>
-     * By default, this value is {@code true}.
-     *
-     * @return True if the RecyclerView will try to preserve focused Item after a layout if it loses
-     * focus.
-     *
-     * @see #setPreserveFocusAfterLayout(boolean)
-     */
+
     public boolean getPreserveFocusAfterLayout() {
-        return mPreserveFocusAfterLayout;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Set whether the RecyclerView should try to keep the same Item focused after a layout
-     * calculation or not.
-     * <p>
-     * Usually, LayoutManagers keep focused views visible before and after layout but sometimes,
-     * views may lose focus during a layout calculation as their state changes or they are replaced
-     * with another view due to type change or animation. In these cases, RecyclerView can request
-     * focus on the new view automatically.
-     *
-     * @param preserveFocusAfterLayout Whether RecyclerView should preserve focused Item during a
-     *                                 layout calculations. Defaults to true.
-     *
-     * @see #getPreserveFocusAfterLayout()
-     */
+
     public void setPreserveFocusAfterLayout(boolean preserveFocusAfterLayout) {
-        mPreserveFocusAfterLayout = preserveFocusAfterLayout;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Retrieve the {@link ViewHolder} for the given child view.
-     *
-     * @param child Child of this RecyclerView to query for its ViewHolder
-     * @return The child view's ViewHolder
-     */
-    public ViewHolder getChildViewHolder( View child) {
-        final ViewParent parent = child.getParent();
-        if (parent != null && parent != this) {
-            throw new IllegalArgumentException("View " + child + " is not a direct child of "
-                    + this);
-        }
-        return getChildViewHolderInt(child);
+
+    public ViewHolder getChildViewHolder(View child) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Traverses the ancestors of the given view and returns the item view that contains it and
      * also a direct child of the RecyclerView. This returned view can be used to get the
@@ -2105,15 +1437,10 @@ public class RecyclerView extends ViewGroup  {
      * @see #getChildViewHolder(View)
      * @see #findContainingViewHolder(View)
      */
-    
-    public View findContainingItemView( View view) {
-        ViewParent parent = view.getParent();
-        while (parent != null && parent != this && parent instanceof View) {
-            view = (View) parent;
-            parent = view.getParent();
-        }
-        return parent == this ? view : null;
+    public View findContainingItemView(View view) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * Returns the ViewHolder that contains the given view.
      *
@@ -2122,218 +1449,111 @@ public class RecyclerView extends ViewGroup  {
      * @return The ViewHolder that contains the given view or null if the provided view is not a
      * descendant of this RecyclerView.
      */
-    
-    public ViewHolder findContainingViewHolder( View view) {
-        View itemView = findContainingItemView(view);
-        return itemView == null ? null : getChildViewHolder(itemView);
+    public ViewHolder findContainingViewHolder(View view) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     static ViewHolder getChildViewHolderInt(View child) {
-        if (child == null) {
-            return null;
-        }
-        return ((LayoutParams) child.getLayoutParams()).mViewHolder;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * @deprecated use {@link #getChildAdapterPosition(View)} or
      * {@link #getChildLayoutPosition(View)}.
      */
     @Deprecated
-    public int getChildPosition( View child) {
+    public int getChildPosition(View child) {
         return getChildAdapterPosition(child);
     }
-    /**
-     * Return the adapter position that the given child view corresponds to.
-     *
-     * @param child Child View to query
-     * @return Adapter position corresponding to the given view or {@link #NO_POSITION}
-     */
-    public int getChildAdapterPosition( View child) {
-        final ViewHolder holder = getChildViewHolderInt(child);
-        return holder != null ? holder.getAdapterPosition() : NO_POSITION;
+
+    public int getChildAdapterPosition(View child) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Return the adapter position of the given child view as of the latest completed layout pass.
-     * <p>
-     * This position may not be equal to Item's adapter position if there are pending changes
-     * in the adapter which have not been reflected to the layout yet.
-     *
-     * @param child Child View to query
-     * @return Adapter position of the given View as of last layout pass or {@link #NO_POSITION} if
-     * the View is representing a removed item.
-     */
-    public int getChildLayoutPosition( View child) {
-        final ViewHolder holder = getChildViewHolderInt(child);
-        return holder != null ? holder.getLayoutPosition() : NO_POSITION;
+
+    public int getChildLayoutPosition(View child) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Return the stable item id that the given child view corresponds to.
-     *
-     * @param child Child View to query
-     * @return Item id corresponding to the given view or {@link #NO_ID}
-     */
-    public long getChildItemId( View child) {
-        if (mAdapter == null || !mAdapter.hasStableIds()) {
-            return NO_ID;
-        }
-        final ViewHolder holder = getChildViewHolderInt(child);
-        return holder != null ? holder.getItemId() : NO_ID;
+
+    public long getChildItemId(View child) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public boolean drawChild(Canvas canvas, View child, long drawingTime) {
-        return super.drawChild(canvas, child, drawingTime);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Called when an item view is attached to this RecyclerView.
-     *
-     * <p>Subclasses of RecyclerView may want to perform extra bookkeeping or modifications
-     * of child views as they become attached. This will be called before a
-     * {@link LayoutManager} measures or lays out the view and is a good time to perform these
-     * changes.</p>
-     *
-     * @param child Child view that is now attached to this RecyclerView and its associated window
-     */
-    public void onChildAttachedToWindow( View child) {
+
+    public void onChildAttachedToWindow(View child) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Called when an item view is detached from this RecyclerView.
-     *
-     * <p>Subclasses of RecyclerView may want to perform extra bookkeeping or modifications
-     * of child views as they become detached. This will be called as a
-     * {@link LayoutManager} fully detaches the child view from the parent and its window.</p>
-     *
-     * @param child Child view that is now detached from this RecyclerView and its associated window
-     */
-    public void onChildDetachedFromWindow( View child) {
+
+    public void onChildDetachedFromWindow(View child) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Returns the bounds of the view including its decoration and margins.
-     *
-     * @param view The view element to check
-     * @param outBounds A rect that will receive the bounds of the element including its
-     *                  decoration and margins.
-     */
-    public void getDecoratedBoundsWithMargins( View view,  Rect outBounds) {
-        getDecoratedBoundsWithMarginsInt(view, outBounds);
+
+    public void getDecoratedBoundsWithMargins(View view, Rect outBounds) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     static void getDecoratedBoundsWithMarginsInt(View view, Rect outBounds) {
-        final LayoutParams lp = (LayoutParams) view.getLayoutParams();
-        final Rect insets = lp.mDecorInsets;
-        outBounds.set(view.getLeft() - insets.left - lp.leftMargin,
-                view.getTop() - insets.top - lp.topMargin,
-                view.getRight() + insets.right + lp.rightMargin,
-                view.getBottom() + insets.bottom + lp.bottomMargin);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     Rect getItemDecorInsetsForChild(View child) {
-        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-        if (!lp.mInsetsDirty) {
-            return lp.mDecorInsets;
-        }
-        if (mState.isPreLayout() && (lp.isItemChanged() || lp.isViewInvalid())) {
-            // changed/invalid items should not be updated until they are rebound.
-            return lp.mDecorInsets;
-        }
-        final Rect insets = lp.mDecorInsets;
-        insets.set(0, 0, 0, 0);
-        final int decorCount = mItemDecorations.size();
-        for (int i = 0; i < decorCount; i++) {
-            mTempRect.set(0, 0, 0, 0);
-            mItemDecorations.get(i).getItemOffsets(mTempRect, child, this, mState);
-            insets.left += mTempRect.left;
-            insets.top += mTempRect.top;
-            insets.right += mTempRect.right;
-            insets.bottom += mTempRect.bottom;
-        }
-        lp.mInsetsDirty = false;
-        return insets;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Called when the scroll position of this RecyclerView changes. Subclasses should use
-     * this method to respond to scrolling within the adapter's data set instead of an explicit
-     * listener.
-     *
-     * <p>This method will always be invoked before listeners. If a subclass needs to perform
-     * any additional upkeep or bookkeeping after scrolling but before listeners run,
-     * this is a good place to do so.</p>
-     *
-     * <p>This differs from {@link View#onScrollChanged(int, int, int, int)} in that it receives
-     * the distance scrolled in either direction within the adapter's data set instead of absolute
-     * scroll coordinates. Since RecyclerView cannot compute the absolute scroll position from
-     * any arbitrary point in the data set, <code>onScrollChanged</code> will always receive
-     * the current {@link View#getScrollX()} and {@link View#getScrollY()} values which
-     * do not correspond to the data set scroll position. However, some subclasses may choose
-     * to use these fields as special offsets.</p>
-     *
-     * @param dx horizontal distance scrolled in pixels
-     * @param dy vertical distance scrolled in pixels
-     */
-    public void onScrolled( int dx,  int dy) {
-        // Do nothing
+
+    public void onScrolled(int dx, int dy) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void dispatchOnScrolled(int hresult, int vresult) {
-        mDispatchScrollCounter++;
-        // Pass the current scrollX/scrollY values; no actual change in these properties occurred
-        // but some general-purpose code may choose to respond to changes this way.
-        final int scrollX = getScrollX();
-        final int scrollY = getScrollY();
-        onScrollChanged(scrollX, scrollY, scrollX, scrollY);
-        // Pass the real deltas to onScrolled, the RecyclerView-specific method.
-        onScrolled(hresult, vresult);
-        // Invoke listeners last. Subclassed view methods always handle the event first.
-        // All internal state is consistent by the time listeners are invoked.
-        if (mScrollListener != null) {
-            mScrollListener.onScrolled(this, hresult, vresult);
-        }
-        if (mScrollListeners != null) {
-            for (int i = mScrollListeners.size() - 1; i >= 0; i--) {
-                mScrollListeners.get(i).onScrolled(this, hresult, vresult);
-            }
-        }
-        mDispatchScrollCounter--;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Called when the scroll state of this RecyclerView changes. Subclasses should use this
-     * method to respond to state changes instead of an explicit listener.
-     *
-     * <p>This method will always be invoked before listeners, but after the LayoutManager
-     * responds to the scroll state change.</p>
-     *
-     * @param state the new scroll state, one of {@link #SCROLL_STATE_IDLE},
-     *              {@link #SCROLL_STATE_DRAGGING} or {@link #SCROLL_STATE_SETTLING}
-     */
+
     public void onScrollStateChanged(int state) {
-        // Do nothing
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void repositionShadowingViews() {
-        // Fix up shadow views used by change animations
-        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     private class RecyclerViewDataObserver extends AdapterDataObserver {
+
         RecyclerViewDataObserver() {
         }
+
         @Override
         public void onChanged() {
-           
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         @Override
         public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
-       
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         @Override
         public void onItemRangeInserted(int positionStart, int itemCount) {
-          
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         @Override
         public void onItemRangeRemoved(int positionStart, int itemCount) {
-           
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         @Override
         public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-           
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void triggerUpdateProcessor() {
-           
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
+
     /**
      * RecycledViewPool lets you share Views between multiple RecyclerViews.
      * <p>
@@ -2343,7 +1563,9 @@ public class RecyclerView extends ViewGroup  {
      * RecyclerView automatically creates a pool for itself if you don't provide one.
      */
     public static class RecycledViewPool {
+
         private static final int DEFAULT_MAX_SCRAP = 5;
+
         /**
          * Tracks both pooled holders, as well as create/bind timing metadata for the given type.
          *
@@ -2359,42 +1581,32 @@ public class RecyclerView extends ViewGroup  {
          * constructed by {@link GapWorker} prefetch from being bound to a lower priority prefetch.
          */
         static class ScrapData {
+
             final ArrayList<ViewHolder> mScrapHeap = new ArrayList<>();
+
             int mMaxScrap = DEFAULT_MAX_SCRAP;
+
             long mCreateRunningAverageNs = 0;
+
             long mBindRunningAverageNs = 0;
         }
+
         SparseArray<ScrapData> mScrap = new SparseArray<>();
+
         private int mAttachCount = 0;
-        /**
-         * Discard all ViewHolders.
-         */
+
         public void clear() {
-            for (int i = 0; i < mScrap.size(); i++) {
-                ScrapData data = mScrap.valueAt(i);
-                data.mScrapHeap.clear();
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Sets the maximum number of ViewHolders to hold in the pool before discarding.
-         *
-         * @param viewType ViewHolder Type
-         * @param max Maximum number
-         */
+
         public void setMaxRecycledViews(int viewType, int max) {
-            ScrapData scrapData = getScrapDataForType(viewType);
-            scrapData.mMaxScrap = max;
-            final ArrayList<ViewHolder> scrapHeap = scrapData.mScrapHeap;
-            while (scrapHeap.size() > max) {
-                scrapHeap.remove(scrapHeap.size() - 1);
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns the current number of Views held by the RecycledViewPool of the given view type.
-         */
+
         public int getRecycledViewCount(int viewType) {
-            return getScrapDataForType(viewType).mScrapHeap.size();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         /**
          * Acquire a ViewHolder of the specified type from the pool, or {@code null} if none are
          * present.
@@ -2403,106 +1615,50 @@ public class RecyclerView extends ViewGroup  {
          * @return ViewHolder of the specified type acquired from the pool, or {@code null} if none
          * are present.
          */
-        
         public ViewHolder getRecycledView(int viewType) {
-            final ScrapData scrapData = mScrap.get(viewType);
-            if (scrapData != null && !scrapData.mScrapHeap.isEmpty()) {
-                final ArrayList<ViewHolder> scrapHeap = scrapData.mScrapHeap;
-                for (int i = scrapHeap.size() - 1; i >= 0; i--) {
-                    if (!scrapHeap.get(i).isAttachedToTransitionOverlay()) {
-                        return scrapHeap.remove(i);
-                    }
-                }
-            }
-            return null;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Total number of ViewHolders held by the pool.
-         *
-         * @return Number of ViewHolders held by the pool.
-         */
+
         int size() {
-            int count = 0;
-            for (int i = 0; i < mScrap.size(); i++) {
-                ArrayList<ViewHolder> viewHolders = mScrap.valueAt(i).mScrapHeap;
-                if (viewHolders != null) {
-                    count += viewHolders.size();
-                }
-            }
-            return count;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Add a scrap ViewHolder to the pool.
-         * <p>
-         * If the pool is already full for that ViewHolder's type, it will be immediately discarded.
-         *
-         * @param scrap ViewHolder to be added to the pool.
-         */
+
         public void putRecycledView(ViewHolder scrap) {
-            final int viewType = scrap.getItemViewType();
-            final ArrayList<ViewHolder> scrapHeap = getScrapDataForType(viewType).mScrapHeap;
-            if (mScrap.get(viewType).mMaxScrap <= scrapHeap.size()) {
-                return;
-            }
-            if (DEBUG && scrapHeap.contains(scrap)) {
-                throw new IllegalArgumentException("this scrap item already exists");
-            }
-            scrap.resetInternal();
-            scrapHeap.add(scrap);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         long runningAverage(long oldAverage, long newValue) {
-            if (oldAverage == 0) {
-                return newValue;
-            }
-            return (oldAverage / 4 * 3) + (newValue / 4);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void factorInCreateTime(int viewType, long createTimeNs) {
-            ScrapData scrapData = getScrapDataForType(viewType);
-            scrapData.mCreateRunningAverageNs = runningAverage(
-                    scrapData.mCreateRunningAverageNs, createTimeNs);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void factorInBindTime(int viewType, long bindTimeNs) {
-            ScrapData scrapData = getScrapDataForType(viewType);
-            scrapData.mBindRunningAverageNs = runningAverage(
-                    scrapData.mBindRunningAverageNs, bindTimeNs);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean willCreateInTime(int viewType, long approxCurrentNs, long deadlineNs) {
-            long expectedDurationNs = getScrapDataForType(viewType).mCreateRunningAverageNs;
-            return expectedDurationNs == 0 || (approxCurrentNs + expectedDurationNs < deadlineNs);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean willBindInTime(int viewType, long approxCurrentNs, long deadlineNs) {
-            long expectedDurationNs = getScrapDataForType(viewType).mBindRunningAverageNs;
-            return expectedDurationNs == 0 || (approxCurrentNs + expectedDurationNs < deadlineNs);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void attach() {
-            mAttachCount++;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void detach() {
-            mAttachCount--;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Detaches the old adapter and attaches the new one.
-         * <p>
-         * RecycledViewPool will clear its cache if it has only one adapter attached and the new
-         * adapter uses a different ViewHolder than the oldAdapter.
-         *
-         * @param oldAdapter The previous adapter instance. Will be detached.
-         * @param newAdapter The new adapter instance. Will be attached.
-         * @param compatibleWithPrevious True if both oldAdapter and newAdapter are using the same
-         *                               ViewHolder and view types.
-         */
-        void onAdapterChanged(Adapter oldAdapter, Adapter newAdapter,
-                boolean compatibleWithPrevious) {
-            if (oldAdapter != null) {
-                detach();
-            }
-            if (!compatibleWithPrevious && mAttachCount == 0) {
-                clear();
-            }
-            if (newAdapter != null) {
-                attach();
-            }
+
+        void onAdapterChanged(Adapter oldAdapter, Adapter newAdapter, boolean compatibleWithPrevious) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         private ScrapData getScrapDataForType(int viewType) {
             ScrapData scrapData = mScrap.get(viewType);
             if (scrapData == null) {
@@ -2512,60 +1668,19 @@ public class RecyclerView extends ViewGroup  {
             return scrapData;
         }
     }
-    /**
-     * Utility method for finding an internal RecyclerView, if present
-     */
+
     static RecyclerView findNestedRecyclerView(View view) {
-        if (!(view instanceof ViewGroup)) {
-            return null;
-        }
-        if (view instanceof RecyclerView) {
-            return (RecyclerView) view;
-        }
-        final ViewGroup parent = (ViewGroup) view;
-        final int count = parent.getChildCount();
-        for (int i = 0; i < count; i++) {
-            final View child = parent.getChildAt(i);
-            final RecyclerView descendant = findNestedRecyclerView(child);
-            if (descendant != null) {
-                return descendant;
-            }
-        }
-        return null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Utility method for clearing holder's internal RecyclerView, if present
-     */
+
     static void clearNestedRecyclerViewIfNotNested(ViewHolder holder) {
-        if (holder.mNestedRecyclerView != null) {
-            View item = holder.mNestedRecyclerView.get();
-            while (item != null) {
-                if (item == holder.itemView) {
-                    return; // match found, don't need to clear
-                }
-                ViewParent parent = item.getParent();
-                if (parent instanceof View) {
-                    item = (View) parent;
-                } else {
-                    item = null;
-                }
-            }
-            holder.mNestedRecyclerView = null; // not nested
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Time base for deadline-aware work scheduling. Overridable for testing.
-     *
-     * Will return 0 to avoid cost of System.nanoTime where deadline-aware work scheduling
-     * isn't relevant.
-     */
+
     long getNanoTime() {
-        if (ALLOW_THREAD_GAP_WORK) {
-            return System.nanoTime();
-        } else {
-            return 0;
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * A Recycler is responsible for managing scrapped or detached item views for reuse.
      *
@@ -2581,11 +1696,11 @@ public class RecyclerView extends ViewGroup  {
      */
     public final class Recycler {
 
-		public void clear() {
-			// TODO Auto-generated method stub
-			
-		}
+        public void clear() {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
     }
+
     /**
      * ViewCacheExtension is a helper class to provide an additional layer of view caching that can
      * be controlled by the developer.
@@ -2600,6 +1715,7 @@ public class RecyclerView extends ViewGroup  {
      * the default recycling policy handle it.
      */
     public abstract static class ViewCacheExtension {
+
         /**
          * Returns a View that can be binded to the given Adapter position.
          * <p>
@@ -2616,10 +1732,9 @@ public class RecyclerView extends ViewGroup  {
          * @return A View that is bound to the given position or NULL if there is no View to re-use
          * @see LayoutManager#ignoreView(View)
          */
-        
-        public abstract View getViewForPositionAndType( Recycler recycler, int position,
-                int type);
+        public abstract View getViewForPositionAndType(Recycler recycler, int position, int type);
     }
+
     /**
      * Base class for an Adapter
      *
@@ -2629,8 +1744,11 @@ public class RecyclerView extends ViewGroup  {
      * @param <VH> A class that extends ViewHolder that will be used by the adapter.
      */
     public abstract static class Adapter<VH extends ViewHolder> {
+
         private final AdapterDataObservable mObservable = new AdapterDataObservable();
+
         private boolean mHasStableIds = false;
+
         /**
          * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
          * an item.
@@ -2652,8 +1770,8 @@ public class RecyclerView extends ViewGroup  {
          * @see #getItemViewType(int)
          * @see #onBindViewHolder(ViewHolder, int)
          */
-        
-        public abstract VH onCreateViewHolder( ViewGroup parent, int viewType);
+        public abstract VH onCreateViewHolder(ViewGroup parent, int viewType);
+
         /**
          * Called by RecyclerView to display the data at the specified position. This method should
          * update the contents of the {@link ViewHolder#itemView} to reflect the item at the given
@@ -2674,507 +1792,134 @@ public class RecyclerView extends ViewGroup  {
          *        item at the given position in the data set.
          * @param position The position of the item within the adapter's data set.
          */
-        public abstract void onBindViewHolder( VH holder, int position);
-        /**
-         * Called by RecyclerView to display the data at the specified position. This method
-         * should update the contents of the {@link ViewHolder#itemView} to reflect the item at
-         * the given position.
-         * <p>
-         * Note that unlike {@link android.widget.ListView}, RecyclerView will not call this method
-         * again if the position of the item changes in the data set unless the item itself is
-         * invalidated or the new position cannot be determined. For this reason, you should only
-         * use the <code>position</code> parameter while acquiring the related data item inside
-         * this method and should not keep a copy of it. If you need the position of an item later
-         * on (e.g. in a click listener), use {@link ViewHolder#getAdapterPosition()} which will
-         * have the updated adapter position.
-         * <p>
-         * Partial bind vs full bind:
-         * <p>
-         * The payloads parameter is a merge list from {@link #notifyItemChanged(int, Object)} or
-         * {@link #notifyItemRangeChanged(int, int, Object)}.  If the payloads list is not empty,
-         * the ViewHolder is currently bound to old data and Adapter may run an efficient partial
-         * update using the payload info.  If the payload is empty,  Adapter must run a full bind.
-         * Adapter should not assume that the payload passed in notify methods will be received by
-         * onBindViewHolder().  For example when the view is not attached to the screen, the
-         * payload in notifyItemChange() will be simply dropped.
-         *
-         * @param holder The ViewHolder which should be updated to represent the contents of the
-         *               item at the given position in the data set.
-         * @param position The position of the item within the adapter's data set.
-         * @param payloads A non-null list of merged payloads. Can be empty list if requires full
-         *                 update.
-         */
-        public void onBindViewHolder( VH holder, int position,
-                 List<Object> payloads) {
-            onBindViewHolder(holder, position);
+        public abstract void onBindViewHolder(VH holder, int position);
+
+        public void onBindViewHolder(VH holder, int position, List<Object> payloads) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         /**
          * This method calls {@link #onCreateViewHolder(ViewGroup, int)} to create a new
          * {@link ViewHolder} and initializes some private fields to be used by RecyclerView.
          *
          * @see #onCreateViewHolder(ViewGroup, int)
          */
-        
-        public final VH createViewHolder( ViewGroup parent, int viewType) {
-            try {
-                
-                final VH holder = onCreateViewHolder(parent, viewType);
-                if (holder.itemView.getParent() != null) {
-                    throw new IllegalStateException("ViewHolder views must not be attached when"
-                            + " created. Ensure that you are not passing 'true' to the attachToRoot"
-                            + " parameter of LayoutInflater.inflate(..., boolean attachToRoot)");
-                }
-                holder.mItemViewType = viewType;
-                return holder;
-            } finally {
-                
-            }
+        public final VH createViewHolder(ViewGroup parent, int viewType) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * This method internally calls {@link #onBindViewHolder(ViewHolder, int)} to update the
-         * {@link ViewHolder} contents with the item at the given position and also sets up some
-         * private fields to be used by RecyclerView.
-         *
-         * @see #onBindViewHolder(ViewHolder, int)
-         */
-        public final void bindViewHolder( VH holder, int position) {
-            holder.mPosition = position;
-            if (hasStableIds()) {
-                holder.mItemId = getItemId(position);
-            }
-            holder.setFlags(ViewHolder.FLAG_BOUND,
-                    ViewHolder.FLAG_BOUND | ViewHolder.FLAG_UPDATE | ViewHolder.FLAG_INVALID
-                            | ViewHolder.FLAG_ADAPTER_POSITION_UNKNOWN);            
-            onBindViewHolder(holder, position, holder.getUnmodifiedPayloads());
-            holder.clearPayload();
-            final ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-            if (layoutParams instanceof RecyclerView.LayoutParams) {
-                ((LayoutParams) layoutParams).mInsetsDirty = true;
-            }
-            
+
+        public final void bindViewHolder(VH holder, int position) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Return the view type of the item at <code>position</code> for the purposes
-         * of view recycling.
-         *
-         * <p>The default implementation of this method returns 0, making the assumption of
-         * a single view type for the adapter. Unlike ListView adapters, types need not
-         * be contiguous. Consider using id resources to uniquely identify item view types.
-         *
-         * @param position position to query
-         * @return integer value identifying the type of the view needed to represent the item at
-         *                 <code>position</code>. Type codes need not be contiguous.
-         */
+
         public int getItemViewType(int position) {
-            return 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Indicates whether each item in the data set can be represented with a unique identifier
-         * of type {@link java.lang.Long}.
-         *
-         * @param hasStableIds Whether items in data set have unique identifiers or not.
-         * @see #hasStableIds()
-         * @see #getItemId(int)
-         */
+
         public void setHasStableIds(boolean hasStableIds) {
-            if (hasObservers()) {
-                throw new IllegalStateException("Cannot change whether this adapter has "
-                        + "stable IDs while the adapter has registered observers.");
-            }
-            mHasStableIds = hasStableIds;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Return the stable ID for the item at <code>position</code>. If {@link #hasStableIds()}
-         * would return false this method should return {@link #NO_ID}. The default implementation
-         * of this method returns {@link #NO_ID}.
-         *
-         * @param position Adapter position to query
-         * @return the stable ID of the item at position
-         */
+
         public long getItemId(int position) {
-            return NO_ID;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         /**
          * Returns the total number of items in the data set held by the adapter.
          *
          * @return The total number of items in this adapter.
          */
         public abstract int getItemCount();
-        /**
-         * Returns true if this adapter publishes a unique <code>long</code> value that can
-         * act as a key for the item at a given position in the data set. If that item is relocated
-         * in the data set, the ID returned for that item should be the same.
-         *
-         * @return true if this adapter's items have stable IDs
-         */
+
         public final boolean hasStableIds() {
-            return mHasStableIds;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Called when a view created by this adapter has been recycled.
-         *
-         * <p>A view is recycled when a {@link LayoutManager} decides that it no longer
-         * needs to be attached to its parent {@link RecyclerView}. This can be because it has
-         * fallen out of visibility or a set of cached views represented by views still
-         * attached to the parent RecyclerView. If an item view has large or expensive data
-         * bound to it such as large bitmaps, this may be a good place to release those
-         * resources.</p>
-         * <p>
-         * RecyclerView calls this method right before clearing ViewHolder's internal data and
-         * sending it to RecycledViewPool. This way, if ViewHolder was holding valid information
-         * before being recycled, you can call {@link ViewHolder#getAdapterPosition()} to get
-         * its adapter position.
-         *
-         * @param holder The ViewHolder for the view being recycled
-         */
-        public void onViewRecycled( VH holder) {
+
+        public void onViewRecycled(VH holder) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Called by the RecyclerView if a ViewHolder created by this Adapter cannot be recycled
-         * due to its transient state. Upon receiving this callback, Adapter can clear the
-         * animation(s) that effect the View's transient state and return <code>true</code> so that
-         * the View can be recycled. Keep in mind that the View in question is already removed from
-         * the RecyclerView.
-         * <p>
-         * In some cases, it is acceptable to recycle a View although it has transient state. Most
-         * of the time, this is a case where the transient state will be cleared in
-         * {@link #onBindViewHolder(ViewHolder, int)} call when View is rebound to a new position.
-         * For this reason, RecyclerView leaves the decision to the Adapter and uses the return
-         * value of this method to decide whether the View should be recycled or not.
-         * <p>
-         * Note that when all animations are created by {@link RecyclerView.ItemAnimator}, you
-         * should never receive this callback because RecyclerView keeps those Views as children
-         * until their animations are complete. This callback is useful when children of the item
-         * views create animations which may not be easy to implement using an {@link ItemAnimator}.
-         * <p>
-         * You should <em>never</em> fix this issue by calling
-         * <code>holder.itemView.setHasTransientState(false);</code> unless you've previously called
-         * <code>holder.itemView.setHasTransientState(true);</code>. Each
-         * <code>View.setHasTransientState(true)</code> call must be matched by a
-         * <code>View.setHasTransientState(false)</code> call, otherwise, the state of the View
-         * may become inconsistent. You should always prefer to end or cancel animations that are
-         * triggering the transient state instead of handling it manually.
-         *
-         * @param holder The ViewHolder containing the View that could not be recycled due to its
-         *               transient state.
-         * @return True if the View should be recycled, false otherwise. Note that if this method
-         * returns <code>true</code>, RecyclerView <em>will ignore</em> the transient state of
-         * the View and recycle it regardless. If this method returns <code>false</code>,
-         * RecyclerView will check the View's transient state again before giving a final decision.
-         * Default implementation returns false.
-         */
-        public boolean onFailedToRecycleView( VH holder) {
-            return false;
+
+        public boolean onFailedToRecycleView(VH holder) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Called when a view created by this adapter has been attached to a window.
-         *
-         * <p>This can be used as a reasonable signal that the view is about to be seen
-         * by the user. If the adapter previously freed any resources in
-         * {@link #onViewDetachedFromWindow(RecyclerView.ViewHolder) onViewDetachedFromWindow}
-         * those resources should be restored here.</p>
-         *
-         * @param holder Holder of the view being attached
-         */
-        public void onViewAttachedToWindow( VH holder) {
+
+        public void onViewAttachedToWindow(VH holder) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Called when a view created by this adapter has been detached from its window.
-         *
-         * <p>Becoming detached from the window is not necessarily a permanent condition;
-         * the consumer of an Adapter's views may choose to cache views offscreen while they
-         * are not visible, attaching and detaching them as appropriate.</p>
-         *
-         * @param holder Holder of the view being detached
-         */
-        public void onViewDetachedFromWindow( VH holder) {
+
+        public void onViewDetachedFromWindow(VH holder) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns true if one or more observers are attached to this adapter.
-         *
-         * @return true if this adapter has observers
-         */
+
         public final boolean hasObservers() {
-            return mObservable.hasObservers();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Register a new observer to listen for data changes.
-         *
-         * <p>The adapter may publish a variety of events describing specific changes.
-         * Not all adapters may support all change types and some may fall back to a generic
-         * {@link RecyclerView.AdapterDataObserver#onChanged()
-         * "something changed"} event if more specific data is not available.</p>
-         *
-         * <p>Components registering observers with an adapter are responsible for
-         * {@link #unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver)
-         * unregistering} those observers when finished.</p>
-         *
-         * @param observer Observer to register
-         *
-         * @see #unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver)
-         */
-        public void registerAdapterDataObserver( AdapterDataObserver observer) {
-            mObservable.registerObserver(observer);
+
+        public void registerAdapterDataObserver(AdapterDataObserver observer) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Unregister an observer currently listening for data changes.
-         *
-         * <p>The unregistered observer will no longer receive events about changes
-         * to the adapter.</p>
-         *
-         * @param observer Observer to unregister
-         *
-         * @see #registerAdapterDataObserver(RecyclerView.AdapterDataObserver)
-         */
-        public void unregisterAdapterDataObserver( AdapterDataObserver observer) {
-            mObservable.unregisterObserver(observer);
+
+        public void unregisterAdapterDataObserver(AdapterDataObserver observer) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Called by RecyclerView when it starts observing this Adapter.
-         * <p>
-         * Keep in mind that same adapter may be observed by multiple RecyclerViews.
-         *
-         * @param recyclerView The RecyclerView instance which started observing this adapter.
-         * @see #onDetachedFromRecyclerView(RecyclerView)
-         */
-        public void onAttachedToRecyclerView( RecyclerView recyclerView) {
+
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Called by RecyclerView when it stops observing this Adapter.
-         *
-         * @param recyclerView The RecyclerView instance which stopped observing this adapter.
-         * @see #onAttachedToRecyclerView(RecyclerView)
-         */
-        public void onDetachedFromRecyclerView( RecyclerView recyclerView) {
+
+        public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Notify any registered observers that the data set has changed.
-         *
-         * <p>There are two different classes of data change events, item changes and structural
-         * changes. Item changes are when a single item has its data updated but no positional
-         * changes have occurred. Structural changes are when items are inserted, removed or moved
-         * within the data set.</p>
-         *
-         * <p>This event does not specify what about the data set has changed, forcing
-         * any observers to assume that all existing items and structure may no longer be valid.
-         * LayoutManagers will be forced to fully rebind and relayout all visible views.</p>
-         *
-         * <p><code>RecyclerView</code> will attempt to synthesize visible structural change events
-         * for adapters that report that they have {@link #hasStableIds() stable IDs} when
-         * this method is used. This can help for the purposes of animation and visual
-         * object persistence but individual item views will still need to be rebound
-         * and relaid out.</p>
-         *
-         * <p>If you are writing an adapter it will always be more efficient to use the more
-         * specific change events if you can. Rely on <code>notifyDataSetChanged()</code>
-         * as a last resort.</p>
-         *
-         * @see #notifyItemChanged(int)
-         * @see #notifyItemInserted(int)
-         * @see #notifyItemRemoved(int)
-         * @see #notifyItemRangeChanged(int, int)
-         * @see #notifyItemRangeInserted(int, int)
-         * @see #notifyItemRangeRemoved(int, int)
-         */
+
         public final void notifyDataSetChanged() {
-            mObservable.notifyChanged();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Notify any registered observers that the item at <code>position</code> has changed.
-         * Equivalent to calling <code>notifyItemChanged(position, null);</code>.
-         *
-         * <p>This is an item change event, not a structural change event. It indicates that any
-         * reflection of the data at <code>position</code> is out of date and should be updated.
-         * The item at <code>position</code> retains the same identity.</p>
-         *
-         * @param position Position of the item that has changed
-         *
-         * @see #notifyItemRangeChanged(int, int)
-         */
+
         public final void notifyItemChanged(int position) {
-            mObservable.notifyItemRangeChanged(position, 1);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Notify any registered observers that the item at <code>position</code> has changed with
-         * an optional payload object.
-         *
-         * <p>This is an item change event, not a structural change event. It indicates that any
-         * reflection of the data at <code>position</code> is out of date and should be updated.
-         * The item at <code>position</code> retains the same identity.
-         * </p>
-         *
-         * <p>
-         * Client can optionally pass a payload for partial change. These payloads will be merged
-         * and may be passed to adapter's {@link #onBindViewHolder(ViewHolder, int, List)} if the
-         * item is already represented by a ViewHolder and it will be rebound to the same
-         * ViewHolder. A notifyItemRangeChanged() with null payload will clear all existing
-         * payloads on that item and prevent future payload until
-         * {@link #onBindViewHolder(ViewHolder, int, List)} is called. Adapter should not assume
-         * that the payload will always be passed to onBindViewHolder(), e.g. when the view is not
-         * attached, the payload will be simply dropped.
-         *
-         * @param position Position of the item that has changed
-         * @param payload Optional parameter, use null to identify a "full" update
-         *
-         * @see #notifyItemRangeChanged(int, int)
-         */
-        public final void notifyItemChanged(int position,  Object payload) {
-            mObservable.notifyItemRangeChanged(position, 1, payload);
+
+        public final void notifyItemChanged(int position, Object payload) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Notify any registered observers that the <code>itemCount</code> items starting at
-         * position <code>positionStart</code> have changed.
-         * Equivalent to calling <code>notifyItemRangeChanged(position, itemCount, null);</code>.
-         *
-         * <p>This is an item change event, not a structural change event. It indicates that
-         * any reflection of the data in the given position range is out of date and should
-         * be updated. The items in the given range retain the same identity.</p>
-         *
-         * @param positionStart Position of the first item that has changed
-         * @param itemCount Number of items that have changed
-         *
-         * @see #notifyItemChanged(int)
-         */
+
         public final void notifyItemRangeChanged(int positionStart, int itemCount) {
-            mObservable.notifyItemRangeChanged(positionStart, itemCount);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Notify any registered observers that the <code>itemCount</code> items starting at
-         * position <code>positionStart</code> have changed. An optional payload can be
-         * passed to each changed item.
-         *
-         * <p>This is an item change event, not a structural change event. It indicates that any
-         * reflection of the data in the given position range is out of date and should be updated.
-         * The items in the given range retain the same identity.
-         * </p>
-         *
-         * <p>
-         * Client can optionally pass a payload for partial change. These payloads will be merged
-         * and may be passed to adapter's {@link #onBindViewHolder(ViewHolder, int, List)} if the
-         * item is already represented by a ViewHolder and it will be rebound to the same
-         * ViewHolder. A notifyItemRangeChanged() with null payload will clear all existing
-         * payloads on that item and prevent future payload until
-         * {@link #onBindViewHolder(ViewHolder, int, List)} is called. Adapter should not assume
-         * that the payload will always be passed to onBindViewHolder(), e.g. when the view is not
-         * attached, the payload will be simply dropped.
-         *
-         * @param positionStart Position of the first item that has changed
-         * @param itemCount Number of items that have changed
-         * @param payload  Optional parameter, use null to identify a "full" update
-         *
-         * @see #notifyItemChanged(int)
-         */
-        public final void notifyItemRangeChanged(int positionStart, int itemCount,
-                 Object payload) {
-            mObservable.notifyItemRangeChanged(positionStart, itemCount, payload);
+
+        public final void notifyItemRangeChanged(int positionStart, int itemCount, Object payload) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Notify any registered observers that the item reflected at <code>position</code>
-         * has been newly inserted. The item previously at <code>position</code> is now at
-         * position <code>position + 1</code>.
-         *
-         * <p>This is a structural change event. Representations of other existing items in the
-         * data set are still considered up to date and will not be rebound, though their
-         * positions may be altered.</p>
-         *
-         * @param position Position of the newly inserted item in the data set
-         *
-         * @see #notifyItemRangeInserted(int, int)
-         */
+
         public final void notifyItemInserted(int position) {
-            mObservable.notifyItemRangeInserted(position, 1);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Notify any registered observers that the item reflected at <code>fromPosition</code>
-         * has been moved to <code>toPosition</code>.
-         *
-         * <p>This is a structural change event. Representations of other existing items in the
-         * data set are still considered up to date and will not be rebound, though their
-         * positions may be altered.</p>
-         *
-         * @param fromPosition Previous position of the item.
-         * @param toPosition New position of the item.
-         */
+
         public final void notifyItemMoved(int fromPosition, int toPosition) {
-            mObservable.notifyItemMoved(fromPosition, toPosition);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Notify any registered observers that the currently reflected <code>itemCount</code>
-         * items starting at <code>positionStart</code> have been newly inserted. The items
-         * previously located at <code>positionStart</code> and beyond can now be found starting
-         * at position <code>positionStart + itemCount</code>.
-         *
-         * <p>This is a structural change event. Representations of other existing items in the
-         * data set are still considered up to date and will not be rebound, though their positions
-         * may be altered.</p>
-         *
-         * @param positionStart Position of the first item that was inserted
-         * @param itemCount Number of items inserted
-         *
-         * @see #notifyItemInserted(int)
-         */
+
         public final void notifyItemRangeInserted(int positionStart, int itemCount) {
-            mObservable.notifyItemRangeInserted(positionStart, itemCount);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Notify any registered observers that the item previously located at <code>position</code>
-         * has been removed from the data set. The items previously located at and after
-         * <code>position</code> may now be found at <code>oldPosition - 1</code>.
-         *
-         * <p>This is a structural change event. Representations of other existing items in the
-         * data set are still considered up to date and will not be rebound, though their positions
-         * may be altered.</p>
-         *
-         * @param position Position of the item that has now been removed
-         *
-         * @see #notifyItemRangeRemoved(int, int)
-         */
+
         public final void notifyItemRemoved(int position) {
-            mObservable.notifyItemRangeRemoved(position, 1);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Notify any registered observers that the <code>itemCount</code> items previously
-         * located at <code>positionStart</code> have been removed from the data set. The items
-         * previously located at and after <code>positionStart + itemCount</code> may now be found
-         * at <code>oldPosition - itemCount</code>.
-         *
-         * <p>This is a structural change event. Representations of other existing items in the data
-         * set are still considered up to date and will not be rebound, though their positions
-         * may be altered.</p>
-         *
-         * @param positionStart Previous position of the first item that was removed
-         * @param itemCount Number of items removed from the data set
-         */
+
         public final void notifyItemRangeRemoved(int positionStart, int itemCount) {
-            mObservable.notifyItemRangeRemoved(positionStart, itemCount);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
+
     void dispatchChildDetached(View child) {
-        final ViewHolder viewHolder = getChildViewHolderInt(child);
-        onChildDetachedFromWindow(child);
-        if (mAdapter != null && viewHolder != null) {
-            mAdapter.onViewDetachedFromWindow(viewHolder);
-        }
-        if (mOnChildAttachStateListeners != null) {
-            final int cnt = mOnChildAttachStateListeners.size();
-            for (int i = cnt - 1; i >= 0; i--) {
-                mOnChildAttachStateListeners.get(i).onChildViewDetachedFromWindow(child);
-            }
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     void dispatchChildAttached(View child) {
-        final ViewHolder viewHolder = getChildViewHolderInt(child);
-        onChildAttachedToWindow(child);
-        if (mAdapter != null && viewHolder != null) {
-            mAdapter.onViewAttachedToWindow(viewHolder);
-        }
-        if (mOnChildAttachStateListeners != null) {
-            final int cnt = mOnChildAttachStateListeners.size();
-            for (int i = cnt - 1; i >= 0; i--) {
-                mOnChildAttachStateListeners.get(i).onChildViewAttachedToWindow(child);
-            }
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * An ItemDecoration allows the application to add a special drawing and layout offset
      * to specific item views from the adapter's data set. This can be useful for drawing dividers
@@ -3186,80 +1931,45 @@ public class RecyclerView extends ViewGroup  {
      * RecyclerView.State)}.</p>
      */
     public abstract static class ItemDecoration {
-        /**
-         * Draw any appropriate decorations into the Canvas supplied to the RecyclerView.
-         * Any content drawn by this method will be drawn before the item views are drawn,
-         * and will thus appear underneath the views.
-         *
-         * @param c Canvas to draw into
-         * @param parent RecyclerView this ItemDecoration is drawing into
-         * @param state The current state of RecyclerView
-         */
-        public void onDraw( Canvas c,  RecyclerView parent,  State state) {
-            onDraw(c, parent);
+
+        public void onDraw(Canvas c, RecyclerView parent, State state) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         /**
          * @deprecated
          * Override {@link #onDraw(Canvas, RecyclerView, RecyclerView.State)}
          */
         @Deprecated
-        public void onDraw( Canvas c,  RecyclerView parent) {
+        public void onDraw(Canvas c, RecyclerView parent) {
         }
-        /**
-         * Draw any appropriate decorations into the Canvas supplied to the RecyclerView.
-         * Any content drawn by this method will be drawn after the item views are drawn
-         * and will thus appear over the views.
-         *
-         * @param c Canvas to draw into
-         * @param parent RecyclerView this ItemDecoration is drawing into
-         * @param state The current state of RecyclerView.
-         */
-        public void onDrawOver( Canvas c,  RecyclerView parent,
-                 State state) {
-            onDrawOver(c, parent);
+
+        public void onDrawOver(Canvas c, RecyclerView parent, State state) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         /**
          * @deprecated
          * Override {@link #onDrawOver(Canvas, RecyclerView, RecyclerView.State)}
          */
         @Deprecated
-        public void onDrawOver( Canvas c,  RecyclerView parent) {
+        public void onDrawOver(Canvas c, RecyclerView parent) {
         }
+
         /**
          * @deprecated
          * Use {@link #getItemOffsets(Rect, View, RecyclerView, State)}
          */
         @Deprecated
-        public void getItemOffsets( Rect outRect, int itemPosition,
-                 RecyclerView parent) {
+        public void getItemOffsets(Rect outRect, int itemPosition, RecyclerView parent) {
             outRect.set(0, 0, 0, 0);
         }
-        /**
-         * Retrieve any offsets for the given item. Each field of <code>outRect</code> specifies
-         * the number of pixels that the item view should be inset by, similar to padding or margin.
-         * The default implementation sets the bounds of outRect to 0 and returns.
-         *
-         * <p>
-         * If this ItemDecoration does not affect the positioning of item views, it should set
-         * all four fields of <code>outRect</code> (left, top, right, bottom) to zero
-         * before returning.
-         *
-         * <p>
-         * If you need to access Adapter for additional data, you can call
-         * {@link RecyclerView#getChildAdapterPosition(View)} to get the adapter position of the
-         * View.
-         *
-         * @param outRect Rect to receive the output.
-         * @param view    The child view to decorate
-         * @param parent  RecyclerView this ItemDecoration is decorating
-         * @param state   The current state of RecyclerView.
-         */
-        public void getItemOffsets( Rect outRect,  View view,
-                 RecyclerView parent,  State state) {
-            getItemOffsets(outRect, ((LayoutParams) view.getLayoutParams()).getViewLayoutPosition(),
-                    parent);
+
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State state) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
+
     /**
      * An OnItemTouchListener allows the application to intercept touch events in progress at the
      * view hierarchy level of the RecyclerView before those touch events are considered for
@@ -3273,6 +1983,7 @@ public class RecyclerView extends ViewGroup  {
      * @see SimpleOnItemTouchListener
      */
     public interface OnItemTouchListener {
+
         /**
          * Silently observe and/or take over touch events sent to the RecyclerView
          * before they are handled by either the RecyclerView itself or its child views.
@@ -3287,7 +1998,8 @@ public class RecyclerView extends ViewGroup  {
          *         to continue with the current behavior and continue observing future events in
          *         the gesture.
          */
-        boolean onInterceptTouchEvent( RecyclerView rv,  MotionEvent e);
+        boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e);
+
         /**
          * Process a touch event as part of a gesture that was claimed by returning true from
          * a previous call to {@link #onInterceptTouchEvent}.
@@ -3295,7 +2007,8 @@ public class RecyclerView extends ViewGroup  {
          * @param e MotionEvent describing the touch event. All coordinates are in
          *          the RecyclerView's coordinate system.
          */
-        void onTouchEvent( RecyclerView rv,  MotionEvent e);
+        void onTouchEvent(RecyclerView rv, MotionEvent e);
+
         /**
          * Called when a child of RecyclerView does not want RecyclerView and its ancestors to
          * intercept touch events with
@@ -3307,6 +2020,7 @@ public class RecyclerView extends ViewGroup  {
          */
         void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept);
     }
+
     /**
      * An implementation of {@link RecyclerView.OnItemTouchListener} that has empty method bodies
      * and default return values.
@@ -3317,47 +2031,41 @@ public class RecyclerView extends ViewGroup  {
      * you update to a new version of the support library.
      */
     public static class SimpleOnItemTouchListener implements RecyclerView.OnItemTouchListener {
+
         @Override
-        public boolean onInterceptTouchEvent( RecyclerView rv,  MotionEvent e) {
-            return false;
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         @Override
-        public void onTouchEvent( RecyclerView rv,  MotionEvent e) {
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
+
     /**
      * An OnScrollListener can be added to a RecyclerView to receive messages when a scrolling event
      * has occurred on that RecyclerView.
      * <p>
      * @see RecyclerView#addOnScrollListener(OnScrollListener)
      * @see RecyclerView#clearOnChildAttachStateChangeListeners()
-     *
      */
     public abstract static class OnScrollListener {
-        /**
-         * Callback method to be invoked when RecyclerView's scroll state changes.
-         *
-         * @param recyclerView The RecyclerView whose scroll state has changed.
-         * @param newState     The updated scroll state. One of {@link #SCROLL_STATE_IDLE},
-         *                     {@link #SCROLL_STATE_DRAGGING} or {@link #SCROLL_STATE_SETTLING}.
-         */
-        public void onScrollStateChanged( RecyclerView recyclerView, int newState){}
-        /**
-         * Callback method to be invoked when the RecyclerView has been scrolled. This will be
-         * called after the scroll has completed.
-         * <p>
-         * This callback will also be called if visible item range changes after a layout
-         * calculation. In that case, dx and dy will be 0.
-         *
-         * @param recyclerView The RecyclerView which scrolled.
-         * @param dx The amount of horizontal scroll.
-         * @param dy The amount of vertical scroll.
-         */
-        public void onScrolled( RecyclerView recyclerView, int dx, int dy){}
+
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
     }
+
     /**
      * A RecyclerListener can be set on a RecyclerView to receive messages whenever
      * a view is recycled.
@@ -3365,6 +2073,7 @@ public class RecyclerView extends ViewGroup  {
      * @see RecyclerView#setRecyclerListener(RecyclerListener)
      */
     public interface RecyclerListener {
+
         /**
          * This method is called whenever the view in the ViewHolder is recycled.
          *
@@ -3375,26 +2084,30 @@ public class RecyclerView extends ViewGroup  {
          *
          * @param holder The ViewHolder containing the view that was recycled
          */
-        void onViewRecycled( ViewHolder holder);
+        void onViewRecycled(ViewHolder holder);
     }
+
     /**
      * A Listener interface that can be attached to a RecylcerView to get notified
      * whenever a ViewHolder is attached to or detached from RecyclerView.
      */
     public interface OnChildAttachStateChangeListener {
+
         /**
          * Called when a view is attached to the RecyclerView.
          *
          * @param view The View which is attached to the RecyclerView
          */
-        void onChildViewAttachedToWindow( View view);
+        void onChildViewAttachedToWindow(View view);
+
         /**
          * Called when a view is detached from RecyclerView.
          *
          * @param view The View which is being detached from the RecyclerView
          */
-        void onChildViewDetachedFromWindow( View view);
+        void onChildViewDetachedFromWindow(View view);
     }
+
     /**
      * A ViewHolder describes an item view and metadata about its place within the RecyclerView.
      *
@@ -3409,43 +2122,58 @@ public class RecyclerView extends ViewGroup  {
      * strong references to extra off-screen item views for caching purposes</p>
      */
     public abstract static class ViewHolder {
+
         public final View itemView;
+
         WeakReference<RecyclerView> mNestedRecyclerView;
+
         int mPosition = NO_POSITION;
+
         int mOldPosition = NO_POSITION;
+
         long mItemId = NO_ID;
+
         int mItemViewType = INVALID_TYPE;
+
         int mPreLayoutPosition = NO_POSITION;
+
         // The item that this holder is shadowing during an item change event/animation
         ViewHolder mShadowedHolder = null;
+
         // The item that is shadowing this holder during an item change event/animation
         ViewHolder mShadowingHolder = null;
+
         /**
          * This ViewHolder has been bound to a position; mPosition, mItemId and mItemViewType
          * are all valid.
          */
         static final int FLAG_BOUND = 1 << 0;
+
         /**
          * The data this ViewHolder's view reflects is stale and needs to be rebound
          * by the adapter. mPosition and mItemId are consistent.
          */
         static final int FLAG_UPDATE = 1 << 1;
+
         /**
          * This ViewHolder's data is invalid. The identity implied by mPosition and mItemId
          * are not to be trusted and may no longer match the item view type.
          * This ViewHolder must be fully rebound to different data.
          */
         static final int FLAG_INVALID = 1 << 2;
+
         /**
          * This ViewHolder points at data that represents an item previously removed from the
          * data set. Its view may still be used for things like outgoing animations.
          */
         static final int FLAG_REMOVED = 1 << 3;
+
         /**
          * This ViewHolder should not be recycled. This flag is set via setIsRecyclable()
          * and is intended to keep views around during animations.
          */
         static final int FLAG_NOT_RECYCLABLE = 1 << 4;
+
         /**
          * This ViewHolder is returned from scrap which means we are expecting an addView call
          * for this itemView. When returned from scrap, ViewHolder stays in the scrap list until
@@ -3453,17 +2181,20 @@ public class RecyclerView extends ViewGroup  {
          * the RecyclerView.
          */
         static final int FLAG_RETURNED_FROM_SCRAP = 1 << 5;
+
         /**
          * This ViewHolder is fully managed by the LayoutManager. We do not scrap, recycle or remove
          * it unless LayoutManager is replaced.
          * It is still fully visible to the LayoutManager.
          */
         static final int FLAG_IGNORE = 1 << 7;
+
         /**
          * When the View is detached form the parent, we set this flag so that we can take correct
          * action when we need to remove it or add it back.
          */
         static final int FLAG_TMP_DETACHED = 1 << 8;
+
         /**
          * Set when we can no longer determine the adapter position of this ViewHolder until it is
          * rebound to a new position. It is different than FLAG_INVALID because FLAG_INVALID is
@@ -3472,19 +2203,24 @@ public class RecyclerView extends ViewGroup  {
          * re-calculated.
          */
         static final int FLAG_ADAPTER_POSITION_UNKNOWN = 1 << 9;
+
         /**
          * Set when a addChangePayload(null) is called
          */
         static final int FLAG_ADAPTER_FULLUPDATE = 1 << 10;
+
         /**
          * Used by ItemAnimator when a ViewHolder's position changes
          */
         static final int FLAG_MOVED = 1 << 11;
+
         /**
          * Used by ItemAnimator when a ViewHolder appears in pre-layout
          */
         static final int FLAG_APPEARED_IN_PRE_LAYOUT = 1 << 12;
+
         static final int PENDING_ACCESSIBILITY_STATE_NOT_SET = -1;
+
         /**
          * Used when a ViewHolder starts the layout pass as a hidden ViewHolder but is re-used from
          * hidden list (as if it was scrap) without being recycled in between.
@@ -3499,64 +2235,64 @@ public class RecyclerView extends ViewGroup  {
          * already there.
          */
         static final int FLAG_BOUNCED_FROM_HIDDEN_LIST = 1 << 13;
+
         int mFlags;
+
         private static final List<Object> FULLUPDATE_PAYLOADS = Collections.emptyList();
+
         List<Object> mPayloads = null;
+
         List<Object> mUnmodifiedPayloads = null;
+
         private int mIsRecyclableCount = 0;
+
         // If non-null, view is currently considered scrap and may be reused for other data by the
         // scrap container.
         Recycler mScrapContainer = null;
+
         // Keeps whether this ViewHolder lives in Change scrap or Attached scrap
         boolean mInChangeScrap = false;
+
         // Saves isImportantForAccessibility value for the view item while it's in hidden state and
         // marked as unimportant for accessibility.
-        private int mWasImportantForAccessibilityBeforeHidden =0;
+        private int mWasImportantForAccessibilityBeforeHidden = 0;
+
         // set if we defer the accessibility state change of the view holder
-                int mPendingAccessibilityState = PENDING_ACCESSIBILITY_STATE_NOT_SET;
+        int mPendingAccessibilityState = PENDING_ACCESSIBILITY_STATE_NOT_SET;
+
         /**
          * Is set when VH is bound from the adapter and cleaned right before it is sent to
          * {@link RecycledViewPool}.
          */
         RecyclerView mOwnerRecyclerView;
-        public ViewHolder( View itemView) {
+
+        public ViewHolder(View itemView) {
             if (itemView == null) {
                 throw new IllegalArgumentException("itemView may not be null");
             }
             this.itemView = itemView;
         }
+
         void flagRemovedAndOffsetPosition(int mNewPosition, int offset, boolean applyToPreLayout) {
-            addFlags(ViewHolder.FLAG_REMOVED);
-            offsetPosition(offset, applyToPreLayout);
-            mPosition = mNewPosition;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void offsetPosition(int offset, boolean applyToPreLayout) {
-            if (mOldPosition == NO_POSITION) {
-                mOldPosition = mPosition;
-            }
-            if (mPreLayoutPosition == NO_POSITION) {
-                mPreLayoutPosition = mPosition;
-            }
-            if (applyToPreLayout) {
-                mPreLayoutPosition += offset;
-            }
-            mPosition += offset;
-            if (itemView.getLayoutParams() != null) {
-                ((LayoutParams) itemView.getLayoutParams()).mInsetsDirty = true;
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void clearOldPosition() {
-            mOldPosition = NO_POSITION;
-            mPreLayoutPosition = NO_POSITION;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void saveOldPosition() {
-            if (mOldPosition == NO_POSITION) {
-                mOldPosition = mPosition;
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean shouldIgnore() {
-            return (mFlags & FLAG_IGNORE) != 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         /**
          * @deprecated This method is deprecated because its meaning is ambiguous due to the async
          * handling of adapter updates. You should use {@link #getLayoutPosition()} or
@@ -3569,277 +2305,149 @@ public class RecyclerView extends ViewGroup  {
         public final int getPosition() {
             return mPreLayoutPosition == NO_POSITION ? mPosition : mPreLayoutPosition;
         }
-        /**
-         * Returns the position of the ViewHolder in terms of the latest layout pass.
-         * <p>
-         * This position is mostly used by RecyclerView components to be consistent while
-         * RecyclerView lazily processes adapter updates.
-         * <p>
-         * For performance and animation reasons, RecyclerView batches all adapter updates until the
-         * next layout pass. This may cause mismatches between the Adapter position of the item and
-         * the position it had in the latest layout calculations.
-         * <p>
-         * LayoutManagers should always call this method while doing calculations based on item
-         * positions. All methods in {@link RecyclerView.LayoutManager}, {@link RecyclerView.State},
-         * {@link RecyclerView.Recycler} that receive a position expect it to be the layout position
-         * of the item.
-         * <p>
-         * If LayoutManager needs to call an external method that requires the adapter position of
-         * the item, it can use {@link #getAdapterPosition()} or
-         * {@link RecyclerView.Recycler#convertPreLayoutPositionToPostLayout(int)}.
-         *
-         * @return Returns the adapter position of the ViewHolder in the latest layout pass.
-         * @see #getAdapterPosition()
-         */
+
         public final int getLayoutPosition() {
-            return mPreLayoutPosition == NO_POSITION ? mPosition : mPreLayoutPosition;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns the Adapter position of the item represented by this ViewHolder.
-         * <p>
-         * Note that this might be different than the {@link #getLayoutPosition()} if there are
-         * pending adapter updates but a new layout pass has not happened yet.
-         * <p>
-         * RecyclerView does not handle any adapter updates until the next layout traversal. This
-         * may create temporary inconsistencies between what user sees on the screen and what
-         * adapter contents have. This inconsistency is not important since it will be less than
-         * 16ms but it might be a problem if you want to use ViewHolder position to access the
-         * adapter. Sometimes, you may need to get the exact adapter position to do
-         * some actions in response to user events. In that case, you should use this method which
-         * will calculate the Adapter position of the ViewHolder.
-         * <p>
-         * Note that if you've called {@link RecyclerView.Adapter#notifyDataSetChanged()}, until the
-         * next layout pass, the return value of this method will be {@link #NO_POSITION}.
-         *
-         * @return The adapter position of the item if it still exists in the adapter.
-         * {@link RecyclerView#NO_POSITION} if item has been removed from the adapter,
-         * {@link RecyclerView.Adapter#notifyDataSetChanged()} has been called after the last
-         * layout pass or the ViewHolder has already been recycled.
-         */
+
         public final int getAdapterPosition() {
-            if (mOwnerRecyclerView == null) {
-                return NO_POSITION;
-            }
-            return 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * When LayoutManager supports animations, RecyclerView tracks 3 positions for ViewHolders
-         * to perform animations.
-         * <p>
-         * If a ViewHolder was laid out in the previous onLayout call, old position will keep its
-         * adapter index in the previous layout.
-         *
-         * @return The previous adapter index of the Item represented by this ViewHolder or
-         * {@link #NO_POSITION} if old position does not exists or cleared (pre-layout is
-         * complete).
-         */
+
         public final int getOldPosition() {
-            return mOldPosition;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns The itemId represented by this ViewHolder.
-         *
-         * @return The item's id if adapter has stable ids, {@link RecyclerView#NO_ID}
-         * otherwise
-         */
+
         public final long getItemId() {
-            return mItemId;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * @return The view type of this ViewHolder.
-         */
+
         public final int getItemViewType() {
-            return mItemViewType;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean isScrap() {
-            return mScrapContainer != null;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void unScrap() {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean wasReturnedFromScrap() {
-            return (mFlags & FLAG_RETURNED_FROM_SCRAP) != 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void clearReturnedFromScrapFlag() {
-            mFlags = mFlags & ~FLAG_RETURNED_FROM_SCRAP;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void clearTmpDetachFlag() {
-            mFlags = mFlags & ~FLAG_TMP_DETACHED;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void stopIgnoring() {
-            mFlags = mFlags & ~FLAG_IGNORE;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void setScrapContainer(Recycler recycler, boolean isChangeScrap) {
-            mScrapContainer = recycler;
-            mInChangeScrap = isChangeScrap;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean isInvalid() {
-            return (mFlags & FLAG_INVALID) != 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean needsUpdate() {
-            return (mFlags & FLAG_UPDATE) != 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean isBound() {
-            return (mFlags & FLAG_BOUND) != 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean isRemoved() {
-            return (mFlags & FLAG_REMOVED) != 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean hasAnyOfTheFlags(int flags) {
-            return (mFlags & flags) != 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean isTmpDetached() {
-            return (mFlags & FLAG_TMP_DETACHED) != 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean isAttachedToTransitionOverlay() {
-            return itemView.getParent() != null && itemView.getParent() != mOwnerRecyclerView;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean isAdapterPositionUnknown() {
-            return (mFlags & FLAG_ADAPTER_POSITION_UNKNOWN) != 0 || isInvalid();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void setFlags(int flags, int mask) {
-            mFlags = (mFlags & ~mask) | (flags & mask);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void addFlags(int flags) {
-            mFlags |= flags;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void addChangePayload(Object payload) {
-            if (payload == null) {
-                addFlags(FLAG_ADAPTER_FULLUPDATE);
-            } else if ((mFlags & FLAG_ADAPTER_FULLUPDATE) == 0) {
-                createPayloadsIfNeeded();
-                mPayloads.add(payload);
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         private void createPayloadsIfNeeded() {
             if (mPayloads == null) {
                 mPayloads = new ArrayList<Object>();
                 mUnmodifiedPayloads = Collections.unmodifiableList(mPayloads);
             }
         }
+
         void clearPayload() {
-            if (mPayloads != null) {
-                mPayloads.clear();
-            }
-            mFlags = mFlags & ~FLAG_ADAPTER_FULLUPDATE;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         List<Object> getUnmodifiedPayloads() {
-            if ((mFlags & FLAG_ADAPTER_FULLUPDATE) == 0) {
-                if (mPayloads == null || mPayloads.size() == 0) {
-                    // Initial state,  no update being called.
-                    return FULLUPDATE_PAYLOADS;
-                }
-                // there are none-null payloads
-                return mUnmodifiedPayloads;
-            } else {
-                // a full update has been called.
-                return FULLUPDATE_PAYLOADS;
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         void resetInternal() {
-            mFlags = 0;
-            mPosition = NO_POSITION;
-            mOldPosition = NO_POSITION;
-            mItemId = NO_ID;
-            mPreLayoutPosition = NO_POSITION;
-            mIsRecyclableCount = 0;
-            mShadowedHolder = null;
-            mShadowingHolder = null;
-            clearPayload();
-            mPendingAccessibilityState = PENDING_ACCESSIBILITY_STATE_NOT_SET;
-            clearNestedRecyclerViewIfNotNested(this);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Called when the child view enters the hidden state
-         */
+
         void onEnteredHiddenState(RecyclerView parent) {
-            // While the view item is in hidden state, make it invisible for the accessibility.
-            if (mPendingAccessibilityState != PENDING_ACCESSIBILITY_STATE_NOT_SET) {
-                mWasImportantForAccessibilityBeforeHidden = mPendingAccessibilityState;
-            } else {
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Called when the child view leaves the hidden state
-         */
+
         void onLeftHiddenState(RecyclerView parent) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         @Override
         public String toString() {
-            final StringBuilder sb = new StringBuilder("ViewHolder{"
-                    + Integer.toHexString(hashCode()) + " position=" + mPosition + " id=" + mItemId
-                    + ", oldPos=" + mOldPosition + ", pLpos:" + mPreLayoutPosition);
-            if (isScrap()) {
-                sb.append(" scrap ")
-                        .append(mInChangeScrap ? "[changeScrap]" : "[attachedScrap]");
-            }
-            if (isInvalid()) sb.append(" invalid");
-            if (!isBound()) sb.append(" unbound");
-            if (needsUpdate()) sb.append(" update");
-            if (isRemoved()) sb.append(" removed");
-            if (shouldIgnore()) sb.append(" ignored");
-            if (isTmpDetached()) sb.append(" tmpDetached");
-            if (!isRecyclable()) sb.append(" not recyclable(" + mIsRecyclableCount + ")");
-            if (isAdapterPositionUnknown()) sb.append(" undefined adapter position");
-            if (itemView.getParent() == null) sb.append(" no parent");
-            sb.append("}");
-            return sb.toString();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Informs the recycler whether this item can be recycled. Views which are not
-         * recyclable will not be reused for other items until setIsRecyclable() is
-         * later set to true. Calls to setIsRecyclable() should always be paired (one
-         * call to setIsRecyclabe(false) should always be matched with a later call to
-         * setIsRecyclable(true)). Pairs of calls may be nested, as the state is internally
-         * reference-counted.
-         *
-         * @param recyclable Whether this item is available to be recycled. Default value
-         * is true.
-         *
-         * @see #isRecyclable()
-         */
+
         public final void setIsRecyclable(boolean recyclable) {
-            mIsRecyclableCount = recyclable ? mIsRecyclableCount - 1 : mIsRecyclableCount + 1;
-            if (mIsRecyclableCount < 0) {
-                mIsRecyclableCount = 0;
-                if (DEBUG) {
-                    throw new RuntimeException("isRecyclable decremented below 0: "
-                            + "unmatched pair of setIsRecyable() calls for " + this);
-                }
-                Log.e(VIEW_LOG_TAG, "isRecyclable decremented below 0: "
-                        + "unmatched pair of setIsRecyable() calls for " + this);
-            } else if (!recyclable && mIsRecyclableCount == 1) {
-                mFlags |= FLAG_NOT_RECYCLABLE;
-            } else if (recyclable && mIsRecyclableCount == 0) {
-                mFlags &= ~FLAG_NOT_RECYCLABLE;
-            }
-            if (DEBUG) {
-                Log.d(TAG, "setIsRecyclable val:" + recyclable + ":" + this);
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * @return true if this item is available to be recycled, false otherwise.
-         *
-         * @see #setIsRecyclable(boolean)
-         */
+
         public final boolean isRecyclable() {
-        	return false;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns whether we have animations referring to this view holder or not.
-         * This is similar to isRecyclable flag but does not check transient state.
-         */
+
         boolean shouldBeKeptAsChild() {
-            return (mFlags & FLAG_NOT_RECYCLABLE) != 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * @return True if ViewHolder is not referenced by RecyclerView animations but has
-         * transient state which will prevent it from being recycled.
-         */
+
         boolean doesTransientStatePreventRecycling() {
-        	return false;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         boolean isUpdated() {
-            return (mFlags & FLAG_UPDATE) != 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
 
@@ -3850,66 +2458,54 @@ public class RecyclerView extends ViewGroup  {
      * to store any additional required per-child view metadata about the layout.
      */
     public static class LayoutParams extends android.view.ViewGroup.MarginLayoutParams {
+
         ViewHolder mViewHolder;
+
         final Rect mDecorInsets = new Rect();
+
         boolean mInsetsDirty = true;
+
         // Flag is set to true if the view is bound while it is detached from RV.
         // In this case, we need to manually call invalidate after view is added to guarantee that
         // invalidation is populated through the View hierarchy
         boolean mPendingInvalidate = false;
+
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
         }
+
         public LayoutParams(int width, int height) {
             super(width, height);
         }
+
         public LayoutParams(MarginLayoutParams source) {
             super(source);
         }
+
         public LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
         }
+
         public LayoutParams(LayoutParams source) {
             super((ViewGroup.LayoutParams) source);
         }
-        /**
-         * Returns true if the view this LayoutParams is attached to needs to have its content
-         * updated from the corresponding adapter.
-         *
-         * @return true if the view should have its content updated
-         */
+
         public boolean viewNeedsUpdate() {
-            return mViewHolder.needsUpdate();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns true if the view this LayoutParams is attached to is now representing
-         * potentially invalid data. A LayoutManager should scrap/recycle it.
-         *
-         * @return true if the view is invalid
-         */
+
         public boolean isViewInvalid() {
-            return mViewHolder.isInvalid();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns true if the adapter data item corresponding to the view this LayoutParams
-         * is attached to has been removed from the data set. A LayoutManager may choose to
-         * treat it differently in order to animate its outgoing or disappearing state.
-         *
-         * @return true if the item the view corresponds to was removed from the data set
-         */
+
         public boolean isItemRemoved() {
-            return mViewHolder.isRemoved();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns true if the adapter data item corresponding to the view this LayoutParams
-         * is attached to has been changed in the data set. A LayoutManager may choose to
-         * treat it differently in order to animate its changing state.
-         *
-         * @return true if the item the view corresponds to was changed in the data set
-         */
+
         public boolean isItemChanged() {
-            return mViewHolder.isUpdated();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         /**
          * @deprecated use {@link #getViewLayoutPosition()} or {@link #getViewAdapterPosition()}
          */
@@ -3917,103 +2513,78 @@ public class RecyclerView extends ViewGroup  {
         public int getViewPosition() {
             return mViewHolder.getPosition();
         }
-        /**
-         * Returns the adapter position that the view this LayoutParams is attached to corresponds
-         * to as of latest layout calculation.
-         *
-         * @return the adapter position this view as of latest layout pass
-         */
+
         public int getViewLayoutPosition() {
-            return mViewHolder.getLayoutPosition();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns the up-to-date adapter position that the view this LayoutParams is attached to
-         * corresponds to.
-         *
-         * @return the up-to-date adapter position this view. It may return
-         * {@link RecyclerView#NO_POSITION} if item represented by this View has been removed or
-         * its up-to-date position cannot be calculated.
-         */
+
         public int getViewAdapterPosition() {
-            return mViewHolder.getAdapterPosition();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
+
     /**
      * Observer base class for watching changes to an {@link Adapter}.
      * See {@link Adapter#registerAdapterDataObserver(AdapterDataObserver)}.
      */
     public abstract static class AdapterDataObserver {
+
         public void onChanged() {
-            // Do nothing
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         public void onItemRangeChanged(int positionStart, int itemCount) {
-            // do nothing
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        public void onItemRangeChanged(int positionStart, int itemCount,  Object payload) {
-            // fallback to onItemRangeChanged(positionStart, itemCount) if app
-            // does not override this method.
-            onItemRangeChanged(positionStart, itemCount);
+
+        public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         public void onItemRangeInserted(int positionStart, int itemCount) {
-            // do nothing
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         public void onItemRangeRemoved(int positionStart, int itemCount) {
-            // do nothing
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-            // do nothing
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
+
     static class AdapterDataObservable extends Observable<AdapterDataObserver> {
+
         public boolean hasObservers() {
-            return !mObservers.isEmpty();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         public void notifyChanged() {
-            // since onChanged() is implemented by the app, it could do anything, including
-            // removing itself from {@link mObservers} - and that could cause problems if
-            // an iterator is used on the ArrayList {@link mObservers}.
-            // to avoid such problems, just march thru the list in the reverse order.
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onChanged();
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         public void notifyItemRangeChanged(int positionStart, int itemCount) {
-            notifyItemRangeChanged(positionStart, itemCount, null);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        public void notifyItemRangeChanged(int positionStart, int itemCount,
-                 Object payload) {
-            // since onItemRangeChanged() is implemented by the app, it could do anything, including
-            // removing itself from {@link mObservers} - and that could cause problems if
-            // an iterator is used on the ArrayList {@link mObservers}.
-            // to avoid such problems, just march thru the list in the reverse order.
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onItemRangeChanged(positionStart, itemCount, payload);
-            }
+
+        public void notifyItemRangeChanged(int positionStart, int itemCount, Object payload) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         public void notifyItemRangeInserted(int positionStart, int itemCount) {
-            // since onItemRangeInserted() is implemented by the app, it could do anything,
-            // including removing itself from {@link mObservers} - and that could cause problems if
-            // an iterator is used on the ArrayList {@link mObservers}.
-            // to avoid such problems, just march thru the list in the reverse order.
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onItemRangeInserted(positionStart, itemCount);
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         public void notifyItemRangeRemoved(int positionStart, int itemCount) {
-            // since onItemRangeRemoved() is implemented by the app, it could do anything, including
-            // removing itself from {@link mObservers} - and that could cause problems if
-            // an iterator is used on the ArrayList {@link mObservers}.
-            // to avoid such problems, just march thru the list in the reverse order.
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onItemRangeRemoved(positionStart, itemCount);
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         public void notifyItemMoved(int fromPosition, int toPosition) {
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onItemRangeMoved(fromPosition, toPosition, 1);
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
+
     /**
      * <p>Contains useful information about the current RecyclerView state like target scroll
      * position or view focus. State object can also keep arbitrary data, identified by resource
@@ -4025,19 +2596,24 @@ public class RecyclerView extends ViewGroup  {
      * data between your components without needing to manage their lifecycles.</p>
      */
     public static class State {
+
         static final int STEP_START = 1;
+
         static final int STEP_LAYOUT = 1 << 1;
+
         static final int STEP_ANIMATIONS = 1 << 2;
+
         void assertLayoutStep(int accepted) {
-            if ((accepted & mLayoutStep) == 0) {
-                throw new IllegalStateException("Layout state should be one of "
-                        + Integer.toBinaryString(accepted) + " but it is "
-                        + Integer.toBinaryString(mLayoutStep));
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /** Owned by SmoothScroller */
+
+        /**
+         * Owned by SmoothScroller
+         */
         int mTargetPosition = RecyclerView.NO_POSITION;
+
         private SparseArray<Object> mData;
+
         ////////////////////////////////////////////////////////////////////////////////////////////
         // Fields below are carried from one layout pass to the next
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -4045,239 +2621,129 @@ public class RecyclerView extends ViewGroup  {
          * Number of items adapter had in the previous layout.
          */
         int mPreviousLayoutItemCount = 0;
+
         /**
          * Number of items that were NOT laid out but has been deleted from the adapter after the
          * previous layout.
          */
         int mDeletedInvisibleItemCountSincePreviousLayout = 0;
+
         ////////////////////////////////////////////////////////////////////////////////////////////
         // Fields below must be updated or cleared before they are used (generally before a pass)
         ////////////////////////////////////////////////////////////////////////////////////////////
         @Retention(RetentionPolicy.SOURCE)
-        @interface LayoutState {}
+        @interface LayoutState {
+        }
+
         @LayoutState
         int mLayoutStep = STEP_START;
+
         /**
          * Number of items adapter has.
          */
         int mItemCount = 0;
+
         boolean mStructureChanged = false;
+
         /**
          * True if the associated {@link RecyclerView} is in the pre-layout step where it is having
          * its {@link LayoutManager} layout items where they will be at the beginning of a set of
          * predictive item animations.
          */
         boolean mInPreLayout = false;
+
         boolean mTrackOldChangeHolders = false;
+
         boolean mIsMeasuring = false;
+
         ////////////////////////////////////////////////////////////////////////////////////////////
         // Fields below are always reset outside of the pass (or passes) that use them
         ////////////////////////////////////////////////////////////////////////////////////////////
         boolean mRunSimpleAnimations = false;
+
         boolean mRunPredictiveAnimations = false;
+
         /**
          * This data is saved before a layout calculation happens. After the layout is finished,
          * if the previously focused view has been replaced with another view for the same item, we
          * move the focus to the new item automatically.
          */
         int mFocusedItemPosition;
+
         long mFocusedItemId;
+
         // when a sub child has focus, record its id and see if we can directly request focus on
         // that one instead
         int mFocusedSubChildId;
+
         int mRemainingScrollHorizontal;
+
         int mRemainingScrollVertical;
+
         ////////////////////////////////////////////////////////////////////////////////////////////
-        /**
-         * Prepare for a prefetch occurring on the RecyclerView in between traversals, potentially
-         * prior to any layout passes.
-         *
-         * <p>Don't touch any state stored between layout passes, only reset per-layout state, so
-         * that Recycler#getViewForPosition() can function safely.</p>
-         */
         void prepareForNestedPrefetch(Adapter adapter) {
-            mLayoutStep = STEP_START;
-            mItemCount = adapter.getItemCount();
-            mInPreLayout = false;
-            mTrackOldChangeHolders = false;
-            mIsMeasuring = false;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns true if the RecyclerView is currently measuring the layout. This value is
-         * {@code true} only if the LayoutManager opted into the auto measure API and RecyclerView
-         * has non-exact measurement specs.
-         * <p>
-         * Note that if the LayoutManager supports predictive animations and it is calculating the
-         * pre-layout step, this value will be {@code false} even if the RecyclerView is in
-         * {@code onMeasure} call. This is because pre-layout means the previous state of the
-         * RecyclerView and measurements made for that state cannot change the RecyclerView's size.
-         * LayoutManager is always guaranteed to receive another call to
-         * {@link LayoutManager#onLayoutChildren(Recycler, State)} when this happens.
-         *
-         * @return True if the RecyclerView is currently calculating its bounds, false otherwise.
-         */
+
         public boolean isMeasuring() {
-            return mIsMeasuring;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns true if the {@link RecyclerView} is in the pre-layout step where it is having its
-         * {@link LayoutManager} layout items where they will be at the beginning of a set of
-         * predictive item animations.
-         */
+
         public boolean isPreLayout() {
-            return mInPreLayout;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns whether RecyclerView will run predictive animations in this layout pass
-         * or not.
-         *
-         * @return true if RecyclerView is calculating predictive animations to be run at the end
-         *         of the layout pass.
-         */
+
         public boolean willRunPredictiveAnimations() {
-            return mRunPredictiveAnimations;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns whether RecyclerView will run simple animations in this layout pass
-         * or not.
-         *
-         * @return true if RecyclerView is calculating simple animations to be run at the end of
-         *         the layout pass.
-         */
+
         public boolean willRunSimpleAnimations() {
-            return mRunSimpleAnimations;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Removes the mapping from the specified id, if there was any.
-         * @param resourceId Id of the resource you want to remove. It is suggested to use R.id.* to
-         *                   preserve cross functionality and avoid conflicts.
-         */
+
         public void remove(int resourceId) {
-            if (mData == null) {
-                return;
-            }
-            mData.remove(resourceId);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Gets the Object mapped from the specified id, or <code>null</code>
-         * if no such data exists.
-         *
-         * @param resourceId Id of the resource you want to remove. It is suggested to use R.id.*
-         *                   to
-         *                   preserve cross functionality and avoid conflicts.
-         */
+
         @SuppressWarnings("TypeParameterUnusedInFormals")
         public <T> T get(int resourceId) {
-            if (mData == null) {
-                return null;
-            }
-            return (T) mData.get(resourceId);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Adds a mapping from the specified id to the specified value, replacing the previous
-         * mapping from the specified key if there was one.
-         *
-         * @param resourceId Id of the resource you want to add. It is suggested to use R.id.* to
-         *                   preserve cross functionality and avoid conflicts.
-         * @param data       The data you want to associate with the resourceId.
-         */
+
         public void put(int resourceId, Object data) {
-            if (mData == null) {
-                mData = new SparseArray<Object>();
-            }
-            mData.put(resourceId, data);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * If scroll is triggered to make a certain item visible, this value will return the
-         * adapter index of that item.
-         * @return Adapter index of the target item or
-         * {@link RecyclerView#NO_POSITION} if there is no target
-         * position.
-         */
+
         public int getTargetScrollPosition() {
-            return mTargetPosition;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns if current scroll has a target position.
-         * @return true if scroll is being triggered to make a certain position visible
-         * @see #getTargetScrollPosition()
-         */
+
         public boolean hasTargetScrollPosition() {
-            return mTargetPosition != RecyclerView.NO_POSITION;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * @return true if the structure of the data set has changed since the last call to
-         *         onLayoutChildren, false otherwise
-         */
+
         public boolean didStructureChange() {
-            return mStructureChanged;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns the total number of items that can be laid out. Note that this number is not
-         * necessarily equal to the number of items in the adapter, so you should always use this
-         * number for your position calculations and never access the adapter directly.
-         * <p>
-         * RecyclerView listens for Adapter's notify events and calculates the effects of adapter
-         * data changes on existing Views. These calculations are used to decide which animations
-         * should be run.
-         * <p>
-         * To support predictive animations, RecyclerView may rewrite or reorder Adapter changes to
-         * present the correct state to LayoutManager in pre-layout pass.
-         * <p>
-         * For example, a newly added item is not included in pre-layout item count because
-         * pre-layout reflects the contents of the adapter before the item is added. Behind the
-         * scenes, RecyclerView offsets {@link Recycler#getViewForPosition(int)} calls such that
-         * LayoutManager does not know about the new item's existence in pre-layout. The item will
-         * be available in second layout pass and will be included in the item count. Similar
-         * adjustments are made for moved and removed items as well.
-         * <p>
-         * You can get the adapter's item count via {@link LayoutManager#getItemCount()} method.
-         *
-         * @return The number of items currently available
-         * @see LayoutManager#getItemCount()
-         */
+
         public int getItemCount() {
-            return mInPreLayout
-                    ? (mPreviousLayoutItemCount - mDeletedInvisibleItemCountSincePreviousLayout)
-                    : mItemCount;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns remaining horizontal scroll distance of an ongoing scroll animation(fling/
-         * smoothScrollTo/SmoothScroller) in pixels. Returns zero if {@link #getScrollState()} is
-         * other than {@link #SCROLL_STATE_SETTLING}.
-         *
-         * @return Remaining horizontal scroll distance
-         */
+
         public int getRemainingScrollHorizontal() {
-            return mRemainingScrollHorizontal;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-        /**
-         * Returns remaining vertical scroll distance of an ongoing scroll animation(fling/
-         * smoothScrollTo/SmoothScroller) in pixels. Returns zero if {@link #getScrollState()} is
-         * other than {@link #SCROLL_STATE_SETTLING}.
-         *
-         * @return Remaining vertical scroll distance
-         */
+
         public int getRemainingScrollVertical() {
-            return mRemainingScrollVertical;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
+
         @Override
         public String toString() {
-            return "State{"
-                    + "mTargetPosition=" + mTargetPosition
-                    + ", mData=" + mData
-                    + ", mItemCount=" + mItemCount
-                    + ", mIsMeasuring=" + mIsMeasuring
-                    + ", mPreviousLayoutItemCount=" + mPreviousLayoutItemCount
-                    + ", mDeletedInvisibleItemCountSincePreviousLayout="
-                    + mDeletedInvisibleItemCountSincePreviousLayout
-                    + ", mStructureChanged=" + mStructureChanged
-                    + ", mInPreLayout=" + mInPreLayout
-                    + ", mRunSimpleAnimations=" + mRunSimpleAnimations
-                    + ", mRunPredictiveAnimations=" + mRunPredictiveAnimations
-                    + '}';
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
+
     /**
      * This class defines the behavior of fling if the developer wishes to handle it.
      * <p>
@@ -4286,6 +2752,7 @@ public class RecyclerView extends ViewGroup  {
      * @see #setOnFlingListener(OnFlingListener)
      */
     public abstract static class OnFlingListener {
+
         /**
          * Override this to handle a fling given the velocities in both x and y directions.
          * Note that this method will only be called if the associated {@link LayoutManager}
@@ -4298,14 +2765,12 @@ public class RecyclerView extends ViewGroup  {
          */
         public abstract boolean onFling(int velocityX, int velocityY);
     }
+
     @Override
     protected int getChildDrawingOrder(int childCount, int i) {
-        if (mChildDrawingOrderCallback == null) {
-            return super.getChildDrawingOrder(childCount, i);
-        } else {
-            return mChildDrawingOrderCallback.onGetChildDrawingOrder(childCount, i);
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     /**
      * A callback interface that can be used to alter the drawing order of RecyclerView children.
      * <p>
@@ -4315,6 +2780,7 @@ public class RecyclerView extends ViewGroup  {
      * elevation overrides the result of this callback.
      */
     public interface ChildDrawingOrderCallback {
+
         /**
          * Returns the index of the child to draw for this iteration. Override this
          * if you want to change the drawing order of children. By default, it

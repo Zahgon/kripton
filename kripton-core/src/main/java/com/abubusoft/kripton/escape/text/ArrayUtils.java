@@ -16,7 +16,6 @@
  */
 package com.abubusoft.kripton.escape.text;
 
-
 /**
  * <p>Operations on arrays, primitive arrays (like {@code int[]}) and
  * primitive wrapper arrays (like {@code Integer[]}).
@@ -39,168 +38,49 @@ public class ArrayUtils {
      * to operate.
      */
     public ArrayUtils() {
-      super();
+        super();
     }
-
 
     // NOTE: Cannot use {@code} to enclose text which includes {}, but <code></code> is OK
-
-
     // Clone
     //-----------------------------------------------------------------------
-    /**
-     * <p>Shallow clones an array returning a typecast result and handling
-     * {@code null}.
-     *
-     * <p>The objects in the array are not cloned, thus there is no special
-     * handling for multi-dimensional arrays.
-     *
-     * <p>This method returns {@code null} for a {@code null} input array.
-     *
-     * @param <T> the component type of the array
-     * @param array  the array to shallow clone, may be {@code null}
-     * @return the cloned array, {@code null} if {@code null} input
-     */
     public static <T> T[] clone(final T[] array) {
-        if (array == null) {
-            return null;
-        }
-        return array.clone();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Clones an array returning a typecast result and handling
-     * {@code null}.
-     *
-     * <p>This method returns {@code null} for a {@code null} input array.
-     *
-     * @param array  the array to clone, may be {@code null}
-     * @return the cloned array, {@code null} if {@code null} input
-     */
     public static long[] clone(final long[] array) {
-        if (array == null) {
-            return null;
-        }
-        return array.clone();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Clones an array returning a typecast result and handling
-     * {@code null}.
-     *
-     * <p>This method returns {@code null} for a {@code null} input array.
-     *
-     * @param array  the array to clone, may be {@code null}
-     * @return the cloned array, {@code null} if {@code null} input
-     */
     public static int[] clone(final int[] array) {
-        if (array == null) {
-            return null;
-        }
-        return array.clone();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Clones an array returning a typecast result and handling
-     * {@code null}.
-     *
-     * <p>This method returns {@code null} for a {@code null} input array.
-     *
-     * @param array  the array to clone, may be {@code null}
-     * @return the cloned array, {@code null} if {@code null} input
-     */
     public static short[] clone(final short[] array) {
-        if (array == null) {
-            return null;
-        }
-        return array.clone();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Clones an array returning a typecast result and handling
-     * {@code null}.
-     *
-     * <p>This method returns {@code null} for a {@code null} input array.
-     *
-     * @param array  the array to clone, may be {@code null}
-     * @return the cloned array, {@code null} if {@code null} input
-     */
     public static char[] clone(final char[] array) {
-        if (array == null) {
-            return null;
-        }
-        return array.clone();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Clones an array returning a typecast result and handling
-     * {@code null}.
-     *
-     * <p>This method returns {@code null} for a {@code null} input array.
-     *
-     * @param array  the array to clone, may be {@code null}
-     * @return the cloned array, {@code null} if {@code null} input
-     */
     public static byte[] clone(final byte[] array) {
-        if (array == null) {
-            return null;
-        }
-        return array.clone();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Clones an array returning a typecast result and handling
-     * {@code null}.
-     *
-     * <p>This method returns {@code null} for a {@code null} input array.
-     *
-     * @param array  the array to clone, may be {@code null}
-     * @return the cloned array, {@code null} if {@code null} input
-     */
     public static double[] clone(final double[] array) {
-        if (array == null) {
-            return null;
-        }
-        return array.clone();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Clones an array returning a typecast result and handling
-     * {@code null}.
-     *
-     * <p>This method returns {@code null} for a {@code null} input array.
-     *
-     * @param array  the array to clone, may be {@code null}
-     * @return the cloned array, {@code null} if {@code null} input
-     */
     public static float[] clone(final float[] array) {
-        if (array == null) {
-            return null;
-        }
-        return array.clone();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Clones an array returning a typecast result and handling
-     * {@code null}.
-     *
-     * <p>This method returns {@code null} for a {@code null} input array.
-     *
-     * @param array  the array to clone, may be {@code null}
-     * @return the cloned array, {@code null} if {@code null} input
-     */
     public static boolean[] clone(final boolean[] array) {
-        if (array == null) {
-            return null;
-        }
-        return array.clone();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-
     // IndexOf search
     // ----------------------------------------------------------------------
-
-
     // Primitive/Object array converters
     // ----------------------------------------------------------------------
-
 }

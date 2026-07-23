@@ -1,26 +1,25 @@
-/*******************************************************************************
- * Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
+/**
+ * ****************************************************************************
+ *  Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * *****************************************************************************
+ */
 package com.abubusoft.kripton.processor.sqlite.model;
 
 import java.util.List;
-
 import javax.lang.model.element.Element;
-
 import org.apache.commons.lang3.StringUtils;
-
 import com.abubusoft.kripton.android.ColumnAffinityType;
 import com.abubusoft.kripton.android.ColumnType;
 import com.abubusoft.kripton.android.annotation.BindSqlAdapter;
@@ -42,168 +41,135 @@ import com.squareup.javapoet.TypeName;
  */
 public class SQLProperty extends ManagedModelProperty {
 
-	public boolean hasPropertyType() {
-		return this.propertyType != null;
-	}
+    public boolean hasPropertyType() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	public void updatePropertyType(TypeName propertyTypeName) {
-		this.propertyType = new ModelType(propertyTypeName);
-	}
+    public void updatePropertyType(TypeName propertyTypeName) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Construtor used for generated fields.
-	 *
-	 * @param name
-	 *            name of property
-	 * @param parentTypeName
-	 *            class name of parent type
-	 */
-	public SQLProperty(String name, TypeName parentTypeName, TypeName propertyTypeName) {
-		super(null, null, null);
+    /**
+     * Construtor used for generated fields.
+     *
+     * @param name
+     *            name of property
+     * @param parentTypeName
+     *            class name of parent type
+     */
+    public SQLProperty(String name, TypeName parentTypeName, TypeName propertyTypeName) {
+        super(null, null, null);
+        this.name = name;
+        this.entityTypeName = parentTypeName;
+        if (propertyTypeName != null) {
+            this.propertyType = new ModelType(propertyTypeName);
+        }
+        onDeleteAction = ForeignKeyAction.NO_ACTION;
+        onUpdateAction = ForeignKeyAction.NO_ACTION;
+    }
 
-		this.name = name;
-		this.entityTypeName = parentTypeName;
+    /**
+     * Instantiates a new SQL property.
+     *
+     * @param entity
+     *            the entity
+     * @param element
+     *            the element
+     * @param modelAnnotations
+     *            the model annotations
+     */
+    public SQLProperty(SQLiteEntity entity, Element element, List<ModelAnnotation> modelAnnotations) {
+        super(entity, element, modelAnnotations);
+        entityTypeName = TypeUtility.className(getParent().getName());
+        // @BindSqlAdapter
+        ModelAnnotation annotationBindAdapter = this.getAnnotation(BindSqlAdapter.class);
+        if (annotationBindAdapter != null) {
+            typeAdapter.adapterClazz = annotationBindAdapter.getAttributeAsClassName(AnnotationAttributeType.ADAPTER);
+            typeAdapter.dataType = TypeAdapterHelper.detectDestinationType(entity.getElement(), typeAdapter.adapterClazz);
+            SQLTransform transform = SQLTransformer.lookup(TypeUtility.typeName(typeAdapter.dataType));
+            // check type adapter
+            checkTypeAdapter(entity, element.asType(), typeAdapter, annotationBindAdapter);
+            if (!transform.isTypeAdapterAware()) {
+                String msg = String.format("In class '%s', property '%s' is of type '%s' and it can not be annotated with @%s", element.asType().toString(), getName(), getPropertyType().getTypeName(), BindSqlAdapter.class.getSimpleName());
+                throw (new IncompatibleAnnotationException(msg));
+            }
+        }
+        String globalKey = element.asType().toString();
+        if (!hasTypeAdapter() && entity.schema.globalSqlTypeAdapter.containsKey(globalKey)) {
+            // check for global type adapter
+            typeAdapter.adapterClazz = entity.schema.globalSqlTypeAdapter.get(globalKey);
+            typeAdapter.dataType = TypeAdapterHelper.detectDestinationType(entity.getElement(), typeAdapter.adapterClazz);
+        }
+        onDeleteAction = ForeignKeyAction.NO_ACTION;
+        onUpdateAction = ForeignKeyAction.NO_ACTION;
+    }
 
-		if (propertyTypeName != null) {
-			this.propertyType = new ModelType(propertyTypeName);
-		}
+    /**
+     * typeName of the column.
+     */
+    public String columnName;
 
-		onDeleteAction = ForeignKeyAction.NO_ACTION;
-		onUpdateAction = ForeignKeyAction.NO_ACTION;
+    /**
+     * The nullable.
+     */
+    protected boolean nullable;
 
-	}
+    public void setPrimaryKey(boolean primaryKey) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Instantiates a new SQL property.
-	 *
-	 * @param entity
-	 *            the entity
-	 * @param element
-	 *            the element
-	 * @param modelAnnotations
-	 *            the model annotations
-	 */
-	public SQLProperty(SQLiteEntity entity, Element element, List<ModelAnnotation> modelAnnotations) {
-		super(entity, element, modelAnnotations);
+    public boolean isNullable() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		entityTypeName = TypeUtility.className(getParent().getName());
+    public void setNullable(boolean nullable) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		// @BindSqlAdapter
-		ModelAnnotation annotationBindAdapter = this.getAnnotation(BindSqlAdapter.class);
-		if (annotationBindAdapter != null) {
-			typeAdapter.adapterClazz = annotationBindAdapter.getAttributeAsClassName(AnnotationAttributeType.ADAPTER);
-			typeAdapter.dataType = TypeAdapterHelper.detectDestinationType(entity.getElement(),
-					typeAdapter.adapterClazz);
-			SQLTransform transform = SQLTransformer.lookup(TypeUtility.typeName(typeAdapter.dataType));
+    public boolean isPrimaryKey() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-			// check type adapter
-			checkTypeAdapter(entity, element.asType(), typeAdapter, annotationBindAdapter);
+    /**
+     * The primary key.
+     */
+    protected boolean primaryKey;
 
-			if (!transform.isTypeAdapterAware()) {
-				String msg = String.format(
-						"In class '%s', property '%s' is of type '%s' and it can not be annotated with @%s",
-						element.asType().toString(), getName(), getPropertyType().getTypeName(),
-						BindSqlAdapter.class.getSimpleName());
-				throw (new IncompatibleAnnotationException(msg));
-			}
-		}
+    /**
+     * type of column.
+     */
+    public ColumnType columnType;
 
-		String globalKey = element.asType().toString();
-		if (!hasTypeAdapter() && entity.schema.globalSqlTypeAdapter.containsKey(globalKey)) {			
-			// check for global type adapter
-			typeAdapter.adapterClazz = entity.schema.globalSqlTypeAdapter.get(globalKey);
-			typeAdapter.dataType = TypeAdapterHelper.detectDestinationType(entity.getElement(),
-					typeAdapter.adapterClazz);
-		}
+    /**
+     * Affinity type of the column.
+     */
+    public ColumnAffinityType columnAffinityType;
 
-		onDeleteAction = ForeignKeyAction.NO_ACTION;
-		onUpdateAction = ForeignKeyAction.NO_ACTION;
+    /**
+     * The parent type name.
+     */
+    protected TypeName entityTypeName;
 
-	}
+    /**
+     * class name of referred table as foreignKey
+     */
+    public String foreignParentClassName;
 
-	/** typeName of the column. */
-	public String columnName;
+    /**
+     * The on delete action.
+     */
+    public ForeignKeyAction onDeleteAction;
 
-	/** The nullable. */
-	protected boolean nullable;
+    /**
+     * The on update action.
+     */
+    public ForeignKeyAction onUpdateAction;
 
-	/**
-	 * Sets the primary key.
-	 *
-	 * @param primaryKey
-	 *            the primaryKey to set
-	 */
-	public void setPrimaryKey(boolean primaryKey) {
-		this.primaryKey = primaryKey;
-	}
+    public boolean isForeignKey() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Checks if is nullable.
-	 *
-	 * @return the nullable
-	 */
-	public boolean isNullable() {
-		return nullable;
-	}
-
-	/**
-	 * Sets the nullable.
-	 *
-	 * @param nullable
-	 *            the nullable to set
-	 */
-	public void setNullable(boolean nullable) {
-		this.nullable = nullable;
-	}
-
-	/**
-	 * Checks if is primary key.
-	 *
-	 * @return the primaryKey
-	 */
-	public boolean isPrimaryKey() {
-		return primaryKey;
-	}
-
-	/** The primary key. */
-	protected boolean primaryKey;
-
-	/** type of column. */
-	public ColumnType columnType;
-
-	/**
-	 * Affinity type of the column.
-	 */
-	public ColumnAffinityType columnAffinityType;
-
-	/** The parent type name. */
-	protected TypeName entityTypeName;
-
-	/** class name of referred table as foreignKey */
-	public String foreignParentClassName;
-
-	/** The on delete action. */
-	public ForeignKeyAction onDeleteAction;
-
-	/** The on update action. */
-	public ForeignKeyAction onUpdateAction;
-
-	/**
-	 * Checks for foreign key class name.
-	 *
-	 * @return true, if successful
-	 */
-	public boolean isForeignKey() {
-		return !StringUtils.isEmpty(foreignParentClassName)
-				&& !NoParentEntity.class.getName().equals(foreignParentClassName);
-	}
-
-	/**
-	 * Gets the parent type name.
-	 *
-	 * @return the parent type name
-	 */
-	public TypeName getEntityTypeName() {
-		return entityTypeName;
-	}
+    public TypeName getEntityTypeName() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

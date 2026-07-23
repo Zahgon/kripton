@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package net.sqlcipher.database;
 
 /**
@@ -21,22 +20,21 @@ package net.sqlcipher.database;
  */
 public abstract class SQLiteClosable {
 
+    protected abstract void onAllReferencesReleased();
 
-	protected abstract void onAllReferencesReleased();
+    protected void onAllReferencesReleasedFromContainer() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	protected void onAllReferencesReleasedFromContainer() {
-	}
+    public void acquireReference() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	public void acquireReference() {
+    public void releaseReference() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	}
-
-	public void releaseReference() {
-
-	}
-
-	public void releaseReferenceFromContainer() {
-
-	}
-
+    public void releaseReferenceFromContainer() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

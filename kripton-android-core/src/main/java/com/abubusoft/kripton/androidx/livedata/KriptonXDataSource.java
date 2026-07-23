@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.paging.DataSource;
 import androidx.paging.PositionalDataSource;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,76 +15,53 @@ import java.util.List;
  */
 public class KriptonXDataSource<T> extends PositionalDataSource<T> {
 
-  private final PagedLiveData<T> query;
+    private final PagedLiveData<T> query;
 
-  private final Observer<T> observer;
+    private final Observer<T> observer;
 
-  public static class Factory<Item> extends DataSource.Factory<Integer, Item> {
+    public static class Factory<Item> extends DataSource.Factory<Integer, Item> {
 
-    private final PagedLiveData<Item> query;
+        private final PagedLiveData<Item> query;
 
-    public Factory(PagedLiveData<Item> query) {
-      this.query = query;
+        public Factory(PagedLiveData<Item> query) {
+            this.query = query;
+        }
+
+        @Override
+        public KriptonXDataSource<Item> create() {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+    }
+
+    public KriptonXDataSource(PagedLiveData<T> query) {
+        this.query = query;
+        observer = new Observer<T>() {
+
+            @Override
+            public void onChanged(T t) {
+                throw new UnsupportedOperationException("STUB: not implemented");
+            }
+        };
+        query.observeForever(observer);
+        // observer will be automatically removed once GC'ed
+        // query. subscribe().onlyChanges().weak().observer(observer);
     }
 
     @Override
-    public KriptonXDataSource<Item> create() {
-      return new KriptonXDataSource<>(query);
-    }
-  }
-
-  public KriptonXDataSource(PagedLiveData<T> query) {
-    this.query = query;
-
-    observer = new Observer<T>() {
-
-      @Override
-      public void onChanged(T t) {
-        invalidate();
-
-      }
-    };
-
-    query.observeForever(observer);
-    // observer will be automatically removed once GC'ed
-    // query. subscribe().onlyChanges().weak().observer(observer);
-  }
-
-  @Override
-  public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<T> callback) {
-    // note: limiting to int should be fine for Android apps
-    // TODO ripristinare query.count();
-    int totalCount = query.getTotalElements();
-    if (totalCount == 0) {
-      callback.onResult(Collections.<T>emptyList(), 0, 0);
-      return;
+    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<T> callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    int position = computeInitialLoadPosition(params, totalCount);
-    int loadSize = computeInitialLoadSize(params, position, totalCount);
-
-    List<T> list = loadRange(position, loadSize);
-    if (list != null && list.size() == loadSize) {
-      callback.onResult(list, position, totalCount);
-    } else {
-      invalidate(); // size doesn't match request - DB modified between
-      // count and load
+    @Override
+    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<T> callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-  }
 
-  @Override
-  public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<T> callback) {
-    callback.onResult(loadRange(params.startPosition, params.loadSize));
-  }
-
-  private List<T> loadRange(int startPosition, int loadCount) {
-    /* private void loadRange(int startPosition, int loadCount) { */
-    // note: find interprets loadCount 0 as no limit
-    //query.moveTo(startPosition, loadCount);
-
-    query.createPageRequestBuilder().offset(startPosition).pageSize(loadCount).apply();
-
-    return new ArrayList<>();
-  }
-
+    private List<T> loadRange(int startPosition, int loadCount) {
+        /* private void loadRange(int startPosition, int loadCount) { */
+        // note: find interprets loadCount 0 as no limit
+        //query.moveTo(startPosition, loadCount);
+        query.createPageRequestBuilder().offset(startPosition).pageSize(loadCount).apply();
+        return new ArrayList<>();
+    }
 }

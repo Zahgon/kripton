@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.abubusoft.kripton.androidx.livedata;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.abubusoft.kripton.android.LiveDataHandler;
 import com.abubusoft.kripton.android.Paginator;
 import com.abubusoft.kripton.android.executor.KriptonTaskExecutor;
-
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -37,114 +34,81 @@ import androidx.annotation.WorkerThread;
  */
 public abstract class KriptonXPagedLiveDataHandlerImpl<T> implements LiveDataHandler {
 
-	/** The m live data. */
-	private final PagedLiveData<T> mLiveData;
+    /**
+     * The m live data.
+     */
+    private final PagedLiveData<T> mLiveData;
 
-	/** The m invalid. */
-	private AtomicBoolean mInvalid = new AtomicBoolean(true);
+    /**
+     * The m invalid.
+     */
+    private AtomicBoolean mInvalid = new AtomicBoolean(true);
 
-	/** The m computing. */
-	private AtomicBoolean mComputing = new AtomicBoolean(false);
+    /**
+     * The m computing.
+     */
+    private AtomicBoolean mComputing = new AtomicBoolean(false);
 
-	/**
-	 * Creates a computable live data which is computed when there are active
-	 * observers.
-	 * <p>
-	 * It can also be invalidated via {@link #invalidate()} which will result in
-	 * a call to {@link #compute()} if there are active observers (or when they
-	 * start observing)
-	 */
-	public KriptonXPagedLiveDataHandlerImpl(Paginator<T> pagedResult) {
-		mLiveData = new PagedLiveData<T>(pagedResult, this) {
-			@Override
-			protected void onActive() {
-				KriptonTaskExecutor.getInstance().executeOnDiskIO(mRefreshRunnable);
-			}
-		};
-	}
+    /**
+     * Creates a computable live data which is computed when there are active
+     * observers.
+     * <p>
+     * It can also be invalidated via {@link #invalidate()} which will result in
+     * a call to {@link #compute()} if there are active observers (or when they
+     * start observing)
+     */
+    public KriptonXPagedLiveDataHandlerImpl(Paginator<T> pagedResult) {
+        mLiveData = new PagedLiveData<T>(pagedResult, this) {
 
-	/**
-	 * Returns the LiveData managed by this class.
-	 *
-	 * @return A LiveData that is controlled by ComputableLiveData.
-	 */
-	@NonNull
-	public PagedLiveData<T> getLiveData() {
-		return mLiveData;
-	}
+            @Override
+            protected void onActive() {
+                throw new UnsupportedOperationException("STUB: not implemented");
+            }
+        };
+    }
 
-	/** The m refresh runnable. */
-	@VisibleForTesting
-	final Runnable mRefreshRunnable = new Runnable() {
-		@WorkerThread
-		@Override
-		public void run() {
-			boolean computed;
-			do {
-				computed = false;
-				// compute can happen only in 1 thread but no reason to lock
-				// others.
-				if (mComputing.compareAndSet(false, true)) {
-					// as long as it is invalid, keep computing.
-					try {
-						T value = null;
-						while (mInvalid.compareAndSet(true, false)) {
-							computed = true;
-							value = compute();
-						}
-						if (computed) {
-							mLiveData.updateValue(value);
-							// mLiveData.postValue(value);
-						}
-					} finally {
-						// release compute lock
-						mComputing.set(false);
-					}
-				}
-				// check invalid after releasing compute lock to avoid the
-				// following scenario.
-				// Thread A runs compute()
-				// Thread A checks invalid, it is false
-				// Main thread sets invalid to true
-				// Thread B runs, fails to acquire compute lock and skips
-				// Thread A releases compute lock
-				// We've left invalid in set state. The check below recovers.
-			} while (computed && mInvalid.get());
-		}
-	};
+    @NonNull
+    public PagedLiveData<T> getLiveData() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/** The m invalidation runnable. */
-	// invalidation check always happens on the main thread
-	@VisibleForTesting
-	final Runnable mInvalidationRunnable = new Runnable() {
-		@MainThread
-		@Override
-		public void run() {
-			boolean isActive = mLiveData.hasActiveObservers();
-			if (mInvalid.compareAndSet(false, true)) {
-				if (isActive) {
-					KriptonTaskExecutor.getInstance().executeOnDiskIO(mRefreshRunnable);
-				}
-			}
-		}
-	};
+    /**
+     * The m refresh runnable.
+     */
+    @VisibleForTesting
+    final Runnable mRefreshRunnable = new Runnable() {
 
-	/**
-	 * Invalidates the LiveData.
-	 * <p>
-	 * When there are active observers, this will trigger a call to
-	 * {@link #compute()}.
-	 */
-	@Override
-	public void invalidate() {
-		KriptonTaskExecutor.getInstance().executeOnMainThread(mInvalidationRunnable);
-	}
+        @WorkerThread
+        @Override
+        public void run() {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+    };
 
-	/**
-	 * Compute.
-	 *
-	 * @return the t
-	 */
-	@WorkerThread
-	protected abstract T compute();
+    /**
+     * The m invalidation runnable.
+     */
+    // invalidation check always happens on the main thread
+    @VisibleForTesting
+    final Runnable mInvalidationRunnable = new Runnable() {
+
+        @MainThread
+        @Override
+        public void run() {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+    };
+
+    @Override
+    public void invalidate() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
+
+    /**
+     * Compute.
+     *
+     * @return the t
+     */
+    @WorkerThread
+    protected abstract T compute();
 }

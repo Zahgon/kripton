@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.arch.core.executor.internal;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import androidx.annotation.NonNull;
-
 
 /**
  * Poor's man LinkedHashMap, which supports modifications during iterations.
@@ -32,7 +29,9 @@ import androidx.annotation.NonNull;
  */
 public class FastSafeIterableMap<K, V> extends SafeIterableMap<K, V> {
 
-    /** The m hash map. */
+    /**
+     * The m hash map.
+     */
     private HashMap<K, Entry<K, V>> mHashMap = new HashMap<>();
 
     /* (non-Javadoc)
@@ -40,7 +39,7 @@ public class FastSafeIterableMap<K, V> extends SafeIterableMap<K, V> {
      */
     @Override
     protected Entry<K, V> get(K k) {
-        return mHashMap.get(k);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
@@ -48,12 +47,7 @@ public class FastSafeIterableMap<K, V> extends SafeIterableMap<K, V> {
      */
     @Override
     public V putIfAbsent(@NonNull K key, @NonNull V v) {
-        Entry<K, V> current = get(key);
-        if (current != null) {
-            return current.mValue;
-        }
-        mHashMap.put(key, put(key, v));
-        return null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
@@ -61,32 +55,14 @@ public class FastSafeIterableMap<K, V> extends SafeIterableMap<K, V> {
      */
     @Override
     public V remove(@NonNull K key) {
-        V removed = super.remove(key);
-        mHashMap.remove(key);
-        return removed;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Returns {@code true} if this map contains a mapping for the specified
-     * key.
-     *
-     * @param key the key
-     * @return true, if successful
-     */
     public boolean contains(K key) {
-        return mHashMap.containsKey(key);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Return an entry added to prior to an entry associated with the given key.
-     *
-     * @param k the key
-     * @return the map. entry
-     */
     public Map.Entry<K, V> ceil(K k) {
-        if (contains(k)) {
-            return mHashMap.get(k).mPrevious;
-        }
-        return null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

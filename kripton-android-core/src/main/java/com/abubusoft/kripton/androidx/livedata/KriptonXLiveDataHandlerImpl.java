@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.abubusoft.kripton.androidx.livedata;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.abubusoft.kripton.android.LiveDataHandler;
 import com.abubusoft.kripton.android.executor.KriptonTaskExecutor;
-
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -43,112 +40,71 @@ import androidx.annotation.WorkerThread;
  */
 public abstract class KriptonXLiveDataHandlerImpl<T> implements LiveDataHandler {
 
-	private final Executor mExecutor;
-	private final KriptonXLiveData<T> mLiveData;
+    private final Executor mExecutor;
 
-	private AtomicBoolean mInvalid = new AtomicBoolean(true);
-	private AtomicBoolean mComputing = new AtomicBoolean(false);
+    private final KriptonXLiveData<T> mLiveData;
 
-	/**
-	 * Creates a computable live data that computes values on the arch IO thread
-	 * executor.
-	 */
-	public KriptonXLiveDataHandlerImpl() {
-		this(KriptonTaskExecutor.getIOThreadExecutor());
-	}
+    private AtomicBoolean mInvalid = new AtomicBoolean(true);
 
-	/**
-	 *
-	 * Creates a computable live data that computes values on the specified
-	 * executor.
-	 *
-	 * @param executor
-	 *            Executor that is used to compute new LiveData values.
-	 */
-	public KriptonXLiveDataHandlerImpl(@NonNull Executor executor) {
-		mExecutor = executor;
-		mLiveData = new KriptonXLiveData<T>() {
-			@Override
-			protected void onActive() {
-				mExecutor.execute(mRefreshRunnable);
-			}
-		};
-	}
+    private AtomicBoolean mComputing = new AtomicBoolean(false);
 
-	/**
-	 * Returns the LiveData managed by this class.
-	 *
-	 * @return A LiveData that is controlled by ComputableLiveData.
-	 */
-	@NonNull
-	public KriptonXLiveData<T> getLiveData() {
-		return mLiveData;
-	}
+    /**
+     * Creates a computable live data that computes values on the arch IO thread
+     * executor.
+     */
+    public KriptonXLiveDataHandlerImpl() {
+        this(KriptonTaskExecutor.getIOThreadExecutor());
+    }
 
-	@VisibleForTesting
-	final Runnable mRefreshRunnable = new Runnable() {
-		@WorkerThread
-		@Override
-		public void run() {
-			boolean computed;
-			do {
-				computed = false;
-				// compute can happen only in 1 thread but no reason to lock
-				// others.
-				if (mComputing.compareAndSet(false, true)) {
-					// as long as it is invalid, keep computing.
-					try {
-						T value = null;
-						while (mInvalid.compareAndSet(true, false)) {
-							computed = true;
-							value = compute();
-						}
-						if (computed) {
-							mLiveData.postValue(value);
-						}
-					} finally {
-						// release compute lock
-						mComputing.set(false);
-					}
-				}
-				// check invalid after releasing compute lock to avoid the
-				// following scenario.
-				// Thread A runs compute()
-				// Thread A checks invalid, it is false
-				// Main thread sets invalid to true
-				// Thread B runs, fails to acquire compute lock and skips
-				// Thread A releases compute lock
-				// We've left invalid in set state. The check below recovers.
-			} while (computed && mInvalid.get());
-		}
-	};
+    /**
+     * Creates a computable live data that computes values on the specified
+     * executor.
+     *
+     * @param executor
+     *            Executor that is used to compute new LiveData values.
+     */
+    public KriptonXLiveDataHandlerImpl(@NonNull Executor executor) {
+        mExecutor = executor;
+        mLiveData = new KriptonXLiveData<T>() {
 
-	// invalidation check always happens on the main thread
-	@VisibleForTesting
-	final Runnable mInvalidationRunnable = new Runnable() {
-		@MainThread
-		@Override
-		public void run() {
-			boolean isActive = mLiveData.hasActiveObservers();
-			if (mInvalid.compareAndSet(false, true)) {
-				if (isActive) {
-					mExecutor.execute(mRefreshRunnable);
-				}
-			}
-		}
-	};
+            @Override
+            protected void onActive() {
+                throw new UnsupportedOperationException("STUB: not implemented");
+            }
+        };
+    }
 
-	/**
-	 * Invalidates the LiveData.
-	 * <p>
-	 * When there are active observers, this will trigger a call to
-	 * {@link #compute()}.
-	 */
-	@Override
-	public void invalidate() {
-		KriptonTaskExecutor.getInstance().executeOnMainThread(mInvalidationRunnable);
-	}
+    @NonNull
+    public KriptonXLiveData<T> getLiveData() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@WorkerThread
-	protected abstract T compute();
+    @VisibleForTesting
+    final Runnable mRefreshRunnable = new Runnable() {
+
+        @WorkerThread
+        @Override
+        public void run() {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+    };
+
+    // invalidation check always happens on the main thread
+    @VisibleForTesting
+    final Runnable mInvalidationRunnable = new Runnable() {
+
+        @MainThread
+        @Override
+        public void run() {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+    };
+
+    @Override
+    public void invalidate() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
+
+    @WorkerThread
+    protected abstract T compute();
 }

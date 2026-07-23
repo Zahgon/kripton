@@ -1,24 +1,24 @@
-/*******************************************************************************
- * Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
+/**
+ * ****************************************************************************
+ *  Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * *****************************************************************************
+ */
 package com.abubusoft.kripton.processor.bind.model;
 
 import java.util.List;
-
 import javax.lang.model.element.Element;
-
 import com.abubusoft.kripton.android.annotation.BindSqlAdapter;
 import com.abubusoft.kripton.annotation.BindAdapter;
 import com.abubusoft.kripton.common.StringUtils;
@@ -32,343 +32,253 @@ import com.abubusoft.kripton.xml.MapEntryType;
 import com.abubusoft.kripton.xml.XmlType;
 import com.squareup.javapoet.TypeName;
 
-
 /**
  * The Class BindProperty.
  */
 public class BindProperty extends ModelProperty {
 
-	/**
-	 * The Class BindPropertyBuilder.
-	 */
-	public static class BindPropertyBuilder {
-		
-		/** The parent property. */
-		protected BindProperty parentProperty;
+    /**
+     * The Class BindPropertyBuilder.
+     */
+    public static class BindPropertyBuilder {
 
-		/** The raw type name. */
-		protected TypeName rawTypeName;
+        /**
+         * The parent property.
+         */
+        protected BindProperty parentProperty;
 
-		/** The xml type. */
-		protected XmlType xmlType;
+        /**
+         * The raw type name.
+         */
+        protected TypeName rawTypeName;
 
-		/** element's label, or collection's label (for xml binding). */
-		private String label;
+        /**
+         * The xml type.
+         */
+        protected XmlType xmlType;
 
-		/** The nullable. */
-		private boolean nullable;
+        /**
+         * element's label, or collection's label (for xml binding).
+         */
+        private String label;
 
-		/** The in collection. */
-		protected boolean inCollection;
+        /**
+         * The nullable.
+         */
+        private boolean nullable;
 
-		/**
-		 * In collection.
-		 *
-		 * @param inCollection the in collection
-		 * @return the bind property builder
-		 */
-		public BindPropertyBuilder inCollection(boolean inCollection) {
-			this.inCollection = inCollection;
+        /**
+         * The in collection.
+         */
+        protected boolean inCollection;
 
-			return this;
-		}
+        public BindPropertyBuilder inCollection(boolean inCollection) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-		/**
-		 * Instantiates a new bind property builder.
-		 *
-		 * @param rawTypeName the raw type name
-		 * @param property the property
-		 */
-		public BindPropertyBuilder(TypeName rawTypeName, BindProperty property) {
-			this.rawTypeName = rawTypeName;			
+        /**
+         * Instantiates a new bind property builder.
+         *
+         * @param rawTypeName the raw type name
+         * @param property the property
+         */
+        public BindPropertyBuilder(TypeName rawTypeName, BindProperty property) {
+            this.rawTypeName = rawTypeName;
+            if (property != null) {
+                this.parentProperty = property;
+                //	this.parent=property.getParent();
+                this.nullable = property.nullable;
+                this.xmlType = property.xmlInfo.xmlType;
+                this.label = property.label;
+            }
+            this.inCollection = true;
+        }
 
-			if (property != null) {
-				this.parentProperty = property;
-			//	this.parent=property.getParent();
-				this.nullable = property.nullable;
-				this.xmlType = property.xmlInfo.xmlType;
-				this.label = property.label;
-			}
-			this.inCollection = true;
-		}
+        /**
+         * Instantiates a new bind property builder.
+         *
+         * @param parameterTypeName the parameter type name
+         */
+        public BindPropertyBuilder(TypeName parameterTypeName) {
+            this.rawTypeName = parameterTypeName;
+            this.parentProperty = null;
+            this.nullable = true;
+            this.inCollection = true;
+        }
 
-		/**
-		 * Instantiates a new bind property builder.
-		 *
-		 * @param parameterTypeName the parameter type name
-		 */
-		public BindPropertyBuilder(TypeName parameterTypeName) {
-			this.rawTypeName = parameterTypeName;
-			this.parentProperty = null;
-			this.nullable = true;
-			this.inCollection = true;
-		}
+        public BindProperty build() {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-		/**
-		 * Builds the.
-		 *
-		 * @return the bind property
-		 */
-		public BindProperty build() {
-			BindProperty property = new BindProperty(null, null, null);
+        public BindPropertyBuilder xmlType(XmlType xmlType) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-			property.propertyType = new ModelType(rawTypeName);
-			property.order = parentProperty != null ? parentProperty.order : 0;
-			property.inCollection = this.inCollection;
+        public BindPropertyBuilder elementName(String label) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-			property.label = label;
+        public BindPropertyBuilder label(String elementTag) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-			property.xmlInfo.xmlType = this.xmlType;
-			property.xmlInfo.labelItem = null;
+        public BindPropertyBuilder nullable(boolean value) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+    }
 
-			property.nullable = this.nullable;
+    /**
+     * The Class JacksonInfo.
+     */
+    public class JacksonInfo {
+        // public String jacksonName;
+    }
 
-			return property;
-		}
+    /**
+     * The Class XmlInfo.
+     */
+    public class XmlInfo {
 
-		/**
-		 * Xml type.
-		 *
-		 * @param xmlType the xml type
-		 * @return the bind property builder
-		 */
-		public BindPropertyBuilder xmlType(XmlType xmlType) {
-			this.xmlType = xmlType;
+        /**
+         * The map entry type.
+         */
+        public MapEntryType mapEntryType = MapEntryType.TAG;
 
-			return this;
-		}
+        /**
+         * tag typeName for collection's item
+         */
+        public String labelItem;
 
-		/**
-		 * Element name.
-		 *
-		 * @param label the label
-		 * @return the bind property builder
-		 */
-		public BindPropertyBuilder elementName(String label) {
-			this.label = label;
-			return this;
-		}
+        /**
+         * The wrapped collection.
+         */
+        public boolean wrappedCollection;
 
-		/**
-		 * Label.
-		 *
-		 * @param elementTag the element tag
-		 * @return the bind property builder
-		 */
-		public BindPropertyBuilder label(String elementTag) {
-			this.label = elementTag;
-			return this;
-		}
+        /**
+         * The xml type.
+         */
+        public XmlType xmlType = XmlType.TAG;
 
-		/**
-		 * Nullable.
-		 *
-		 * @param value the value
-		 * @return the bind property builder
-		 */
-		public BindPropertyBuilder nullable(boolean value) {
-			this.nullable = value;
-			return this;
-		}
+        /**
+         * Namespace used for element
+         */
+        public String namespace;
 
-	}
+        public boolean isWrappedCollection() {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+    }
 
-	/**
-	 * The Class JacksonInfo.
-	 */
-	public class JacksonInfo {
+    public static BindPropertyBuilder builder(TypeName rawTypeName, BindProperty property) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		// public String jacksonName;
-	}
+    public static BindPropertyBuilder builder(TypeName parameterTypeName) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * The Class XmlInfo.
-	 */
-	public class XmlInfo {
+    /**
+     * if true, means property is to write into a collection.
+     */
+    public boolean inCollection;
 
-		/** The map entry type. */
-		public MapEntryType mapEntryType = MapEntryType.TAG;
+    /**
+     * The nullable.
+     */
+    public boolean nullable;
 
-		/**
-		 * tag typeName for collection's item
-		 */
-		public String labelItem;
-		
-		/** The wrapped collection. */
-		public boolean wrappedCollection;
+    /**
+     * The binded object.
+     */
+    public boolean bindedObject;
 
-		/** The xml type. */
-		public XmlType xmlType = XmlType.TAG;
+    /**
+     * The order.
+     */
+    public int order;
 
-		/**
-		 * Namespace used for element
-		 */
-		public String namespace;
+    /**
+     * The xml info.
+     */
+    public XmlInfo xmlInfo;
 
-		/**
-		 * If true, this element is a collection with a tag for collection and a
-		 * tag for each element.
-		 *
-		 * @return true if this element is a wrapped collection
-		 */
-		public boolean isWrappedCollection() {
-			return wrappedCollection;
-		}
-	}
+    /**
+     * The jackson info.
+     */
+    public JacksonInfo jacksonInfo;
 
-	/**
-	 * Builder.
-	 *
-	 * @param rawTypeName the raw type name
-	 * @param property the property
-	 * @return the bind property builder
-	 */
-	public static BindPropertyBuilder builder(TypeName rawTypeName, BindProperty property) {
-		return new BindPropertyBuilder(rawTypeName, property);
-	}
+    /**
+     * The map key name.
+     */
+    public String mapKeyName;
 
-	/**
-	 * Builder.
-	 *
-	 * @param parameterTypeName the parameter type name
-	 * @return the bind property builder
-	 */
-	public static BindPropertyBuilder builder(TypeName parameterTypeName) {
-		return new BindPropertyBuilder(parameterTypeName);
-	}
+    /**
+     * property's label.
+     */
+    public String label;
 
-	/** if true, means property is to write into a collection. */
-	public boolean inCollection;
+    /**
+     * The map value name.
+     */
+    public String mapValueName;
 
-	/** The nullable. */
-	public boolean nullable;
+    /**
+     * Instantiates a new bind property.
+     *
+     * @param entity the entity
+     * @param element the element
+     * @param modelAnnotations the model annotations
+     */
+    public BindProperty(BindEntity entity, Element element, List<ModelAnnotation> modelAnnotations) {
+        super(entity, element, modelAnnotations);
+        nullable = true;
+        inCollection = false;
+        xmlInfo = new XmlInfo();
+        jacksonInfo = new JacksonInfo();
+        ModelAnnotation annotationBindAdapter = this.getAnnotation(BindAdapter.class);
+        // this is needed for table generation in sqlite
+        ModelAnnotation annotationBindSqlAdapter = this.getAnnotation(BindSqlAdapter.class);
+        AssertKripton.assertTrueOfInvalidDefinition((annotationBindAdapter == null && annotationBindSqlAdapter == null) || (annotationBindAdapter == null) != (annotationBindSqlAdapter == null), this, "@BindAdapter and @BindSqlAdapter can not be used together");
+        if (annotationBindAdapter == null) {
+            annotationBindAdapter = annotationBindSqlAdapter;
+        }
+        if (annotationBindAdapter != null) {
+            typeAdapter.adapterClazz = annotationBindAdapter.getAttributeAsClassName(AnnotationAttributeType.ADAPTER);
+            typeAdapter.dataType = TypeAdapterHelper.detectDestinationType(entity.getElement(), typeAdapter.adapterClazz);
+            // check type adapter
+            checkTypeAdapter(entity, element.asType(), typeAdapter, annotationBindAdapter);
+        }
+    }
 
-	/** The binded object. */
-	public boolean bindedObject;
+    public boolean isInCollection() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/** The order. */
-	public int order;
+    public boolean isNullable() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/** The xml info. */
-	public XmlInfo xmlInfo;
+    public static String xmlName(BindProperty property) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/** The jackson info. */
-	public JacksonInfo jacksonInfo;
+    public boolean isBindedObject() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/** The map key name. */
-	public String mapKeyName;
+    public boolean isBindedCollection() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/** property's label. */
-	public String label;
+    public boolean isBindedArray() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/** The map value name. */
-	public String mapValueName;
+    public boolean isBindedMap() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Instantiates a new bind property.
-	 *
-	 * @param entity the entity
-	 * @param element the element
-	 * @param modelAnnotations the model annotations
-	 */
-	public BindProperty(BindEntity entity, Element element, List<ModelAnnotation> modelAnnotations) {
-		super(entity, element, modelAnnotations);
-
-		nullable = true;
-		inCollection = false;
-		xmlInfo = new XmlInfo();
-		jacksonInfo = new JacksonInfo();
-		
-		ModelAnnotation annotationBindAdapter = this.getAnnotation(BindAdapter.class);
-		// this is needed for table generation in sqlite
-		ModelAnnotation annotationBindSqlAdapter = this.getAnnotation(BindSqlAdapter.class);		
-		AssertKripton.assertTrueOfInvalidDefinition((annotationBindAdapter==null && annotationBindSqlAdapter==null) || (annotationBindAdapter==null)!=(annotationBindSqlAdapter==null) , this, "@BindAdapter and @BindSqlAdapter can not be used together");
-		if (annotationBindAdapter==null) {
-			annotationBindAdapter=annotationBindSqlAdapter;
-		}		
-		
-		if (annotationBindAdapter != null) {
-			typeAdapter.adapterClazz = annotationBindAdapter.getAttributeAsClassName(AnnotationAttributeType.ADAPTER);
-			typeAdapter.dataType = TypeAdapterHelper.detectDestinationType(entity.getElement(), typeAdapter.adapterClazz);
-			
-			// check type adapter
-			checkTypeAdapter(entity, element.asType(), typeAdapter, annotationBindAdapter);
-		}
-
-	}
-
-	/**
-	 * Checks if is in collection.
-	 *
-	 * @return true, if is in collection
-	 */
-	public boolean isInCollection() {
-		return inCollection;
-	}
-
-	/**
-	 * Checks if is nullable.
-	 *
-	 * @return true, if is nullable
-	 */
-	public boolean isNullable() {
-		return nullable;
-	}
-	
-	public static String xmlName(BindProperty property) {
-		String namespace=property.xmlInfo.namespace;
-		String label=property.label;
-		if (StringUtils.hasText(namespace)) {
-			return namespace+":"+label;
-		}
-		
-		return label;
-	}
-
-	/**
-	 * Checks if is binded object.
-	 *
-	 * @return true, if is binded object
-	 */
-	public boolean isBindedObject() {
-		return bindedObject;
-	}
-
-	/**
-	 * Checks if is binded collection.
-	 *
-	 * @return true, if is binded collection
-	 */
-	public boolean isBindedCollection() {
-		return propertyType.isCollection();
-	}
-
-	/**
-	 * Checks if is binded array.
-	 *
-	 * @return true, if is binded array
-	 */
-	public boolean isBindedArray() {
-		return propertyType.isArray();
-	}
-
-	/**
-	 * Checks if is binded map.
-	 *
-	 * @return true, if is binded map
-	 */
-	public boolean isBindedMap() {
-		return propertyType.isMap();
-	}
-
-	public static String xmlNameForItem(BindProperty property) {		
-		String namespace=property.xmlInfo.namespace;
-		String label=property.xmlInfo.labelItem;
-		if (StringUtils.hasText(namespace)) {
-			return namespace+":"+label;
-		}
-		
-		return label;
-	}
-
+    public static String xmlNameForItem(BindProperty property) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

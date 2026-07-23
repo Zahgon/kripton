@@ -2,19 +2,19 @@ package com.abubusoft.kripton.processor;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 
 public class KriptonDynamicClassManager {
 
-	private static final String KRIPTON_X_DATABASE_CLASS_NAME = "androidx.sqlite.db.SupportSQLiteDatabase";
+    private static final String KRIPTON_X_DATABASE_CLASS_NAME = "androidx.sqlite.db.SupportSQLiteDatabase";
 
-	private static final String KRIPTON_X_STATEMENT_CLASS_NAME = "androidx.sqlite.db.SupportSQLiteStatement";
+    private static final String KRIPTON_X_STATEMENT_CLASS_NAME = "androidx.sqlite.db.SupportSQLiteStatement";
 
-	private static final String KRIPTON_X_PREFERENCE_MANAGER_CLASS_NAME = "androidx.preference.PreferenceManager";
-	/*
+    private static final String KRIPTON_X_PREFERENCE_MANAGER_CLASS_NAME = "androidx.preference.PreferenceManager";
+
+    /*
 	 * private static final String
 	 * KRIPTON_X_PAGED_LIVE_DATA_HANDLER_IMPL_CLASS_NAME =
 	 * "com.abubusoft.kripton.androidx.livedata.KriptonXPagedLiveDataHandlerImpl";
@@ -22,121 +22,90 @@ public class KriptonDynamicClassManager {
 	 * KRIPTON_X_PAGED_LIVE_DATA_HANDLER_IMPL_CLASS_NAME =
 	 * "com.abubusoft.kripton.androidx.livedata.KriptonXPagedLiveDataHandlerImpl";
 	 */
+    private static final String KRIPTON_X_PAGED_LIVE_DATA_HANDLER_IMPL_CLASS_NAME = "com.abubusoft.kripton.androidx.livedata.KriptonXPagedLiveDataHandlerImpl";
 
-	private static final String KRIPTON_X_PAGED_LIVE_DATA_HANDLER_IMPL_CLASS_NAME = "com.abubusoft.kripton.androidx.livedata.KriptonXPagedLiveDataHandlerImpl";
+    private static final String KRIPTON_X_PAGED_LIVE_DATA_CLASS_NAME = "com.abubusoft.kripton.androidx.livedata.PagedLiveData";
 
-	private static final String KRIPTON_X_PAGED_LIVE_DATA_CLASS_NAME = "com.abubusoft.kripton.androidx.livedata.PagedLiveData";
+    private static final String KRIPTON_X_MUTABLE_LIVE_DATA_CLASS_NAME = "androidx.lifecycle.MutableLiveData";
 
-	private static final String KRIPTON_X_MUTABLE_LIVE_DATA_CLASS_NAME = "androidx.lifecycle.MutableLiveData";
+    private static final String KRIPTON_X_LIVE_DATA_CLASS_NAME = "com.abubusoft.kripton.androidx.livedata.KriptonXLiveData";
 
-	private static final String KRIPTON_X_LIVE_DATA_CLASS_NAME = "com.abubusoft.kripton.androidx.livedata.KriptonXLiveData";
+    private static final String KRIPTON_X_LIVE_DATA_HANDLER_IMPL_CLASS_NAME = "com.abubusoft.kripton.androidx.livedata.KriptonXLiveDataHandlerImpl";
 
-	private static final String KRIPTON_X_LIVE_DATA_HANDLER_IMPL_CLASS_NAME = "com.abubusoft.kripton.androidx.livedata.KriptonXLiveDataHandlerImpl";
+    private static KriptonDynamicClassManager instance;
 
-	private static KriptonDynamicClassManager instance;
+    public static KriptonDynamicClassManager getInstance() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	public static KriptonDynamicClassManager getInstance() {
-		return instance;
-	}
+    private Set<String> liveDataClazzSet = new HashSet<>();
 
-	private Set<String> liveDataClazzSet = new HashSet<>();
+    private ClassName preferenceManagerClazz;
 
-	private ClassName preferenceManagerClazz;
+    // public static void init(String androidxSupportValue, String
+    // androidxDbSupportValue) {
+    public static void init() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	// public static void init(String androidxSupportValue, String
-	// androidxDbSupportValue) {
-	public static void init() {
+    public ClassName getPreferenceManagerClazz() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		if (instance == null) {
-			instance = new KriptonDynamicClassManager();
+    public static void reset() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-			instance.liveDataClazzSet.clear();
+    private ClassName liveDataClazz;
 
-			// define database support layer classes
-			instance.databaseClazz = ClassName.bestGuess(KRIPTON_X_DATABASE_CLASS_NAME);
-			instance.statementClazz = ClassName.bestGuess(KRIPTON_X_STATEMENT_CLASS_NAME);
+    private ClassName liveDataHandlerClazz;
 
-			instance.liveDataHandlerClazz = ClassName.bestGuess(KRIPTON_X_LIVE_DATA_HANDLER_IMPL_CLASS_NAME);
-			instance.liveDataClazz = ClassName.bestGuess(KRIPTON_X_LIVE_DATA_CLASS_NAME);
-			instance.mutableLiveDataClazz = ClassName.bestGuess(KRIPTON_X_MUTABLE_LIVE_DATA_CLASS_NAME);
+    private ClassName mutableLiveDataClazz;
 
-			instance.pagedLiveDataClazz = ClassName.bestGuess(KRIPTON_X_PAGED_LIVE_DATA_CLASS_NAME);
-			instance.pagedLiveDataHandlerClazz = ClassName.bestGuess(KRIPTON_X_PAGED_LIVE_DATA_HANDLER_IMPL_CLASS_NAME);
+    private ClassName pagedLiveDataClazz;
 
-			instance.liveDataClazzSet.add("androidx.lifecycle.LiveData");
+    private ClassName pagedLiveDataHandlerClazz;
 
-			instance.preferenceManagerClazz = ClassName.bestGuess(KRIPTON_X_PREFERENCE_MANAGER_CLASS_NAME);
+    private ClassName databaseClazz;
 
-			instance.liveDataClazzSet.add(instance.liveDataClazz.toString());
-			instance.liveDataClazzSet.add(instance.mutableLiveDataClazz.toString());
-			instance.liveDataClazzSet.add(instance.pagedLiveDataClazz.toString());
-		}
-	}
+    private ClassName statementClazz;
 
-	public ClassName getPreferenceManagerClazz() {
-		return preferenceManagerClazz;
-	}
+    public ClassName getStatementClazz() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * test purpouse
-	 */
-	public static void reset() {
-		instance = null;
-	}
+    public ClassName getDatabaseClazz() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	private ClassName liveDataClazz;
-	private ClassName liveDataHandlerClazz;
-	private ClassName mutableLiveDataClazz;
-	private ClassName pagedLiveDataClazz;
-	private ClassName pagedLiveDataHandlerClazz;
+    private KriptonDynamicClassManager() {
+    }
 
-	private ClassName databaseClazz;
-	private ClassName statementClazz;
+    public ClassName getLiveDataClazz() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	public ClassName getStatementClazz() {
-		return statementClazz;
-	}
+    public ClassName getLiveDataHandlerClazz() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	public ClassName getDatabaseClazz() {
-		return databaseClazz;
-	}
+    public ClassName getMutableLiveDataClazz() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	private KriptonDynamicClassManager() {
+    public ClassName getPagedLiveDataClazz() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	}
+    public ClassName getPagedLiveDataHandlerClazz() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	public ClassName getLiveDataClazz() {
-		return liveDataClazz;
-	}
+    public boolean isLiveData(String wrapperName) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	public ClassName getLiveDataHandlerClazz() {
-		return liveDataHandlerClazz;
-	}
-
-	public ClassName getMutableLiveDataClazz() {
-		return this.mutableLiveDataClazz;
-	}
-
-	public ClassName getPagedLiveDataClazz() {
-		return pagedLiveDataClazz;
-	}
-
-	public ClassName getPagedLiveDataHandlerClazz() {
-		return pagedLiveDataHandlerClazz;
-	}
-
-	public boolean isLiveData(String wrapperName) {
-		return this.liveDataClazzSet.contains(wrapperName);
-
-	}
-
-	public boolean isPagedLiveData(TypeName liveDataReturnClass) {
-		if (liveDataReturnClass instanceof ParameterizedTypeName) {
-			ParameterizedTypeName p = (ParameterizedTypeName) liveDataReturnClass;
-			ClassName r = p.rawType;
-			return pagedLiveDataClazz.toString().equals(r.toString());
-		}
-
-		return false;
-	}
+    public boolean isPagedLiveData(TypeName liveDataReturnClass) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 
 public class KriptonXLiveData<T> extends MutableLiveData<T> {
 
-	public void updateValue(T value) {
-		this.postValue(value);
-	}
+    public void updateValue(T value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

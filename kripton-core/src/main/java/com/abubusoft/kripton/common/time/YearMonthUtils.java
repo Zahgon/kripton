@@ -3,19 +3,15 @@ package com.abubusoft.kripton.common.time;
 import java.time.YearMonth;
 
 public abstract class YearMonthUtils {
-  private YearMonthUtils() {
 
-  }
+    private YearMonthUtils() {
+    }
 
-  public static YearMonth read(String value) {
-    if (value == null) return null;
+    public static YearMonth read(String value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-    return YearMonth.parse(value);
-  }
-
-  public static String write(YearMonth value) {
-    if (value == null) return null;
-
-    return value.toString();
-  }
+    public static String write(YearMonth value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

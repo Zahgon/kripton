@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.arch.core.executor;
 
 /**
@@ -22,9 +21,9 @@ package androidx.arch.core.executor;
  * It holds a collection a executors for each group of task.
  * <p>
  * TODO: Don't use this from outside, we don't know what the API will look like yet.
- * 
  */
 public abstract class TaskExecutor {
+
     /**
      * Executes the given task in the disk IO thread pool.
      *
@@ -39,19 +38,8 @@ public abstract class TaskExecutor {
      */
     public abstract void postToMainThread(Runnable runnable);
 
-    /**
-     * Executes the given task on the main thread.
-     * <p>
-     * If the current thread is a main thread, immediately runs the given runnable.
-     *
-     * @param runnable The runnable to run on the main thread.
-     */
     public void executeOnMainThread(Runnable runnable) {
-        if (isMainThread()) {
-            runnable.run();
-        } else {
-            postToMainThread(runnable);
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**

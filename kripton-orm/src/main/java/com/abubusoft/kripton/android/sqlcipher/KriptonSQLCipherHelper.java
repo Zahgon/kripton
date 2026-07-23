@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.abubusoft.kripton.android.sqlcipher;
 
 import com.abubusoft.kripton.android.Logger;
-
 import android.content.Context;
 import android.os.Build;
 import net.sqlcipher.DatabaseErrorHandler;
@@ -34,224 +32,121 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper;
  * SupportSQLiteOpenHelper implementation that works with SQLCipher for Android
  */
 class KriptonSQLCipherHelper implements SupportSQLiteOpenHelper {
-	private final OpenHelper delegate;
-	private final byte[] passphrase;
-	private final boolean clearPassphrase;
-	private final boolean requiredPassphrase;
 
-	KriptonSQLCipherHelper(Context context, String name, Callback callback, byte[] passphrase,
-			KriptonSQLCipherHelperFactory.Options options) {
-		SQLiteDatabase.loadLibs(context);
-		clearPassphrase = options.clearPassphrase;
-		delegate = createDelegate(context, name, callback, options);
-		this.passphrase = passphrase;
-		this.requiredPassphrase = options.requiredPassphrase;
-	}
+    private final OpenHelper delegate;
 
-	private OpenHelper createDelegate(Context context, String name, final Callback callback,
-			KriptonSQLCipherHelperFactory.Options options) {
-		final Database[] dbRef = new Database[1];
+    private final byte[] passphrase;
 
-		return (new OpenHelper(context, name, dbRef, callback, options));
-	}
+    private final boolean clearPassphrase;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	synchronized public String getDatabaseName() {
-		return delegate.getDatabaseName();
-	}
+    private final boolean requiredPassphrase;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-	synchronized public void setWriteAheadLoggingEnabled(boolean enabled) {
-		delegate.setWriteAheadLoggingEnabled(enabled);
-	}
+    KriptonSQLCipherHelper(Context context, String name, Callback callback, byte[] passphrase, KriptonSQLCipherHelperFactory.Options options) {
+        SQLiteDatabase.loadLibs(context);
+        clearPassphrase = options.clearPassphrase;
+        delegate = createDelegate(context, name, callback, options);
+        this.passphrase = passphrase;
+        this.requiredPassphrase = options.requiredPassphrase;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * NOTE: by default, this implementation zeros out the passphrase after
-	 * opening the database
-	 */
-	@Override
-	synchronized public SupportSQLiteDatabase getWritableDatabase() {
-		SupportSQLiteDatabase result;
+    private OpenHelper createDelegate(Context context, String name, final Callback callback, KriptonSQLCipherHelperFactory.Options options) {
+        final Database[] dbRef = new Database[1];
+        return (new OpenHelper(context, name, dbRef, callback, options));
+    }
 
-		// if we don't have a passphrase, an exception will be thrown
-		if (requiredPassphrase && passphrase == null) {
-			Logger.fatal("Try to open ciphered database %s without any passphrase", getDatabaseName());
+    @Override
+    synchronized public String getDatabaseName() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-			throw new SQLCipherPassphraseRequiredException();
-		}
-		try {
-			result = delegate.getWritableSupportDatabase(passphrase);
-		} catch (SQLiteException e) {
-			if (passphrase != null) {
-				boolean isCleared = true;
+    @Override
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    synchronized public void setWriteAheadLoggingEnabled(boolean enabled) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-				for (byte b : passphrase) {
-					isCleared = isCleared && (b == (byte) 0);
-				}
+    @Override
+    synchronized public SupportSQLiteDatabase getWritableDatabase() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-				if (isCleared) {
-					throw new IllegalStateException("The passphrase appears to be cleared. This happens by"
-							+ "default the first time you use the factory to open a database, so we can remove the"
-							+ "cleartext passphrase from memory. If you close the database yourself, please use a"
-							+ "fresh SafeHelperFactory to reopen it. If something else (e.g., Room) closed the"
-							+ "database, and you cannot control that, use SafeHelperFactory.Options to opt out of"
-							+ "the automatic password clearing step. See the project README for more information.");
-				}
-			}
+    @Override
+    public SupportSQLiteDatabase getReadableDatabase() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-			throw e;
-		}
+    @Override
+    synchronized public void close() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		if (clearPassphrase && passphrase != null) {
-			for (int i = 0; i < passphrase.length; i++) {
-				passphrase[i] = (byte) 0;
-			}
-		}
+    static class OpenHelper extends SQLiteOpenHelper {
 
-		return (result);
-	}
+        private final Database[] dbRef;
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * NOTE: this implementation delegates to getWritableDatabase(), to ensure
-	 * that we only need the passphrase once
-	 */
-	@Override
-	public SupportSQLiteDatabase getReadableDatabase() {
-		return (getWritableDatabase());
-	}
+        private volatile Callback callback;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	synchronized public void close() {
-		delegate.close();
-	}
+        private volatile boolean migrated;
 
-	static class OpenHelper extends SQLiteOpenHelper {
-		private final Database[] dbRef;
-		private volatile Callback callback;
-		private volatile boolean migrated;
+        OpenHelper(Context context, String name, Database[] dbRef, Callback callback, KriptonSQLCipherHelperFactory.Options options) {
+            super(context, name, null, callback.version, new SQLiteDatabaseHook() {
 
-		OpenHelper(Context context, String name, Database[] dbRef, Callback callback,
-				KriptonSQLCipherHelperFactory.Options options) {
-			super(context, name, null, callback.version, new SQLiteDatabaseHook() {
-				@Override
-				public void preKey(SQLiteDatabase database) {
-					if (options != null && options.preKeySql != null) {
-						database.rawExecSQL(options.preKeySql);
-					}
-				}
+                @Override
+                public void preKey(SQLiteDatabase database) {
+                    throw new UnsupportedOperationException("STUB: not implemented");
+                }
 
-				@Override
-				public void postKey(SQLiteDatabase database) {
-					if (options != null && options.postKeySql != null) {
-						database.rawExecSQL(options.postKeySql);
-					}
-				}
-			}, new DatabaseErrorHandler() {
-				@Override
-				public void onCorruption(SQLiteDatabase dbObj) {
-					Database db = dbRef[0];
+                @Override
+                public void postKey(SQLiteDatabase database) {
+                    throw new UnsupportedOperationException("STUB: not implemented");
+                }
+            }, new DatabaseErrorHandler() {
 
-					if (db != null) {
-						callback.onCorruption(db);
-					}
-				}
-			});
+                @Override
+                public void onCorruption(SQLiteDatabase dbObj) {
+                    throw new UnsupportedOperationException("STUB: not implemented");
+                }
+            });
+            this.dbRef = dbRef;
+            this.callback = callback;
+        }
 
-			this.dbRef = dbRef;
-			this.callback = callback;
-		}
+        synchronized SupportSQLiteDatabase getWritableSupportDatabase(byte[] passphrase) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-		synchronized SupportSQLiteDatabase getWritableSupportDatabase(byte[] passphrase) {
-			migrated = false;
+        synchronized Database getWrappedDb(SQLiteDatabase db) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-			SQLiteDatabase db = super.getWritableDatabase(passphrase);
+        @Override
+        public void onCreate(SQLiteDatabase sqLiteDatabase) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-			if (migrated) {
-				close();
-				return getWritableSupportDatabase(passphrase);
-			}
+        @Override
+        public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-			return getWrappedDb(db);
-		}
+        @Override
+        public void onConfigure(SQLiteDatabase db) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-		synchronized Database getWrappedDb(SQLiteDatabase db) {
-			Database wrappedDb = dbRef[0];
+        @Override
+        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-			if (wrappedDb == null) {
-				wrappedDb = new Database(db);
-				dbRef[0] = wrappedDb;
-			}
+        @Override
+        public void onOpen(SQLiteDatabase db) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-			return (dbRef[0]);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void onCreate(SQLiteDatabase sqLiteDatabase) {
-			callback.onCreate(getWrappedDb(sqLiteDatabase));
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-			migrated = true;
-			callback.onUpgrade(getWrappedDb(sqLiteDatabase), oldVersion, newVersion);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void onConfigure(SQLiteDatabase db) {
-			callback.onConfigure(getWrappedDb(db));
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			migrated = true;
-			callback.onDowngrade(getWrappedDb(db), oldVersion, newVersion);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void onOpen(SQLiteDatabase db) {
-			if (!migrated) {
-				// from Google: "if we've migrated, we'll re-open the db so we
-				// should not call the callback."
-				callback.onOpen(getWrappedDb(db));
-			}
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public synchronized void close() {
-			super.close();
-			dbRef[0] = null;
-		}
-	}
+        @Override
+        public synchronized void close() {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+    }
 }

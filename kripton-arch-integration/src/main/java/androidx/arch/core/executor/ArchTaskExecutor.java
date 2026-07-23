@@ -13,30 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.arch.core.executor;
 
 import java.util.concurrent.Executor;
 
 /**
  * A static class that serves as a central point to execute common tasks.
- *
  */
 public class ArchTaskExecutor extends TaskExecutor {
-    
-    /** The s instance. */
+
+    /**
+     * The s instance.
+     */
     private static volatile ArchTaskExecutor sInstance;
 
-    /** The m delegate. */
+    /**
+     * The m delegate.
+     */
     private TaskExecutor mDelegate;
 
-    /** The m default task executor. */
+    /**
+     * The m default task executor.
+     */
     private final TaskExecutor mDefaultTaskExecutor;
 
-    /** The Constant sMainThreadExecutor. */
+    /**
+     * The Constant sMainThreadExecutor.
+     */
     private static final Executor sMainThreadExecutor = command -> getInstance().postToMainThread(command);
 
-    /** The Constant sIOThreadExecutor. */
+    /**
+     * The Constant sIOThreadExecutor.
+     */
     private static final Executor sIOThreadExecutor = command -> getInstance().executeOnDiskIO(command);
 
     /**
@@ -47,35 +55,12 @@ public class ArchTaskExecutor extends TaskExecutor {
         mDelegate = mDefaultTaskExecutor;
     }
 
-    /**
-     * Returns an instance of the task executor.
-     *
-     * @return The singleton ArchTaskExecutor.
-     */
     public static ArchTaskExecutor getInstance() {
-        if (sInstance != null) {
-            return sInstance;
-        }
-        synchronized (ArchTaskExecutor.class) {
-            if (sInstance == null) {
-                sInstance = new ArchTaskExecutor();
-            }
-        }
-        return sInstance;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Sets a delegate to handle task execution requests.
-     * <p>
-     * If you have a common executor, you can set it as the delegate and App Toolkit components will
-     * use your executors. You may also want to use this for your tests.
-     * <p>
-     * Calling this method with {@code null} sets it to the default TaskExecutor.
-     *
-     * @param taskExecutor The task executor to handle task requests.
-     */
     public void setDelegate(TaskExecutor taskExecutor) {
-        mDelegate = taskExecutor == null ? mDefaultTaskExecutor : taskExecutor;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
@@ -83,7 +68,7 @@ public class ArchTaskExecutor extends TaskExecutor {
      */
     @Override
     public void executeOnDiskIO(Runnable runnable) {
-        mDelegate.executeOnDiskIO(runnable);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
@@ -91,25 +76,15 @@ public class ArchTaskExecutor extends TaskExecutor {
      */
     @Override
     public void postToMainThread(Runnable runnable) {
-        mDelegate.postToMainThread(runnable);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Gets the main thread executor.
-     *
-     * @return the main thread executor
-     */
     public static Executor getMainThreadExecutor() {
-        return sMainThreadExecutor;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Gets the IO thread executor.
-     *
-     * @return the IO thread executor
-     */
     public static Executor getIOThreadExecutor() {
-        return sIOThreadExecutor;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
@@ -117,6 +92,6 @@ public class ArchTaskExecutor extends TaskExecutor {
      */
     @Override
     public boolean isMainThread() {
-        return mDelegate.isMainThread();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

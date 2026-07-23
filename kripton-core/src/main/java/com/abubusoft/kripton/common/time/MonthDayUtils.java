@@ -3,19 +3,15 @@ package com.abubusoft.kripton.common.time;
 import java.time.MonthDay;
 
 public abstract class MonthDayUtils {
-  private MonthDayUtils() {
 
-  }
+    private MonthDayUtils() {
+    }
 
-  public static MonthDay read(String value) {
-    if (value == null) return null;
+    public static MonthDay read(String value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-    return MonthDay.parse(value);
-  }
-
-  public static String write(MonthDay value) {
-    if (value == null) return null;
-
-    return value.toString();
-  }
+    public static String write(MonthDay value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

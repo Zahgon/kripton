@@ -4,57 +4,45 @@ import android.util.SparseArray;
 import androidx.sqlite.db.SupportSQLiteProgram;
 
 class BindingsRecorder implements SupportSQLiteProgram {
-	private SparseArray<Object> bindings = new SparseArray<>();
 
-	@Override
-	public void bindNull(int index) {
-		bindings.put(index, null);
-	}
+    private SparseArray<Object> bindings = new SparseArray<>();
 
-	@Override
-	public void bindLong(int index, long value) {
-		bindings.put(index, value);
-	}
+    @Override
+    public void bindNull(int index) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void bindDouble(int index, double value) {
-		bindings.put(index, value);
-	}
+    @Override
+    public void bindLong(int index, long value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void bindString(int index, String value) {
-		bindings.put(index, value);
-	}
+    @Override
+    public void bindDouble(int index, double value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void bindBlob(int index, byte[] value) {
-		bindings.put(index, value);
-	}
+    @Override
+    public void bindString(int index, String value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void clearBindings() {
-		bindings.clear();
-	}
+    @Override
+    public void bindBlob(int index, byte[] value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void close() {
-		clearBindings();
-	}
+    @Override
+    public void clearBindings() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	String[] getBindings() {
-		final String[] result = new String[bindings.size()];
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		for (int i = 0; i < bindings.size(); i++) {
-			int key = bindings.keyAt(i);
-			Object binding = bindings.get(key);
-
-			if (binding != null) {
-				result[i] = bindings.get(key).toString();
-			} else {
-				result[i] = ""; // SQLCipher does not like null binding values
-			}
-		}
-
-		return (result);
-	}
+    String[] getBindings() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

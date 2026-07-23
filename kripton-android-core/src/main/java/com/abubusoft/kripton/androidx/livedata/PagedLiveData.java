@@ -1,5 +1,4 @@
 /**
- * 
  */
 package com.abubusoft.kripton.androidx.livedata;
 
@@ -16,214 +15,149 @@ import com.abubusoft.kripton.android.Paginator;
  */
 public abstract class PagedLiveData<T> extends KriptonXLiveData<T> implements PagedResult {
 
-	/**
-	 * Allows to create a builder for a page request. This builder is usefully
-	 * when you need to modify different parameter of page request and you want
-	 * to make only a page request.
-	 * 
-	 * @return
-	 */
-	public PageRequestBuilder createPageRequestBuilder() {
-		return new PageRequestBuilder();
-	}
+    public PageRequestBuilder createPageRequestBuilder() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * This builder allows you to manipulate page request object, changing some
-	 * its attributes and invoke an unique update to live date.
-	 * 
-	 * @author xcesco
-	 *
-	 */
-	public class PageRequestBuilder {
-		private int originalOffset;
-		private int originalPage;
-		private int originalPageSize;
+    /**
+     * This builder allows you to manipulate page request object, changing some
+     * its attributes and invoke an unique update to live date.
+     *
+     * @author xcesco
+     */
+    public class PageRequestBuilder {
 
-		private int offset;
-		private int page;
-		private int pageSize;
+        private int originalOffset;
 
-		private PageRequestBuilder() {
-			originalOffset = pagedResult.getOffset();
-			originalPage = pagedResult.getPageNumber();
-			originalPageSize = pagedResult.getPageSize();
+        private int originalPage;
 
-			offset = originalOffset;
-			page = originalPage;
-			pageSize = originalPageSize;
-		}
+        private int originalPageSize;
 
-		/**
-		 * change offset
-		 * 
-		 * @param value
-		 * @return
-		 */
-		public PageRequestBuilder offset(int value) {
-			offset = value;
-			return this;
-		}
+        private int offset;
 
-		/**
-		 * change page
-		 * 
-		 * @param value
-		 * @return
-		 */
-		public PageRequestBuilder page(int value) {
-			page = value;
-			return this;
-		}
+        private int page;
 
-		/**
-		 * change pageSize
-		 * 
-		 * @param value
-		 * @return
-		 */
-		public PageRequestBuilder pageSize(int value) {
-			pageSize = value;
-			return this;
-		}
+        private int pageSize;
 
-		/**
-		 * Applies all the change you defined with this builder. Backend
-		 * livedata will be updated. If nothing changes, no livedata update will
-		 * be performed.
-		 */
-		public void apply() {
-			boolean changes = false;
-			if (originalOffset != offset) {
-				changes = true;
-				pagedResult.setOffset(offset);
-			}
+        private PageRequestBuilder() {
+            originalOffset = pagedResult.getOffset();
+            originalPage = pagedResult.getPageNumber();
+            originalPageSize = pagedResult.getPageSize();
+            offset = originalOffset;
+            page = originalPage;
+            pageSize = originalPageSize;
+        }
 
-			if (originalPageSize != pageSize) {
-				changes = true;
-				pagedResult.setPageSize(pageSize);
-			}
+        public PageRequestBuilder offset(int value) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-			if (originalPage != page) {
-				changes = true;
-				pagedResult.setPage(page);
-			}
+        public PageRequestBuilder page(int value) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-			if (changes) {
-				handler.invalidate();
-			}
-		}
-	}
+        public PageRequestBuilder pageSize(int value) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
 
-	private final PagedResult pagedResult;
+        public void apply() {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+    }
 
-	private KriptonXPagedLiveDataHandlerImpl<T> handler;
+    private final PagedResult pagedResult;
 
-	private PageRequestExecutor<T> pageRequestExecutor;
+    private KriptonXPagedLiveDataHandlerImpl<T> handler;
 
-	public PagedLiveData(Paginator<T> pageRequest, KriptonXPagedLiveDataHandlerImpl<T> handler) {
-		this.pagedResult = pageRequest;
-		this.pageRequestExecutor = pageRequest;
-		this.handler = handler;
-	}
+    private PageRequestExecutor<T> pageRequestExecutor;
 
-	public PageRequestExecutor<T> getExecutor() {
-		return this.pageRequestExecutor;
-	}
+    public PagedLiveData(Paginator<T> pageRequest, KriptonXPagedLiveDataHandlerImpl<T> handler) {
+        this.pagedResult = pageRequest;
+        this.pageRequestExecutor = pageRequest;
+        this.handler = handler;
+    }
 
-	@Override
-	public int getPageNumber() {
-		return pagedResult.getPageNumber();
-	}
+    public PageRequestExecutor<T> getExecutor() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public int getPageSize() {
-		return pagedResult.getPageSize();
-	}
+    @Override
+    public int getPageNumber() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void setPage(int page) {
-		if (pagedResult.getPageNumber() != page) {
-			pagedResult.setPage(page);
-			handler.invalidate();
-		}
-	}
+    @Override
+    public int getPageSize() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void nextPage() {
-		pagedResult.setPage(pagedResult.getPageNumber() + 1);
-		handler.invalidate();
-	}
+    @Override
+    public void setPage(int page) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void setOffset(int offset) {
-		if (pagedResult.getOffset() != offset && offset >= 0) {
-			this.pagedResult.setOffset(offset);
+    @Override
+    public void nextPage() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-			handler.invalidate();
-		}
-	}
+    @Override
+    public void setOffset(int offset) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void previousPage() {
-		pagedResult.setPage(pagedResult.getPageNumber() - 1);
-		handler.invalidate();
-	}
+    @Override
+    public void previousPage() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void firstPage() {
-		if (pagedResult.getPageNumber() != 0) {
-			pagedResult.setPage(0);
-			handler.invalidate();
-		}
-	}
+    @Override
+    public void firstPage() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public int getOffset() {
-		return pagedResult.getOffset();
-	}
+    @Override
+    public int getOffset() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void setPageSize(int pageSize) {
-		if (pagedResult.getPageSize() != pageSize && pageSize > 0) {
-			this.pagedResult.setPageSize(pageSize);
+    @Override
+    public void setPageSize(int pageSize) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-			handler.invalidate();
-		}
-	}
+    @Override
+    public int getTotalElements() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public int getTotalElements() {
-		return pagedResult.getTotalElements();
-	}
+    @Override
+    public void lastPage() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void lastPage() {
-		setPage(getTotalElements() / getPageSize());
-	}
+    @Override
+    public int getTotalPages() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public int getTotalPages() {
-		return pagedResult.getTotalPages();
-	}
+    @Override
+    public boolean isLast() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean isLast() {
-		return pagedResult.isLast();
-	}
+    @Override
+    public boolean isFirst() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean isFirst() {
-		return pagedResult.isFirst();
-	}
+    @Override
+    public boolean hasNext() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean hasNext() {
-		return pagedResult.hasNext();
-	}
-
-	@Override
-	public boolean hasPrevious() {
-		return pagedResult.hasPrevious();
-	}
-
+    @Override
+    public boolean hasPrevious() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

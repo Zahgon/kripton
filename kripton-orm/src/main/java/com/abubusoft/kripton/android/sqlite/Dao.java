@@ -1,22 +1,23 @@
-/*******************************************************************************
- * Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
+/**
+ * ****************************************************************************
+ *  Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * *****************************************************************************
+ */
 package com.abubusoft.kripton.android.sqlite;
 
 import com.abubusoft.kripton.android.annotation.BindDao;
-
 import android.content.ContentValues;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteStatement;
@@ -24,153 +25,85 @@ import androidx.sqlite.db.SupportSQLiteStatement;
 /**
  * This class become the parent class for every Dao generated. Every Dao have to
  * be defined by an interface with {@link BindDao} annotation.
- * 
- * @author Francesco Benincasa (info@abubusoft.com)
  *
- */ 
+ * @author Francesco Benincasa (info@abubusoft.com)
+ */
 public abstract class Dao implements AutoCloseable {
 
-	/**
-	 * Instantiates a new dao.
-	 *
-	 * @param context the context
-	 */
-	public Dao(SQLContext context) {
-		this._context = context;
-	}
+    /**
+     * Instantiates a new dao.
+     *
+     * @param context the context
+     */
+    public Dao(SQLContext context) {
+        this._context = context;
+    }
 
-	/**
-	 * This attribute is with _ prefix, because it's used on Dao's method and we
-	 * won't to mix it with method's parameters (that usually does not have _
-	 * prefix).
-	 */
-	protected SQLContext _context;
+    /**
+     * This attribute is with _ prefix, because it's used on Dao's method and we
+     * won't to mix it with method's parameters (that usually does not have _
+     * prefix).
+     */
+    protected SQLContext _context;
 
-	/**
-	 * Retrieve SQLite database instance.
-	 *
-	 * @return the SQLite database
-	 */
-	protected SupportSQLiteDatabase getDatabase() {
-		return _context.getDatabase();
-	}
+    protected SupportSQLiteDatabase getDatabase() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see java.lang.AutoCloseable#close()
 	 */
-	@Override
-	public void close() {
-		// for the moment, we do nothing here.
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	}
+    protected KriptonContentValues contentValues() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Content values.
-	 *
-	 * @return the kripton content values
-	 */
-	protected KriptonContentValues contentValues() {
-		return _context.contentValues(null);
-	}
+    protected KriptonContentValues contentValuesForUpdate() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Content values for update.
-	 *
-	 * @return the kripton content values
-	 */
-	protected KriptonContentValues contentValuesForUpdate() {
-		return _context.contentValuesForUpdate(null);
-	}
+    protected KriptonContentValues contentValuesForUpdate(SupportSQLiteStatement compiledStatement) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Content values for update.
-	 *
-	 * @param compiledStatement the compiled statement
-	 * @return the kripton content values
-	 */
-	protected KriptonContentValues contentValuesForUpdate(SupportSQLiteStatement compiledStatement) {
-		return _context.contentValuesForUpdate(compiledStatement);
-	}
+    protected KriptonContentValues contentValuesForContentProvider(ContentValues values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Content values for content provider.
-	 *
-	 * @param values the values
-	 * @return the kripton content values
-	 */
-	protected KriptonContentValues contentValuesForContentProvider(ContentValues values) {
-		return _context.contentValuesForContentProvider(values);
-	}
+    protected StringBuilder sqlBuilder() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Sql builder.
-	 *
-	 * @return the string builder
-	 */
-	protected StringBuilder sqlBuilder() {
-		return _context.sqlBuilder();
-	}
+    protected void onSessionOpened() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * <p>
-	 * Invoked when a transation or a shared connection is opened
-	 * </p>.
-	 */
-	protected void onSessionOpened() {
-		latestEvent = null;
-	}
+    protected void onEvent(SQLiteEvent event) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * <p>
-	 * Invoked when a SQL event is fired.
-	 *
-	 * @param event the event
-	 */
-	protected void onEvent(SQLiteEvent event) {
-		latestEvent = event;
-	}
+    /**
+     * The latest event.
+     */
+    protected SQLiteEvent latestEvent;
 
-	/** The latest event. */
-	protected SQLiteEvent latestEvent;
+    protected SQLiteEvent getLatestEvent() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * <p>
-	 * Retrieve latest event.
-	 * </p>
-	 *
-	 * @return the latest event
-	 */
-	protected SQLiteEvent getLatestEvent() {
-		return latestEvent;
-	}
+    protected boolean hasLatestEvent() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * <p>
-	 * Return true, if there is an event.
-	 * </p>
-	 *
-	 * @return true, if successful
-	 */
-	protected boolean hasLatestEvent() {
-		return latestEvent == null;
-	}
-	
-	/**
-	 * <p>clear latest event</p>.
-	 */
-	protected void clearEvents() {
-		latestEvent=null;
-	}
-	
-	
+    protected void clearEvents() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * <p>
-	 * Invoked when a transation or a shared connection is closed
-	 * </p>.
-	 */
-	protected void onSessionClosed() {
-		latestEvent = null;
-	}
-
+    protected void onSessionClosed() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

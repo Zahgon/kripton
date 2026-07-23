@@ -3,19 +3,15 @@ package com.abubusoft.kripton.common.time;
 import java.time.LocalDateTime;
 
 public abstract class LocalDateTimeUtils {
-  private LocalDateTimeUtils() {
 
-  }
+    private LocalDateTimeUtils() {
+    }
 
-  public static LocalDateTime read(String value) {
-    if (value == null) return null;
+    public static LocalDateTime read(String value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-    return LocalDateTime.parse(value);
-  }
-
-  public static String write(LocalDateTime value) {
-    if (value == null) return null;
-
-    return value.toString();
-  }
+    public static String write(LocalDateTime value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

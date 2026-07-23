@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.abubusoft.kripton.android.executor;
 
 import java.util.concurrent.Executor;
@@ -22,113 +21,89 @@ import java.util.concurrent.Executor;
  * A static class that serves as a central point to execute common tasks.
  */
 public class KriptonTaskExecutor extends TaskExecutor {
-	
-	/** The s instance. */
-	private static volatile KriptonTaskExecutor sInstance;
 
-	/** The m delegate. */
-	private TaskExecutor mDelegate;
+    /**
+     * The s instance.
+     */
+    private static volatile KriptonTaskExecutor sInstance;
 
-	/** The m default task executor. */
-	private TaskExecutor mDefaultTaskExecutor;
+    /**
+     * The m delegate.
+     */
+    private TaskExecutor mDelegate;
 
-	/** The Constant sMainThreadExecutor. */
-	private static final Executor sMainThreadExecutor = new Executor() {
-		@Override
-		public void execute(Runnable command) {
-			getInstance().postToMainThread(command);
-		}
-	};
+    /**
+     * The m default task executor.
+     */
+    private TaskExecutor mDefaultTaskExecutor;
 
-	/** The Constant sIOThreadExecutor. */
-	private static final Executor sIOThreadExecutor = new Executor() {
-		@Override
-		public void execute(Runnable command) {
-			getInstance().executeOnDiskIO(command);
-		}
-	};
+    /**
+     * The Constant sMainThreadExecutor.
+     */
+    private static final Executor sMainThreadExecutor = new Executor() {
 
-	/**
-	 * Instantiates a new kripton task executor.
-	 */
-	private KriptonTaskExecutor() {
-		mDefaultTaskExecutor = new KriptonDefaultTaskExecutor();
-		mDelegate = mDefaultTaskExecutor;
-	}
+        @Override
+        public void execute(Runnable command) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+    };
 
-	/**
-	 * Returns an instance of the task executor.
-	 *
-	 * @return The singleton ArchTaskExecutor.
-	 */
-	public static KriptonTaskExecutor getInstance() {
-		if (sInstance != null) {
-			return sInstance;
-		}
-		synchronized (KriptonTaskExecutor.class) {
-			if (sInstance == null) {
-				sInstance = new KriptonTaskExecutor();
-			}
-		}
-		return sInstance;
-	}
+    /**
+     * The Constant sIOThreadExecutor.
+     */
+    private static final Executor sIOThreadExecutor = new Executor() {
 
-	/**
-	 * Sets a delegate to handle task execution requests.
-	 * <p>
-	 * If you have a common executor, you can set it as the delegate and App
-	 * Toolkit components will use your executors. You may also want to use this
-	 * for your tests.
-	 * <p>
-	 * Calling this method with {@code null} sets it to the default
-	 * TaskExecutor.
-	 *
-	 * @param taskExecutor
-	 *            The task executor to handle task requests.
-	 */
-	public void setDelegate(TaskExecutor taskExecutor) {
-		mDelegate = taskExecutor == null ? mDefaultTaskExecutor : taskExecutor;
-	}
+        @Override
+        public void execute(Runnable command) {
+            throw new UnsupportedOperationException("STUB: not implemented");
+        }
+    };
 
-	/* (non-Javadoc)
+    /**
+     * Instantiates a new kripton task executor.
+     */
+    private KriptonTaskExecutor() {
+        mDefaultTaskExecutor = new KriptonDefaultTaskExecutor();
+        mDelegate = mDefaultTaskExecutor;
+    }
+
+    public static KriptonTaskExecutor getInstance() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
+
+    public void setDelegate(TaskExecutor taskExecutor) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
+
+    /* (non-Javadoc)
 	 * @see com.abubusoft.kripton.android.sqlite.executors.TaskExecutor#executeOnDiskIO(java.lang.Runnable)
 	 */
-	@Override
-	public void executeOnDiskIO(Runnable runnable) {
-		mDelegate.executeOnDiskIO(runnable);
-	}
+    @Override
+    public void executeOnDiskIO(Runnable runnable) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see com.abubusoft.kripton.android.sqlite.executors.TaskExecutor#postToMainThread(java.lang.Runnable)
 	 */
-	@Override
-	public void postToMainThread(Runnable runnable) {
-		mDelegate.postToMainThread(runnable);
-	}
+    @Override
+    public void postToMainThread(Runnable runnable) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Gets the main thread executor.
-	 *
-	 * @return the main thread executor
-	 */
-	public static Executor getMainThreadExecutor() {
-		return sMainThreadExecutor;
-	}
+    public static Executor getMainThreadExecutor() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Gets the IO thread executor.
-	 *
-	 * @return the IO thread executor
-	 */
-	public static Executor getIOThreadExecutor() {
-		return sIOThreadExecutor;
-	}
+    public static Executor getIOThreadExecutor() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see com.abubusoft.kripton.android.sqlite.executors.TaskExecutor#isMainThread()
 	 */
-	@Override
-	public boolean isMainThread() {
-		return mDelegate.isMainThread();
-	}
+    @Override
+    public boolean isMainThread() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

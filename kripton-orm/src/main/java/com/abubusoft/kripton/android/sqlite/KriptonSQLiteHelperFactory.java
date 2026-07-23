@@ -5,22 +5,20 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper.Configuration;
 
 /**
  * Default open helper for standard sqlite databases.
- * 
- * @author Francesco Benincasa (xcesco@gmail.com)
  *
+ * @author Francesco Benincasa (xcesco@gmail.com)
  */
 public class KriptonSQLiteHelperFactory implements SupportSQLiteOpenHelper.Factory {
 
-	public KriptonSQLiteHelperFactory() {
-	}
+    public KriptonSQLiteHelperFactory() {
+    }
 
-	public static KriptonSQLiteHelperFactory build() {
-		return new KriptonSQLiteHelperFactory();
-	}
+    public static KriptonSQLiteHelperFactory build() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public SupportSQLiteOpenHelper create(Configuration configuration) {
-		return new KriptonSQLiteHelper(configuration);
-	}
-
+    @Override
+    public SupportSQLiteOpenHelper create(Configuration configuration) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

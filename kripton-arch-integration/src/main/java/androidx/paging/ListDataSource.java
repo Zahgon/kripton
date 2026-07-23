@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.paging;
 
 import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
 class ListDataSource<T> extends PositionalDataSource<T> {
+
     private final List<T> mList;
 
     public ListDataSource(List<T> list) {
@@ -29,23 +28,12 @@ class ListDataSource<T> extends PositionalDataSource<T> {
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams params,
-            @NonNull LoadInitialCallback<T> callback) {
-        final int totalCount = mList.size();
-
-        final int position = computeInitialLoadPosition(params, totalCount);
-        final int loadSize = computeInitialLoadSize(params, position, totalCount);
-
-        // for simplicity, we could return everything immediately,
-        // but we tile here since it's expected behavior
-        List<T> sublist = mList.subList(position, position + loadSize);
-        callback.onResult(sublist, position, totalCount);
+    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<T> callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
-    public void loadRange(@NonNull LoadRangeParams params,
-            @NonNull LoadRangeCallback<T> callback) {
-        callback.onResult(mList.subList(params.startPosition,
-                params.startPosition + params.loadSize));
+    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<T> callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

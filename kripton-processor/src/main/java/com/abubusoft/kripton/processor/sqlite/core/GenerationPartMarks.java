@@ -1,39 +1,24 @@
 /**
- * 
  */
 package com.abubusoft.kripton.processor.sqlite.core;
-
 
 /**
  * <p>Needed to mark generation code methods.
  *
  * @author Francesco Benincasa (info@abubusoft.com)
  */
-public enum GenerationPartMarks{
+public enum GenerationPartMarks {
 
-	/** The code 001. */
-	CODE_001
-	;
+    /**
+     * The code 001.
+     */
+    CODE_001;
 
-	/**
-	 * Begin.
-	 *
-	 * @param methodBuilder the method builder
-	 * @param code the code
-	 */
-	public static void begin(com.squareup.javapoet.MethodSpec.Builder methodBuilder, GenerationPartMarks code) {
-		methodBuilder.addCode("// generation $L -- BEGIN\n", code);		
-	}
+    public static void begin(com.squareup.javapoet.MethodSpec.Builder methodBuilder, GenerationPartMarks code) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * End.
-	 *
-	 * @param methodBuilder the method builder
-	 * @param code the code
-	 */
-	public static void end(com.squareup.javapoet.MethodSpec.Builder methodBuilder, GenerationPartMarks code) {
-		methodBuilder.addCode("// generation $L -- END\n", code);
-		
-	}
-
+    public static void end(com.squareup.javapoet.MethodSpec.Builder methodBuilder, GenerationPartMarks code) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

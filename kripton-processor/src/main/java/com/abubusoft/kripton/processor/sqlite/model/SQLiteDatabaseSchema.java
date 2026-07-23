@@ -1,18 +1,20 @@
-/*******************************************************************************
- * Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
+/**
+ * ****************************************************************************
+ *  Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * *****************************************************************************
+ */
 package com.abubusoft.kripton.processor.sqlite.model;
 
 import java.util.ArrayList;
@@ -23,14 +25,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-
 import com.abubusoft.kripton.android.annotation.BindDataSource;
 import com.abubusoft.kripton.android.annotation.BindDataSourceOptions;
 import com.abubusoft.kripton.android.annotation.BindSqlTransaction;
@@ -67,14 +67,12 @@ public class SQLiteDatabaseSchema extends ModelBucket<SQLiteDaoDefinition, TypeE
     /**
      * The class name converter.
      */
-    public Converter<String, String> classNameConverter = CaseFormat.UPPER_CAMEL
-            .converterTo(CaseFormat.LOWER_UNDERSCORE);
+    public Converter<String, String> classNameConverter = CaseFormat.UPPER_CAMEL.converterTo(CaseFormat.LOWER_UNDERSCORE);
 
     /**
      * The column name converter.
      */
-    public Converter<String, String> columnNameConverter = CaseFormat.LOWER_CAMEL
-            .converterTo(CaseFormat.LOWER_UNDERSCORE);
+    public Converter<String, String> columnNameConverter = CaseFormat.LOWER_CAMEL.converterTo(CaseFormat.LOWER_UNDERSCORE);
 
     /**
      * The entities.
@@ -101,13 +99,8 @@ public class SQLiteDatabaseSchema extends ModelBucket<SQLiteDaoDefinition, TypeE
      */
     protected long globalCounter = 0;
 
-    /**
-     * Next counter.
-     *
-     * @return the long
-     */
     public long nextCounter() {
-        return ++globalCounter;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -120,13 +113,8 @@ public class SQLiteDatabaseSchema extends ModelBucket<SQLiteDaoDefinition, TypeE
      */
     public String generatedClassName;
 
-    /**
-     * Gets the generated class name.
-     *
-     * @return the generatedClassName
-     */
     public String getGeneratedClassName() {
-        return generatedClassName;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -228,13 +216,8 @@ public class SQLiteDatabaseSchema extends ModelBucket<SQLiteDaoDefinition, TypeE
      */
     public String schemaLocationDirectory;
 
-    /**
-     * Gets the dao name set.
-     *
-     * @return the dao name set
-     */
     public List<String> getDaoNameSet() {
-        return daoNameSet;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -257,13 +240,8 @@ public class SQLiteDatabaseSchema extends ModelBucket<SQLiteDaoDefinition, TypeE
      * @param configPopulatorClass
      * @param neverClose
      */
-    public SQLiteDatabaseSchema(TypeElement item, String schemaFileName, int schemaVersion, boolean schema, boolean log,
-                                boolean asyncTask, boolean generateCursor, boolean generateRx, List<String> daoIntoDataSource,
-                                String configOpenHelperFactoryClass, String configDatabaseErrorHandlerClass,
-                                String configDatabaseLifecycleHandlerClass, boolean configInMemory, boolean configLogEnabled,
-                                String configPopulatorClass, boolean neverClose) {
+    public SQLiteDatabaseSchema(TypeElement item, String schemaFileName, int schemaVersion, boolean schema, boolean log, boolean asyncTask, boolean generateCursor, boolean generateRx, List<String> daoIntoDataSource, String configOpenHelperFactoryClass, String configDatabaseErrorHandlerClass, String configDatabaseLifecycleHandlerClass, boolean configInMemory, boolean configLogEnabled, String configPopulatorClass, boolean neverClose) {
         super(item.getSimpleName().toString(), item);
-
         this.fileName = schemaFileName;
         this.version = schemaVersion;
         this.generateLog = log;
@@ -277,93 +255,50 @@ public class SQLiteDatabaseSchema extends ModelBucket<SQLiteDaoDefinition, TypeE
         this.generatedEntities = new LinkedHashSet<>();
         this.daoNameSet = daoIntoDataSource;
         this.schemaLocationDirectory = KriptonOptions.getSchemaLocation();
-        this.configNeverClose=neverClose;
-
+        this.configNeverClose = neverClose;
         FindTasksVisitor valueVisitor = new FindTasksVisitor();
         FindSqlTypeAdapterVisitor typeAdapterVisitors = new FindSqlTypeAdapterVisitor();
         List<? extends AnnotationMirror> annotationMirrors = item.getAnnotationMirrors();
         for (AnnotationMirror annotationMirror : annotationMirrors) {
-            Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = annotationMirror
-                    .getElementValues();
-
+            Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = annotationMirror.getElementValues();
             if (BindDataSourceOptions.class.getName().equals(annotationMirror.getAnnotationType().toString())) {
-                for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : elementValues
-                        .entrySet()) {
+                for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : elementValues.entrySet()) {
                     // The 'entry.getKey()' here is the annotation attribute
                     // name.
                     String key = entry.getKey().getSimpleName().toString();
                     entry.getValue().accept(valueVisitor, key);
                 }
             } else if (BindDataSource.class.getName().equals(annotationMirror.getAnnotationType().toString())) {
-                for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : elementValues
-                        .entrySet()) {
+                for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : elementValues.entrySet()) {
                     String key = entry.getKey().getSimpleName().toString();
                     entry.getValue().accept(typeAdapterVisitors, key);
                 }
             }
         }
-
         // TODO add supported type and check about types
         {
             List<String> list = typeAdapterVisitors.getAdapters();
             for (String typeAdapter : list) {
                 String sourceType = TypeAdapterHelper.detectSourceType(typeAdapter);
-                AssertKripton.assertTrueOrInvalidGlobalTypeApdaterException(
-                        !globalSqlTypeAdapter.containsKey(sourceType), this, typeAdapter,
-                        globalSqlTypeAdapter.get(sourceType));
-
+                AssertKripton.assertTrueOrInvalidGlobalTypeApdaterException(!globalSqlTypeAdapter.containsKey(sourceType), this, typeAdapter, globalSqlTypeAdapter.get(sourceType));
                 globalSqlTypeAdapter.put(sourceType, typeAdapter);
             }
         }
-
         this.configLogEnabled = configLogEnabled;
         this.configInMemory = configInMemory;
         this.configUpdateTasks = valueVisitor.getTasks();
-
         this.configOpenHelperFactoryClazz = fillClazz(configOpenHelperFactoryClass, ReferredClasses.DEFAULT_OPEN_HELPER_FACTORY_CLASS_NAME);
         this.configDatabaseErrorHandlerClazz = fillClazz(configDatabaseErrorHandlerClass, ReferredClasses.NO_DATABASE_ERROR_HANDLER_CLASS_NAME);
-        this.configDatabaseLifecycleHandlerClazz = fillClazz(configDatabaseLifecycleHandlerClass,
-                ReferredClasses.NO_DATABASE_LIFECYCLE_HANDLER_CLASS_NAME);
+        this.configDatabaseLifecycleHandlerClazz = fillClazz(configDatabaseLifecycleHandlerClass, ReferredClasses.NO_DATABASE_LIFECYCLE_HANDLER_CLASS_NAME);
         this.configPopulatorClazz = fillClazz(configPopulatorClass, ReferredClasses.NO_POPULATOR_CLASS_NAME);
-
         // methods
         // create method for dao
         SqlBuilderHelper.forEachMethods((TypeElement) element, new MethodFoundListener() {
 
             @Override
             public void onMethod(ExecutableElement methodElement) {
-                if (methodElement.getModifiers().contains(Modifier.STATIC)) {
-
-                    final List<ModelAnnotation> annotationList = new ArrayList<>();
-
-                    AnnotationUtility.forEachAnnotations(methodElement, new AnnotationFoundListener() {
-
-                        @Override
-                        public void onAcceptAnnotation(Element element, String annotationClassName,
-                                                       Map<String, String> attributes) {
-
-                            if // @formatter:off
-                            (annotationClassName.equals(BindSqlTransaction.class.getCanonicalName()))
-                            // @formatter:on
-                            {
-                                ModelAnnotation annotation = new ModelAnnotation(annotationClassName, attributes);
-                                annotationList.add(annotation);
-                            }
-                            // we don't insert annotation
-
-                        }
-                    });
-
-                    annotationList.addAll(annotationList);
-
-                    AssertKripton.assertTrueOrInvalidMethodSignException(annotationList.size() != 1,
-                            SQLiteDatabaseSchema.this, methodElement);
-
-                    transactions.add(methodElement);
-
-                }
+                throw new UnsupportedOperationException("STUB: not implemented");
             }
-
         });
     }
 
@@ -382,34 +317,12 @@ public class SQLiteDatabaseSchema extends ModelBucket<SQLiteDaoDefinition, TypeE
         }
     }
 
-    /**
-     * Clear.
-     */
     public void clear() {
-        entities.clear();
-        entitiesBySimpleName.clear();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Adds the entity.
-     *
-     * @param value the value
-     */
     public void addEntity(SQLiteEntity value) {
-        entities.put(value.getName(), value);
-        entitiesBySimpleName.put(value.getSimpleName().toString().toLowerCase(), value);
-        Set<SQLProperty> listEntity = null;
-
-        // update map property name -> property collection with same name
-        for (SQLProperty p : value.getCollection()) {
-            listEntity = propertyBySimpleName.get(p.getName());
-            if (listEntity == null) {
-                listEntity = new HashSet<>();
-            }
-            checkName(listEntity, p);
-            listEntity.add(p);
-            propertyBySimpleName.put(p.getName().toLowerCase(), listEntity);
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -422,156 +335,53 @@ public class SQLiteDatabaseSchema extends ModelBucket<SQLiteDaoDefinition, TypeE
         for (SQLProperty item : listEntity) {
             AssertKripton.assertTrueOrInvalidPropertyName(item.columnName.equals(p.columnName), item, p);
         }
-
     }
 
-    /**
-     * Gets the entities.
-     *
-     * @return the entities
-     */
     public Collection<SQLiteEntity> getEntities() {
-        return entities.values();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Gets the entities as list.
-     *
-     * @return the entities as list
-     */
     public List<SQLiteEntity> getEntitiesAsList() {
-        return new ArrayList<>(entities.values());
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Gets the entity.
-     *
-     * @param entityClassName the entity class name
-     * @return the entity
-     */
     public SQLiteEntity getEntity(String entityClassName) {
-        return entities.get(entityClassName);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Gets the entity by simple name.
-     *
-     * @param entityName the entity name
-     * @return the entity by simple name
-     */
     public Finder<SQLProperty> getEntityBySimpleName(String entityName) {
-        if (entityName == null)
-            return null;
-
-        SQLiteEntity result = entitiesBySimpleName.get(entityName.toLowerCase());
-        if (result != null)
-            return result;
-
-        for (GeneratedTypeElement item : this.generatedEntities) {
-            if (item.typeSpec.name.toLowerCase().equals(entityName.toLowerCase())) {
-                return item;
-            }
-        }
-
-        return null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Gets the property by simple name.
-     *
-     * @param propertyName the property name
-     * @return the property by simple name
-     */
     public Set<SQLProperty> getPropertyBySimpleName(String propertyName) {
-        if (propertyName == null)
-            return null;
-
-        return this.propertyBySimpleName.get(propertyName.toLowerCase());
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * get a.
-     *
-     * @param method       the method
-     * @param propertyName the property name
-     * @return the string
-     */
     public String findColumnNameByPropertyName(SQLiteModelMethod method, String propertyName) {
-        Set<SQLProperty> propertiesSet = getPropertyBySimpleName(propertyName);
-        Set<String> set = new HashSet<String>();
-        String result = null;
-
-        for (SQLProperty item : propertiesSet) {
-            result = item.columnName;
-            set.add(item.columnName);
-        }
-
-        AssertKripton.assertTrueOrInvalidMethodSignException(result != null && set.size() == 1, method,
-                "in JQL attribute can not translate property %s", propertyName);
-
-        return result;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Checks if is log enabled.
-     *
-     * @return true, if is log enabled
-     */
     public boolean isLogEnabled() {
-        return generateLog;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Content provider uri.
-     *
-     * @return the string
-     */
     public String contentProviderUri() {
-        if (!generateContentProvider)
-            return "";
-
-        return contentProvider.getUri();
-
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Gets the generated class.
-     *
-     * @return the generated class
-     */
     public ClassName getGeneratedClass() {
-        String packageName = getElement().asType().toString();
-        return TypeUtility
-                .className(packageName.substring(0, packageName.lastIndexOf(".")) + "." + getGeneratedClassName());
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Returns true if any DAO exposes a method with live data.
-     *
-     * @return true, if successful
-     */
     public boolean hasLiveData() {
-        for (SQLiteDaoDefinition dao : getCollection()) {
-            if (dao.hasLiveData()) {
-                return true;
-            }
-        }
-
-        return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     public SQLiteDaoDefinition findDaoDefinitionForEntity(SQLiteEntity entity) {
-        for (SQLiteDaoDefinition item : collection) {
-            if (item.getEntity().getName().equals(entity.getName())) {
-                return item;
-            }
-        }
-
-        return null;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     public long currentCounter() {
-        return globalCounter;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-
 }

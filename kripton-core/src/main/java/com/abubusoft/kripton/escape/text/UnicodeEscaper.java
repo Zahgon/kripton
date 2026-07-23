@@ -19,7 +19,6 @@ package com.abubusoft.kripton.escape.text;
 import java.io.IOException;
 import java.io.Writer;
 
-
 /**
  * Translates codepoints to their Unicode escaped value.
  *
@@ -27,19 +26,25 @@ import java.io.Writer;
  */
 public class UnicodeEscaper extends CodePointTranslator {
 
-    /** The below. */
+    /**
+     * The below.
+     */
     private final int below;
-    
-    /** The above. */
+
+    /**
+     * The above.
+     */
     private final int above;
-    
-    /** The between. */
+
+    /**
+     * The between.
+     */
     private final boolean between;
 
     /**
      * <p>Constructs a <code>UnicodeEscaper</code> for all characters. </p>
      */
-    public UnicodeEscaper(){
+    public UnicodeEscaper() {
         this(0, Integer.MAX_VALUE, true);
     }
 
@@ -59,84 +64,28 @@ public class UnicodeEscaper extends CodePointTranslator {
         this.between = between;
     }
 
-    /**
-     * <p>Constructs a <code>UnicodeEscaper</code> below the specified value (exclusive). </p>
-     *
-     * @param codepoint below which to escape
-     * @return the newly created {@code UnicodeEscaper} instance
-     */
     public static UnicodeEscaper below(final int codepoint) {
-        return outsideOf(codepoint, Integer.MAX_VALUE);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Constructs a <code>UnicodeEscaper</code> above the specified value (exclusive). </p>
-     *
-     * @param codepoint above which to escape
-     * @return the newly created {@code UnicodeEscaper} instance
-     */
     public static UnicodeEscaper above(final int codepoint) {
-        return outsideOf(0, codepoint);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Constructs a <code>UnicodeEscaper</code> outside of the specified values (exclusive). </p>
-     *
-     * @param codepointLow below which to escape
-     * @param codepointHigh above which to escape
-     * @return the newly created {@code UnicodeEscaper} instance
-     */
     public static UnicodeEscaper outsideOf(final int codepointLow, final int codepointHigh) {
-        return new UnicodeEscaper(codepointLow, codepointHigh, false);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Constructs a <code>UnicodeEscaper</code> between the specified values (inclusive). </p>
-     *
-     * @param codepointLow above which to escape
-     * @param codepointHigh below which to escape
-     * @return the newly created {@code UnicodeEscaper} instance
-     */
     public static UnicodeEscaper between(final int codepointLow, final int codepointHigh) {
-        return new UnicodeEscaper(codepointLow, codepointHigh, true);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean translate(final int codepoint, final Writer out) throws IOException {
-        if (between) {
-            if (codepoint < below || codepoint > above) {
-                return false;
-            }
-        } else {
-            if (codepoint >= below && codepoint <= above) {
-                return false;
-            }
-        }
-
-        // TODO: Handle potential + sign per various Unicode escape implementations
-        if (codepoint > 0xffff) {
-            out.write(toUtf16Escape(codepoint));
-        } else {
-          out.write("\\u");
-          out.write(HEX_DIGITS[(codepoint >> 12) & 15]);
-          out.write(HEX_DIGITS[(codepoint >> 8) & 15]);
-          out.write(HEX_DIGITS[(codepoint >> 4) & 15]);
-          out.write(HEX_DIGITS[(codepoint) & 15]);
-        }
-        return true;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Converts the given codepoint to a hex string of the form {@code "\\uXXXX"}.
-     *
-     * @param codepoint            a Unicode code point
-     * @return the hex string for the given codepoint
-     * @since 3.2
-     */
     protected String toUtf16Escape(final int codepoint) {
-        return "\\u" + hex(codepoint);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

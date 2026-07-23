@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.paging;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -39,44 +37,19 @@ public abstract class TiledDataSource<T> extends PositionalDataSource<T> {
 
     @Override
     boolean isContiguous() {
-        return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @WorkerThread
     public abstract List<T> loadRange(int startPosition, int count);
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams params,
-            @NonNull LoadInitialCallback<T> callback) {
-        int totalCount = countItems();
-        if (totalCount == 0) {
-            callback.onResult(Collections.<T>emptyList(), 0, 0);
-            return;
-        }
-
-        // bound the size requested, based on known count
-        final int firstLoadPosition = computeInitialLoadPosition(params, totalCount);
-        final int firstLoadSize = computeInitialLoadSize(params, firstLoadPosition, totalCount);
-
-        // convert from legacy behavior
-        List<T> list = loadRange(firstLoadPosition, firstLoadSize);
-        if (list != null && list.size() == firstLoadSize) {
-            callback.onResult(list, firstLoadPosition, totalCount);
-        } else {
-            // null list, or size doesn't match request
-            // The size check is a WAR for Room 1.0, subsequent versions do the check in Room
-            invalidate();
-        }
+    public void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<T> callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
-    public void loadRange(@NonNull LoadRangeParams params,
-            @NonNull LoadRangeCallback<T> callback) {
-        List<T> list = loadRange(params.startPosition, params.loadSize);
-        if (list != null) {
-            callback.onResult(list);
-        } else {
-            invalidate();
-        }
+    public void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<T> callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

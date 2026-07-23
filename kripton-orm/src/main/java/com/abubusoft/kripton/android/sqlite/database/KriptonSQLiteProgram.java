@@ -8,65 +8,45 @@ import androidx.sqlite.db.SupportSQLiteProgram;
  * implementation
  */
 class KriptonSQLiteProgram implements SupportSQLiteProgram {
-	private final SQLiteProgram delegate;
 
-	KriptonSQLiteProgram(SQLiteProgram delegate) {
-		this.delegate = delegate;
-	}
+    private final SQLiteProgram delegate;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void bindNull(int index) {
-		delegate.bindNull(index);
-	}
+    KriptonSQLiteProgram(SQLiteProgram delegate) {
+        this.delegate = delegate;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void bindLong(int index, long value) {
-		delegate.bindLong(index, value);
-	}
+    @Override
+    public void bindNull(int index) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void bindDouble(int index, double value) {
-		delegate.bindDouble(index, value);
-	}
+    @Override
+    public void bindLong(int index, long value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void bindString(int index, String value) {
-		delegate.bindString(index, value);
-	}
+    @Override
+    public void bindDouble(int index, double value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void bindBlob(int index, byte[] value) {
-		delegate.bindBlob(index, value);
-	}
+    @Override
+    public void bindString(int index, String value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void clearBindings() {
-		delegate.clearBindings();
-	}
+    @Override
+    public void bindBlob(int index, byte[] value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void close() {
-		delegate.close();
-	}
+    @Override
+    public void clearBindings() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
+
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

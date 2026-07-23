@@ -1,29 +1,27 @@
-/*******************************************************************************
- * Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 /**
- * 
- * 
+ * ****************************************************************************
+ *  Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * *****************************************************************************
+ */
+/**
  */
 package com.abubusoft.kripton.processor.sqlite;
 
 import static com.abubusoft.kripton.processor.core.reflect.TypeUtility.typeName;
-
 import java.util.ArrayList;
 import java.util.Set;
-
 import com.abubusoft.kripton.common.SQLTypeAdapterUtils;
 import com.abubusoft.kripton.processor.core.ImmutableUtility;
 import com.abubusoft.kripton.processor.core.reflect.TypeUtility;
@@ -48,120 +46,14 @@ import com.squareup.javapoet.TypeSpec;
  */
 public class SelectBeanListHelper extends AbstractSelectCodeGenerator {
 
-	/*
+    /*
 	 * (non-Javadoc)
 	 * 
 	 * @see com.abubusoft.kripton.processor.sqlite.SQLiteSelectBuilder.
 	 * SelectCodeGenerator#generate(com.squareup.javapoet.MethodSpec.Builder)
 	 */
-	@Override
-	public void generateSpecializedPart(SQLiteModelMethod method, TypeSpec.Builder classBuilder,
-			MethodSpec.Builder methodBuilder, Set<JQLProjection> fieldList, boolean mapFields) {
-		SQLiteEntity entity = method.getEntity();
-		TypeName returnTypeName = method.getReturnClass();
-
-		ParameterizedTypeName returnListName = (ParameterizedTypeName) returnTypeName;
-
-		ClassName collectionClass;
-		TypeName entityClass = typeName(entity.getElement());
-		ClassName returnRawListClazzName = returnListName.rawType;
-
-		collectionClass = SqlUtility.defineCollection(returnRawListClazzName);
-
-		methodBuilder.addCode("\n");
-		if (TypeUtility.isTypeEquals(collectionClass, TypeUtility.typeName(ArrayList.class))) {
-			methodBuilder.addCode("$T<$T> resultList=new $T<$T>(_cursor.getCount());\n", collectionClass, entityClass,
-					collectionClass, entityClass);
-		} else {
-			methodBuilder.addCode("$T<$T> resultList=new $T<$T>();\n", collectionClass, entityClass, collectionClass,
-					entityClass);
-		}
-		methodBuilder.addStatement("$T resultBean=null", entityClass);
-		// immutable management
-		if (entity.isImmutablePojo()) {
-			methodBuilder.addCode("\n");
-			methodBuilder.addComment("initialize temporary variable for immutable POJO");
-			ImmutableUtility.generateImmutableVariableInit(entity, methodBuilder);
-		}
-
-		methodBuilder.addCode("\n");
-		methodBuilder.beginControlFlow("if (_cursor.moveToFirst())");
-
-		// generate index from columns
-		methodBuilder.addCode("\n");
-		{
-			int i = 0;
-			for (JQLProjection a : fieldList) {
-				SQLProperty item = a.property;
-
-				methodBuilder.addStatement("int index$L=_cursor.getColumnIndex($S)", (i++), item.columnName);
-				if (item.hasTypeAdapter()) {
-					methodBuilder.addStatement("$T $LAdapter=$T.getAdapter($T.class)",
-							item.typeAdapter.getAdapterTypeName(), item.getName(), SQLTypeAdapterUtils.class,
-							item.typeAdapter.getAdapterTypeName());
-				}
-				
-			}
-		}
-		methodBuilder.addCode("\n");
-
-		methodBuilder.beginControlFlow("do\n");
-
-		// immutable management
-		if (entity.isImmutablePojo()) {
-			methodBuilder.addComment("reset temporary variable for immutable POJO");
-			ImmutableUtility.generateImmutableVariableReset(entity, methodBuilder);
-		} else {
-			methodBuilder.addCode("resultBean=new $T();\n\n", entityClass);
-		}
-
-		// generate mapping
-		int i = 0;
-		for (JQLProjection a : fieldList) {
-			SQLProperty item = a.property;
-			if (item.isNullable()) {
-				methodBuilder.addCode("if (!_cursor.isNull(index$L)) { ", i);
-			}
-			SQLTransformer.cursor2Java(method.getParent().getEntity(), methodBuilder, typeName(entity.getElement()), item, "resultBean", "_cursor",
-					"index" + i + "");
-			methodBuilder.addCode(";");
-			if (item.isNullable()) {
-				methodBuilder.addCode(" }");
-			}
-			methodBuilder.addCode("\n");
-
-			i++;
-		}
-
-		generateSubQueries(methodBuilder, method);
-
-		methodBuilder.addCode("\n");
-
-		// immutable management
-		if (entity.isImmutablePojo()) {
-			methodBuilder.addComment("define immutable POJO");
-			ImmutableUtility.generateImmutableEntityCreation(entity, methodBuilder, "resultBean", false);
-		}
-
-		methodBuilder.addCode("resultList.add(resultBean);\n");
-		methodBuilder.endControlFlow("while (_cursor.moveToNext())");
-
-		methodBuilder.endControlFlow();
-
-		methodBuilder.addCode("\n");
-
-		// return list or immutable list
-		if (entity.isImmutablePojo()) {
-			methodBuilder.addCode("return ");
-			ImmutableUtility.generateImmutableCollectionIfPossible(entity, methodBuilder, "resultList",
-					ParameterizedTypeName.get(returnRawListClazzName, entityClass));
-			methodBuilder.addCode(";\n");
-		} else {
-			methodBuilder.addCode("return resultList;\n");
-		}
-
-		// close try { open cursor
-		methodBuilder.endControlFlow();
-	}
-
+    @Override
+    public void generateSpecializedPart(SQLiteModelMethod method, TypeSpec.Builder classBuilder, MethodSpec.Builder methodBuilder, Set<JQLProjection> fieldList, boolean mapFields) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

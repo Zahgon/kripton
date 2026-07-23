@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.lifecycle;
 
 /**
@@ -23,13 +22,14 @@ package androidx.lifecycle;
  */
 @SuppressWarnings("WeakerAccess")
 public class MutableLiveData<T> extends LiveData<T> {
+
     @Override
     public void postValue(T value) {
-        super.postValue(value);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     public void setValue(T value) {
-        super.setValue(value);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

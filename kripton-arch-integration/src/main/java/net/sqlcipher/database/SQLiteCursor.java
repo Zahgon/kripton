@@ -10,248 +10,207 @@ import net.sqlcipher.Cursor;
 
 public class SQLiteCursor implements Cursor {
 
-	public SQLiteCursor(SQLiteDatabase db, SQLiteCursorDriver masterQuery, String editTable, SQLiteQuery query) {
-		// TODO Auto-generated constructor stub
-	}
+    public SQLiteCursor(SQLiteDatabase db, SQLiteCursorDriver masterQuery, String editTable, SQLiteQuery query) {
+        // TODO Auto-generated constructor stub
+    }
 
-	@Override
-	public int getCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	} 
+    @Override
+    public int getCount() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public int getPosition() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getPosition() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean move(int offset) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean move(int offset) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean moveToPosition(int position) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean moveToPosition(int position) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean moveToFirst() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean moveToFirst() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean moveToLast() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean moveToLast() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean moveToNext() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean moveToNext() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean moveToPrevious() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean moveToPrevious() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean isFirst() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean isFirst() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean isLast() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean isLast() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean isBeforeFirst() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean isBeforeFirst() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean isAfterLast() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean isAfterLast() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public int getColumnIndex(String columnName) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getColumnIndex(String columnName) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public int getColumnIndexOrThrow(String columnName) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getColumnIndexOrThrow(String columnName) throws IllegalArgumentException {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public String getColumnName(int columnIndex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getColumnName(int columnIndex) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public String[] getColumnNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String[] getColumnNames() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public int getColumnCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getColumnCount() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public byte[] getBlob(int columnIndex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public byte[] getBlob(int columnIndex) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public String getString(int columnIndex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getString(int columnIndex) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public short getShort(int columnIndex) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public short getShort(int columnIndex) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public int getInt(int columnIndex) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getInt(int columnIndex) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public long getLong(int columnIndex) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public long getLong(int columnIndex) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public float getFloat(int columnIndex) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public float getFloat(int columnIndex) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public double getDouble(int columnIndex) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public double getDouble(int columnIndex) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean isNull(int columnIndex) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean isNull(int columnIndex) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void deactivate() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void deactivate() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean requery() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean requery() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean isClosed() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean isClosed() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void registerContentObserver(ContentObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void registerContentObserver(ContentObserver observer) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void unregisterContentObserver(ContentObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void unregisterContentObserver(ContentObserver observer) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void registerDataSetObserver(DataSetObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void registerDataSetObserver(DataSetObserver observer) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void unregisterDataSetObserver(DataSetObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void unregisterDataSetObserver(DataSetObserver observer) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void setNotificationUri(ContentResolver cr, Uri uri) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void setNotificationUri(ContentResolver cr, Uri uri) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public Uri getNotificationUri() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Uri getNotificationUri() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public boolean getWantsAllOnMoveCalls() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean getWantsAllOnMoveCalls() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public Bundle getExtras() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Bundle getExtras() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public Bundle respond(Bundle extras) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Bundle respond(Bundle extras) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public int getType(int columnIndex) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+    @Override
+    public int getType(int columnIndex) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

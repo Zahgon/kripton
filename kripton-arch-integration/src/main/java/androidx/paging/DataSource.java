@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.paging;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.arch.core.util.Function;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -91,8 +89,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @param <Key> Input used to trigger initial load from the DataSource. Often an Integer position.
  * @param <Value> Value type loaded by the DataSource.
  */
-@SuppressWarnings("unused") // suppress warning to remove Key/Value, needed for subclass type safety
+// suppress warning to remove Key/Value, needed for subclass type safety
+@SuppressWarnings("unused")
 public abstract class DataSource<Key, Value> {
+
     /**
      * Factory for DataSources.
      * <p>
@@ -115,6 +115,7 @@ public abstract class DataSource<Key, Value> {
      * @param <Value> Type of items in the list loaded by the DataSources.
      */
     public abstract static class Factory<Key, Value> {
+
         /**
          * Create a DataSource.
          * <p>
@@ -130,76 +131,24 @@ public abstract class DataSource<Key, Value> {
          */
         public abstract DataSource<Key, Value> create();
 
-        /**
-         * Applies the given function to each value emitted by DataSources produced by this Factory.
-         * <p>
-         * Same as {@link #mapByPage(Function)}, but operates on individual items.
-         *
-         * @param function Function that runs on each loaded item, returning items of a potentially
-         *                  new type.
-         * @param <ToValue> Type of items produced by the new DataSource, from the passed function.
-         *
-         * @return A new DataSource.Factory, which transforms items using the given function.
-         *
-         * @see #mapByPage(Function)
-         * @see DataSource#map(Function)
-         * @see DataSource#mapByPage(Function)
-         */
         @NonNull
-        public <ToValue> DataSource.Factory<Key, ToValue> map(
-                @NonNull Function<Value, ToValue> function) {
-            return mapByPage(createListFunction(function));
+        public <ToValue> DataSource.Factory<Key, ToValue> map(@NonNull Function<Value, ToValue> function) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Applies the given function to each value emitted by DataSources produced by this Factory.
-         * <p>
-         * Same as {@link #map(Function)}, but allows for batch conversions.
-         *
-         * @param function Function that runs on each loaded page, returning items of a potentially
-         *                  new type.
-         * @param <ToValue> Type of items produced by the new DataSource, from the passed function.
-         *
-         * @return A new DataSource.Factory, which transforms items using the given function.
-         *
-         * @see #map(Function)
-         * @see DataSource#map(Function)
-         * @see DataSource#mapByPage(Function)
-         */
         @NonNull
-        public <ToValue> DataSource.Factory<Key, ToValue> mapByPage(
-                @NonNull final Function<List<Value>, List<ToValue>> function) {
-            return new Factory<Key, ToValue>() {
-                @Override
-                public DataSource<Key, ToValue> create() {
-                    return Factory.this.create().mapByPage(function);
-                }
-            };
+        public <ToValue> DataSource.Factory<Key, ToValue> mapByPage(@NonNull final Function<List<Value>, List<ToValue>> function) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
 
     @NonNull
-    static <X, Y> Function<List<X>, List<Y>> createListFunction(
-            final @NonNull Function<X, Y> innerFunc) {
-        return new Function<List<X>, List<Y>>() {
-            @Override
-            public List<Y> apply(@NonNull List<X> source) {
-                List<Y> out = new ArrayList<>(source.size());
-                for (int i = 0; i < source.size(); i++) {
-                    out.add(innerFunc.apply(source.get(i)));
-                }
-                return out;
-            }
-        };
+    static <X, Y> Function<List<X>, List<Y>> createListFunction(@NonNull final Function<X, Y> innerFunc) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     static <A, B> List<B> convert(Function<List<A>, List<B>> function, List<A> source) {
-        List<B> dest = function.apply(source);
-        if (dest.size() != source.size()) {
-            throw new IllegalStateException("Invalid Function " + function
-                    + " changed return size. This is not supported.");
-        }
-        return dest;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     // Since we currently rely on implementation details of two implementations,
@@ -223,8 +172,7 @@ public abstract class DataSource<Key, Value> {
      * @see DataSource.Factory#mapByPage(Function)
      */
     @NonNull
-    public abstract <ToValue> DataSource<Key, ToValue> mapByPage(
-            @NonNull Function<List<Value>, List<ToValue>> function);
+    public abstract <ToValue> DataSource<Key, ToValue> mapByPage(@NonNull Function<List<Value>, List<ToValue>> function);
 
     /**
      * Applies the given function to each value emitted by the DataSource.
@@ -242,8 +190,7 @@ public abstract class DataSource<Key, Value> {
      * @see DataSource.Factory#mapByPage(Function)
      */
     @NonNull
-    public abstract <ToValue> DataSource<Key, ToValue> map(
-            @NonNull Function<Value, ToValue> function);
+    public abstract <ToValue> DataSource<Key, ToValue> map(@NonNull Function<Value, ToValue> function);
 
     /**
      * Returns true if the data source guaranteed to produce a contiguous set of items,
@@ -252,32 +199,26 @@ public abstract class DataSource<Key, Value> {
     abstract boolean isContiguous();
 
     static class LoadCallbackHelper<T> {
+
         static void validateInitialLoadParams(@NonNull List<?> data, int position, int totalCount) {
-            if (position < 0) {
-                throw new IllegalArgumentException("Position must be non-negative");
-            }
-            if (data.size() + position > totalCount) {
-                throw new IllegalArgumentException(
-                        "List size + position too large, last item in list beyond totalCount.");
-            }
-            if (data.size() == 0 && totalCount > 0) {
-                throw new IllegalArgumentException(
-                        "Initial result cannot be empty if items are present in data set.");
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @PageResult.ResultType
         final int mResultType;
+
         private final DataSource mDataSource;
+
         private final PageResult.Receiver<T> mReceiver;
 
         // mSignalLock protects mPostExecutor, and mHasSignalled
         private final Object mSignalLock = new Object();
+
         private Executor mPostExecutor = null;
+
         private boolean mHasSignalled = false;
 
-        LoadCallbackHelper(@NonNull DataSource dataSource, @PageResult.ResultType int resultType,
-                @Nullable Executor mainThreadExecutor, @NonNull PageResult.Receiver<T> receiver) {
+        LoadCallbackHelper(@NonNull DataSource dataSource, @PageResult.ResultType int resultType, @Nullable Executor mainThreadExecutor, @NonNull PageResult.Receiver<T> receiver) {
             mDataSource = dataSource;
             mResultType = resultType;
             mPostExecutor = mainThreadExecutor;
@@ -285,45 +226,15 @@ public abstract class DataSource<Key, Value> {
         }
 
         void setPostExecutor(Executor postExecutor) {
-            synchronized (mSignalLock) {
-                mPostExecutor = postExecutor;
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Call before verifying args, or dispatching actul results
-         *
-         * @return true if DataSource was invalid, and invalid result dispatched
-         */
         boolean dispatchInvalidResultIfInvalid() {
-            if (mDataSource.isInvalid()) {
-                dispatchResultToReceiver(PageResult.<T>getInvalidResult());
-                return true;
-            }
-            return false;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        void dispatchResultToReceiver(final @NonNull PageResult<T> result) {
-            Executor executor;
-            synchronized (mSignalLock) {
-                if (mHasSignalled) {
-                    throw new IllegalStateException(
-                            "callback.onResult already called, cannot call again.");
-                }
-                mHasSignalled = true;
-                executor = mPostExecutor;
-            }
-
-            if (executor != null) {
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        mReceiver.onPageResult(mResultType, result);
-                    }
-                });
-            } else {
-                mReceiver.onPageResult(mResultType, result);
-            }
+        void dispatchResultToReceiver(@NonNull final PageResult<T> result) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
 
@@ -334,6 +245,7 @@ public abstract class DataSource<Key, Value> {
      * is needed to continue loading data.
      */
     public interface InvalidatedCallback {
+
         /**
          * Called when the data backing the list has become invalid. This callback is typically used
          * to signal that a new data source is needed.
@@ -341,61 +253,30 @@ public abstract class DataSource<Key, Value> {
          * This callback will be invoked on the thread that calls {@link #invalidate()}. It is valid
          * for the data source to invalidate itself during its load methods, or for an outside
          * source to invalidate it.
-         */        
+         */
         void onInvalidated();
     }
 
     private AtomicBoolean mInvalid = new AtomicBoolean(false);
 
-    private CopyOnWriteArrayList<InvalidatedCallback> mOnInvalidatedCallbacks =
-            new CopyOnWriteArrayList<>();
+    private CopyOnWriteArrayList<InvalidatedCallback> mOnInvalidatedCallbacks = new CopyOnWriteArrayList<>();
 
-    /**
-     * Add a callback to invoke when the DataSource is first invalidated.
-     * <p>
-     * Once invalidated, a data source will not become valid again.
-     * <p>
-     * A data source will only invoke its callbacks once - the first time {@link #invalidate()}
-     * is called, on that thread.
-     *
-     * @param onInvalidatedCallback The callback, will be invoked on thread that
-     *                              {@link #invalidate()} is called on.
-     */    
     @SuppressWarnings("WeakerAccess")
     public void addInvalidatedCallback(@NonNull InvalidatedCallback onInvalidatedCallback) {
-        mOnInvalidatedCallbacks.add(onInvalidatedCallback);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Remove a previously added invalidate callback.
-     *
-     * @param onInvalidatedCallback The previously added callback.
-     */    
     @SuppressWarnings("WeakerAccess")
     public void removeInvalidatedCallback(@NonNull InvalidatedCallback onInvalidatedCallback) {
-        mOnInvalidatedCallbacks.remove(onInvalidatedCallback);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Signal the data source to stop loading, and notify its callback.
-     * <p>
-     * If invalidate has already been called, this method does nothing.
-     */
     public void invalidate() {
-        if (mInvalid.compareAndSet(false, true)) {
-            for (InvalidatedCallback callback : mOnInvalidatedCallbacks) {
-                callback.onInvalidated();
-            }
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Returns true if the data source is invalid, and can no longer be queried for data.
-     *
-     * @return True if the data source is invalid, and can no longer return data.
-     */
     @WorkerThread
     public boolean isInvalid() {
-        return mInvalid.get();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

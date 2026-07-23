@@ -1,23 +1,24 @@
-/*******************************************************************************
- * Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
+/**
+ * ****************************************************************************
+ *  Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * *****************************************************************************
+ */
 package com.abubusoft.kripton.android.sqlite;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.abubusoft.kripton.android.PageRequest;
 import com.abubusoft.kripton.android.Paginator;
 
@@ -25,7 +26,7 @@ import com.abubusoft.kripton.android.Paginator;
  * <p>
  * Allow to manage SQL result pages with LIMIT clause.
  * </p>
- * 
+ *
  * <p>
  * See <a href="https://www.sqlite.org/lang_select.html">here</a> for more info.
  * </p>
@@ -41,218 +42,139 @@ import com.abubusoft.kripton.android.Paginator;
  */
 public abstract class PagedResultImpl<E> implements Paginator<List<E>> {
 
-	/**
-	 * if false, paged result does not contains valid paged result
-	 */
-	protected boolean paged;
+    /**
+     * if false, paged result does not contains valid paged result
+     */
+    protected boolean paged;
 
-	/** The first row. */
-	protected int offset;
+    /**
+     * The first row.
+     */
+    protected int offset;
 
-	/** The list. */
-	protected volatile List<E> list;
+    /**
+     * The list.
+     */
+    protected volatile List<E> list;
 
-	/** The page size. */
-	protected int pageSize;
+    /**
+     * The page size.
+     */
+    protected int pageSize;
 
-	/**
-	 * number of total element extracted by the query
-	 */
-	protected volatile int totalElements = 0;
+    /**
+     * number of total element extracted by the query
+     */
+    protected volatile int totalElements = 0;
 
-	/**
-	 * Instantiates a new paginated result.
-	 */
-	protected PagedResultImpl() {
-		reset();
-	}
+    /**
+     * Instantiates a new paginated result.
+     */
+    protected PagedResultImpl() {
+        reset();
+    }
 
-	/**
-	 * execute method
-	 * 
-	 * @return result
-	 */
-	public abstract List<E> execute();
+    /**
+     * execute method
+     *
+     * @return result
+     */
+    public abstract List<E> execute();
 
-	@Override
-	public void firstPage() {
-		setPage(0);
+    @Override
+    public void firstPage() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		execute();
-	}
+    public List<E> getList() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * List.
-	 *
-	 * @return the list
-	 */
-	public List<E> getList() {
-		return list;
-	}
+    @Override
+    public int getOffset() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * First row.
-	 *
-	 * @return the int
-	 */
-	@Override
-	public int getOffset() {
-		return offset;
-	}
+    @Override
+    public int getPageNumber() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Get current Page
-	 * 
-	 * @return 0-based number of current page
-	 */
-	@Override
-	public int getPageNumber() {
-		if (!paged)
-			return 0;
+    @Override
+    public int getPageSize() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		return offset / pageSize;
-	}
+    @Override
+    public int getTotalElements() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Page size.
-	 *
-	 * @return the int
-	 */
-	@Override
-	public int getPageSize() {
-		return pageSize;
-	}
+    @Override
+    public boolean hasPrevious() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Get Total count
-	 */
-	@Override
-	public int getTotalElements() {
-		return totalElements;
-	}
+    public void setTotalElements(int value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Has previous pages
-	 * 
-	 * @return
-	 */
-	@Override
-	public boolean hasPrevious() {
-		return !paged || (offset > 0 && totalElements > 0);
-	}
+    @Override
+    public void nextPage() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	public void setTotalElements(int value) {
-		this.totalElements = value;
-	}
+    @Override
+    public void previousPage() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Next page.
-	 *
-	 * @return true, if successful
-	 */
-	@Override
-	public void nextPage() {
-		if (!paged) {
-			this.firstPage();
-			paged = true;
-		} else if (!isLast()) {
-			offset = (getPageNumber() + 1) * pageSize;
+    @Override
+    public void setOffset(int offset) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-			execute();
-		}
-	}
+    @Override
+    public void setPage(int page) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Previous page.
-	 *
-	 * @return true, if successful
-	 */
-	@Override
-	public void previousPage() {
-		if (!isFirst()) {
-			offset = (getPageNumber() - 1) * pageSize;
+    @Override
+    public int getTotalPages() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-			execute();
-		}
-	}
+    @Override
+    public boolean isLast() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public void setOffset(int offset) {
-		if (this.offset != offset && offset >= 0) {
-			this.offset = offset;
-		}
-	}
+    @Override
+    public boolean isFirst() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Goto page.
-	 *
-	 * @param page
-	 *            the page
-	 * @return true, if successful
-	 */
-	@Override
-	public void setPage(int page) {
-		offset = pageSize * page;
+    @Override
+    public void lastPage() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		// check to stay in the range
-		/*
-		 * if (offset < 0) { offset = 0; }
-		 */
+    @Override
+    public boolean hasNext() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		/*
-		 * if (paged && offset > pageSize * (getTotalPages() - 1)) { offset =
-		 * pageSize * (getTotalPages() - 1); }
-		 */
+    @Override
+    public void setPageSize(int pageSize) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		paged = true;
-	}
+    public void reset() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@Override
-	public int getTotalPages() {
-		return (int) Math.ceil((double) getTotalElements() / (double) getPageSize());
-	}
-
-	@Override
-	public boolean isLast() {
-		return !hasNext();
-	}
-
-	@Override
-	public boolean isFirst() {
-		return getPageNumber() > 0;
-	}
-
-	@Override
-	public void lastPage() {
-		setPage(getTotalPages() - 1);
-
-		execute();
-	}
-
-	@Override
-	public boolean hasNext() {
-		return !paged || (getPageNumber() < getTotalPages() - 1);
-	}
-
-	@Override
-	public void setPageSize(int pageSize) {
-		if (pageSize > 0 && this.pageSize != pageSize) {
-			this.pageSize = pageSize;
-		}
-	}
-
-	/**
-	 * Reset
-	 */
-	public void reset() {
-		this.paged = false;
-		this.totalElements = -1;
-		this.list = new ArrayList<>();
-
-	}
-
-	@Override
-	public List<E> execute(int pageNumber, int pageSize) {
-		return execute(PageRequest.build(pageNumber, pageSize));
-	}
+    @Override
+    public List<E> execute(int pageNumber, int pageSize) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

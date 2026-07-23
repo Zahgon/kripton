@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.paging;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 class SnapshotPagedList<T> extends PagedList<T> {
+
     private final boolean mContiguous;
+
     private final Object mLastKey;
+
     private final DataSource<?, T> mDataSource;
 
     SnapshotPagedList(@NonNull PagedList<T> pagedList) {
-        super(pagedList.mStorage.snapshot(),
-                pagedList.mMainThreadExecutor,
-                pagedList.mBackgroundThreadExecutor,
-                null,
-                pagedList.mConfig);
+        super(pagedList.mStorage.snapshot(), pagedList.mMainThreadExecutor, pagedList.mBackgroundThreadExecutor, null, pagedList.mConfig);
         mDataSource = pagedList.getDataSource();
         mContiguous = pagedList.isContiguous();
         mLastKey = pagedList.getLastKey();
@@ -37,37 +35,38 @@ class SnapshotPagedList<T> extends PagedList<T> {
 
     @Override
     public boolean isImmutable() {
-        return true;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     public boolean isDetached() {
-        return true;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     boolean isContiguous() {
-        return mContiguous;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Nullable
     @Override
     public Object getLastKey() {
-        return mLastKey;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @NonNull
     @Override
     public DataSource<?, T> getDataSource() {
-        return mDataSource;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
-    void dispatchUpdatesSinceSnapshot(@NonNull PagedList<T> storageSnapshot,
-            @NonNull Callback callback) {
+    void dispatchUpdatesSinceSnapshot(@NonNull PagedList<T> storageSnapshot, @NonNull Callback callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     void loadAroundInternal(int index) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

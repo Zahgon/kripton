@@ -4,142 +4,56 @@ import java.util.Collection;
 
 /**
  * Contains utilitity function for split arguments and generate ?.
- * 
- * @author Francesco Benincasa (info@abubusoft.com)
  *
+ * @author Francesco Benincasa (info@abubusoft.com)
  */
 public abstract class SpreadUtils {
-	
-	/**
-	 * For each element of array, generate a question.
-	 * 
-	 * @param args
-	 * @return
-	 */
-	public static <E> String generateQuestion(byte[] args) {
-		if (args == null || args.length == 0)
-			return "";
 
-		return generateInternal(args.length);
-	}
+    public static <E> String generateQuestion(byte[] args) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * @param args
-	 * @return
-	 */
-	private static String generateInternal(int length) {
-		StringBuilder buffer = new StringBuilder("?");
+    /**
+     * @param args
+     * @return
+     */
+    private static String generateInternal(int length) {
+        StringBuilder buffer = new StringBuilder("?");
+        for (int i = 1; i < length; i++) {
+            buffer.append(", ?");
+        }
+        return buffer.toString();
+    }
 
-		for (int i = 1; i < length; i++) {
-			buffer.append(", ?");
-		}
+    public static <E> String generateQuestion(char[] args) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		return buffer.toString();
-	}
-	
-	/**
-	 * For each element of array, generate a question.
-	 * 
-	 * @param args
-	 * @return
-	 */
-	public static <E> String generateQuestion(char[] args) {
-		if (args == null || args.length == 0)
-			return "";
+    public static <E> String generateQuestion(short[] args) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		return generateInternal(args.length);
-	}
-	
-	/**
-	 * For each element of array, generate a question.
-	 * 
-	 * @param args
-	 * @return
-	 */
-	public static <E> String generateQuestion(short[] args) {
-		if (args == null || args.length == 0)
-			return "";
+    public static <E> String generateQuestion(int[] args) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		return generateInternal(args.length);
-	}
-	
-	/**
-	 * For each element of array, generate a question.
-	 * 
-	 * @param args
-	 * @return
-	 */
-	public static <E> String generateQuestion(int[] args) {
-		if (args == null || args.length == 0)
-			return "";
+    public static <E> String generateQuestion(long[] args) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		return generateInternal(args.length);
-	}
-	/**
-	 * For each element of array, generate a question.
-	 * 
-	 * @param args
-	 * @return
-	 */
-	public static <E> String generateQuestion(long[] args) {
-		if (args == null || args.length == 0)
-			return "";
+    public static <E> String generateQuestion(float[] args) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		return generateInternal(args.length);
-	}
-	
-	/**
-	 * For each element of array, generate a question.
-	 * 
-	 * @param args
-	 * @return
-	 */
-	public static <E> String generateQuestion(float[] args) {
-		if (args == null || args.length == 0)
-			return "";
+    public static <E> String generateQuestion(double[] args) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		return generateInternal(args.length);
-	}
-	
-	/**
-	 * For each element of array, generate a question.
-	 * 
-	 * @param args
-	 * @return
-	 */
-	public static <E> String generateQuestion(double[] args) {
-		if (args == null || args.length == 0)
-			return "";
+    public static <E> String generateQuestion(E[] args) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		return generateInternal(args.length);
-	}
-	
-
-	
-	/**
-	 * For each element of array, generate a question.
-	 * 
-	 * @param args
-	 * @return
-	 */
-	public static <E> String generateQuestion(E[] args) {
-		if (args == null || args.length == 0)
-			return "";
-
-		return generateInternal(args.length);
-	}
-	
-	/**
-	 * For each element of array, generate a question.
-	 * 
-	 * @param args
-	 * @return
-	 */
-	public static <E> String generateQuestion(Collection<E> args) {
-		if (args == null || args.size() == 0)
-			return "";
-
-		return generateInternal(args.size());
-	}
-		
+    public static <E> String generateQuestion(Collection<E> args) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

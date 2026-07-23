@@ -8,40 +8,37 @@ import androidx.annotation.NonNull;
  * @see DiffUtil.DiffResult#dispatchUpdatesTo(RecyclerView.Adapter)
  */
 public final class AdapterListUpdateCallback implements ListUpdateCallback {
-	@NonNull
-	private final RecyclerView.Adapter mAdapter;
 
-	/**
-	 * Creates an AdapterListUpdateCallback that will dispatch update events to the given adapter.
-	 *
-	 * @param adapter
-	 *            The Adapter to send updates to.
-	 */
-	public AdapterListUpdateCallback(@NonNull RecyclerView.Adapter adapter) {
-		mAdapter = adapter;
-	}
+    @NonNull
+    private final RecyclerView.Adapter mAdapter;
 
-	/** {@inheritDoc} */
-	@Override
-	public void onInserted(int position, int count) {
-		mAdapter.notifyItemRangeInserted(position, count);
-	}
+    /**
+     * Creates an AdapterListUpdateCallback that will dispatch update events to the given adapter.
+     *
+     * @param adapter
+     *            The Adapter to send updates to.
+     */
+    public AdapterListUpdateCallback(@NonNull RecyclerView.Adapter adapter) {
+        mAdapter = adapter;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public void onRemoved(int position, int count) {
-		mAdapter.notifyItemRangeRemoved(position, count);
-	}
+    @Override
+    public void onInserted(int position, int count) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public void onMoved(int fromPosition, int toPosition) {
-		mAdapter.notifyItemMoved(fromPosition, toPosition);
-	}
+    @Override
+    public void onRemoved(int position, int count) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public void onChanged(int position, int count, Object payload) {
-		mAdapter.notifyItemRangeChanged(position, count, payload);
-	}
+    @Override
+    public void onMoved(int fromPosition, int toPosition) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
+
+    @Override
+    public void onChanged(int position, int count, Object payload) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

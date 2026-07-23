@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.lifecycle;
 
 import androidx.annotation.MainThread;
@@ -73,6 +72,7 @@ import androidx.annotation.NonNull;
  * and events without tracking them manually.
  */
 public abstract class Lifecycle {
+
     /**
      * Adds a LifecycleObserver that will be notified when the LifecycleOwner changes
      * state.
@@ -113,6 +113,7 @@ public abstract class Lifecycle {
 
     @SuppressWarnings("WeakerAccess")
     public enum Event {
+
         /**
          * Constant for onCreate event of the {@link LifecycleOwner}.
          */
@@ -149,20 +150,19 @@ public abstract class Lifecycle {
      */
     @SuppressWarnings("WeakerAccess")
     public enum State {
+
         /**
          * Destroyed state for a LifecycleOwner. After this event, this Lifecycle will not dispatch
          * any more events. For instance, for an {@link android.app.Activity}, this state is reached
          * <b>right before</b> Activity's {@link android.app.Activity#onDestroy() onDestroy} call.
          */
         DESTROYED,
-
         /**
          * Initialized state for a LifecycleOwner. For an {@link android.app.Activity}, this is
          * the state when it is constructed but has not received
          * {@link android.app.Activity#onCreate(android.os.Bundle) onCreate} yet.
          */
         INITIALIZED,
-
         /**
          * Created state for a LifecycleOwner. For an {@link android.app.Activity}, this state
          * is reached in two cases:
@@ -172,7 +172,6 @@ public abstract class Lifecycle {
          * </ul>
          */
         CREATED,
-
         /**
          * Started state for a LifecycleOwner. For an {@link android.app.Activity}, this state
          * is reached in two cases:
@@ -182,21 +181,14 @@ public abstract class Lifecycle {
          * </ul>
          */
         STARTED,
-
         /**
          * Resumed state for a LifecycleOwner. For an {@link android.app.Activity}, this state
          * is reached after {@link android.app.Activity#onResume() onResume} is called.
          */
         RESUMED;
 
-        /**
-         * Compares if this State is greater or equal to the given {@code state}.
-         *
-         * @param state State to compare with
-         * @return true if this State is greater or equal to the given {@code state}
-         */
         public boolean isAtLeast(@NonNull State state) {
-            return compareTo(state) >= 0;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
 }

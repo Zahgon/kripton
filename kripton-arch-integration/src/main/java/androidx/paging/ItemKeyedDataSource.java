@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.paging;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.arch.core.util.Function;
-
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -49,6 +47,7 @@ public abstract class ItemKeyedDataSource<Key, Value> extends ContiguousDataSour
      */
     @SuppressWarnings("WeakerAccess")
     public static class LoadInitialParams<Key> {
+
         /**
          * Load items around this key, or at the beginning of the data set if {@code null} is
          * passed.
@@ -72,9 +71,7 @@ public abstract class ItemKeyedDataSource<Key, Value> extends ContiguousDataSour
          */
         public final boolean placeholdersEnabled;
 
-
-        public LoadInitialParams(@Nullable Key requestedInitialKey, int requestedLoadSize,
-                boolean placeholdersEnabled) {
+        public LoadInitialParams(@Nullable Key requestedInitialKey, int requestedLoadSize, boolean placeholdersEnabled) {
             this.requestedInitialKey = requestedInitialKey;
             this.requestedLoadSize = requestedLoadSize;
             this.placeholdersEnabled = placeholdersEnabled;
@@ -89,12 +86,14 @@ public abstract class ItemKeyedDataSource<Key, Value> extends ContiguousDataSour
      */
     @SuppressWarnings("WeakerAccess")
     public static class LoadParams<Key> {
+
         /**
          * Load items before/after this key.
          * <p>
          * Returned data must begin directly adjacent to this position.
          */
         public final Key key;
+
         /**
          * Requested number of items to load.
          * <p>
@@ -128,6 +127,7 @@ public abstract class ItemKeyedDataSource<Key, Value> extends ContiguousDataSour
      * @param <Value> Type of items being loaded.
      */
     public abstract static class LoadInitialCallback<Value> extends LoadCallback<Value> {
+
         /**
          * Called to pass initial load state from a DataSource.
          * <p>
@@ -152,7 +152,6 @@ public abstract class ItemKeyedDataSource<Key, Value> extends ContiguousDataSour
         public abstract void onResult(@NonNull List<Value> data, int position, int totalCount);
     }
 
-
     /**
      * Callback for ItemKeyedDataSource {@link #loadBefore(LoadParams, LoadCallback)}
      * and {@link #loadAfter(LoadParams, LoadCallback)} to return data.
@@ -166,6 +165,7 @@ public abstract class ItemKeyedDataSource<Key, Value> extends ContiguousDataSour
      * @param <Value> Type of items being loaded.
      */
     public abstract static class LoadCallback<Value> {
+
         /**
          * Called to pass loaded data from a DataSource.
          * <p>
@@ -185,93 +185,60 @@ public abstract class ItemKeyedDataSource<Key, Value> extends ContiguousDataSour
     }
 
     static class LoadInitialCallbackImpl<Value> extends LoadInitialCallback<Value> {
+
         final LoadCallbackHelper<Value> mCallbackHelper;
+
         private final boolean mCountingEnabled;
-        LoadInitialCallbackImpl(@NonNull ItemKeyedDataSource dataSource, boolean countingEnabled,
-                @NonNull PageResult.Receiver<Value> receiver) {
+
+        LoadInitialCallbackImpl(@NonNull ItemKeyedDataSource dataSource, boolean countingEnabled, @NonNull PageResult.Receiver<Value> receiver) {
             mCallbackHelper = new LoadCallbackHelper<>(dataSource, PageResult.INIT, null, receiver);
             mCountingEnabled = countingEnabled;
         }
 
         @Override
         public void onResult(@NonNull List<Value> data, int position, int totalCount) {
-            if (!mCallbackHelper.dispatchInvalidResultIfInvalid()) {
-                LoadCallbackHelper.validateInitialLoadParams(data, position, totalCount);
-
-                int trailingUnloadedCount = totalCount - position - data.size();
-                if (mCountingEnabled) {
-                    mCallbackHelper.dispatchResultToReceiver(new PageResult<>(
-                            data, position, trailingUnloadedCount, 0));
-                } else {
-                    mCallbackHelper.dispatchResultToReceiver(new PageResult<>(data, position));
-                }
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @Override
         public void onResult(@NonNull List<Value> data) {
-            if (!mCallbackHelper.dispatchInvalidResultIfInvalid()) {
-                mCallbackHelper.dispatchResultToReceiver(new PageResult<>(data, 0, 0, 0));
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
 
     static class LoadCallbackImpl<Value> extends LoadCallback<Value> {
+
         final LoadCallbackHelper<Value> mCallbackHelper;
 
-        LoadCallbackImpl(@NonNull ItemKeyedDataSource dataSource, @PageResult.ResultType int type,
-                @Nullable Executor mainThreadExecutor,
-                @NonNull PageResult.Receiver<Value> receiver) {
-            mCallbackHelper = new LoadCallbackHelper<>(
-                    dataSource, type, mainThreadExecutor, receiver);
+        LoadCallbackImpl(@NonNull ItemKeyedDataSource dataSource, @PageResult.ResultType int type, @Nullable Executor mainThreadExecutor, @NonNull PageResult.Receiver<Value> receiver) {
+            mCallbackHelper = new LoadCallbackHelper<>(dataSource, type, mainThreadExecutor, receiver);
         }
 
         @Override
         public void onResult(@NonNull List<Value> data) {
-            if (!mCallbackHelper.dispatchInvalidResultIfInvalid()) {
-                mCallbackHelper.dispatchResultToReceiver(new PageResult<>(data, 0, 0, 0));
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
 
     @Nullable
     @Override
     final Key getKey(int position, Value item) {
-        if (item == null) {
-            return null;
-        }
-
-        return getKey(item);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
-    final void dispatchLoadInitial(@Nullable Key key, int initialLoadSize, int pageSize,
-            boolean enablePlaceholders, @NonNull Executor mainThreadExecutor,
-            @NonNull PageResult.Receiver<Value> receiver) {
-        LoadInitialCallbackImpl<Value> callback =
-                new LoadInitialCallbackImpl<>(this, enablePlaceholders, receiver);
-        loadInitial(new LoadInitialParams<>(key, initialLoadSize, enablePlaceholders), callback);
-
-        // If initialLoad's callback is not called within the body, we force any following calls
-        // to post to the UI thread. This constructor may be run on a background thread, but
-        // after constructor, mutation must happen on UI thread.
-        callback.mCallbackHelper.setPostExecutor(mainThreadExecutor);
+    final void dispatchLoadInitial(@Nullable Key key, int initialLoadSize, int pageSize, boolean enablePlaceholders, @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<Value> receiver) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
-    final void dispatchLoadAfter(int currentEndIndex, @NonNull Value currentEndItem,
-            int pageSize, @NonNull Executor mainThreadExecutor,
-            @NonNull PageResult.Receiver<Value> receiver) {
-        loadAfter(new LoadParams<>(getKey(currentEndItem), pageSize),
-                new LoadCallbackImpl<>(this, PageResult.APPEND, mainThreadExecutor, receiver));
+    final void dispatchLoadAfter(int currentEndIndex, @NonNull Value currentEndItem, int pageSize, @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<Value> receiver) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
-    final void dispatchLoadBefore(int currentBeginIndex, @NonNull Value currentBeginItem,
-            int pageSize, @NonNull Executor mainThreadExecutor,
-            @NonNull PageResult.Receiver<Value> receiver) {
-        loadBefore(new LoadParams<>(getKey(currentBeginItem), pageSize),
-                new LoadCallbackImpl<>(this, PageResult.PREPEND, mainThreadExecutor, receiver));
+    final void dispatchLoadBefore(int currentBeginIndex, @NonNull Value currentBeginItem, int pageSize, @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<Value> receiver) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -294,8 +261,7 @@ public abstract class ItemKeyedDataSource<Key, Value> extends ContiguousDataSour
      * @param params Parameters for initial load, including initial key and requested size.
      * @param callback Callback that receives initial load data.
      */
-    public abstract void loadInitial(@NonNull LoadInitialParams<Key> params,
-            @NonNull LoadInitialCallback<Value> callback);
+    public abstract void loadInitial(@NonNull LoadInitialParams<Key> params, @NonNull LoadInitialCallback<Value> callback);
 
     /**
      * Load list data after the key specified in {@link LoadParams#key LoadParams.key}.
@@ -313,8 +279,7 @@ public abstract class ItemKeyedDataSource<Key, Value> extends ContiguousDataSour
      * @param params Parameters for the load, including the key to load after, and requested size.
      * @param callback Callback that receives loaded data.
      */
-    public abstract void loadAfter(@NonNull LoadParams<Key> params,
-            @NonNull LoadCallback<Value> callback);
+    public abstract void loadAfter(@NonNull LoadParams<Key> params, @NonNull LoadCallback<Value> callback);
 
     /**
      * Load list data before the key specified in {@link LoadParams#key LoadParams.key}.
@@ -335,8 +300,7 @@ public abstract class ItemKeyedDataSource<Key, Value> extends ContiguousDataSour
      * @param params Parameters for the load, including the key to load before, and requested size.
      * @param callback Callback that receives loaded data.
      */
-    public abstract void loadBefore(@NonNull LoadParams<Key> params,
-            @NonNull LoadCallback<Value> callback);
+    public abstract void loadBefore(@NonNull LoadParams<Key> params, @NonNull LoadCallback<Value> callback);
 
     /**
      * Return a key associated with the given item.
@@ -360,15 +324,13 @@ public abstract class ItemKeyedDataSource<Key, Value> extends ContiguousDataSour
 
     @NonNull
     @Override
-    public final <ToValue> ItemKeyedDataSource<Key, ToValue> mapByPage(
-            @NonNull Function<List<Value>, List<ToValue>> function) {
-        return new WrapperItemKeyedDataSource<>(this, function);
+    public final <ToValue> ItemKeyedDataSource<Key, ToValue> mapByPage(@NonNull Function<List<Value>, List<ToValue>> function) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @NonNull
     @Override
-    public final <ToValue> ItemKeyedDataSource<Key, ToValue> map(
-            @NonNull Function<Value, ToValue> function) {
-        return mapByPage(createListFunction(function));
+    public final <ToValue> ItemKeyedDataSource<Key, ToValue> map(@NonNull Function<Value, ToValue> function) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

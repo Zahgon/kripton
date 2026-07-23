@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 package androidx.sqlite.db;
+
 import androidx.annotation.Nullable;
+
 /**
  * A basic implementation of {@link SupportSQLiteQuery} which receives a query and its args and
  * binds args based on the passed in Object type.
  */
 public final class SimpleSQLiteQuery implements SupportSQLiteQuery {
+
     private final String mQuery;
+
     @Nullable
     private final Object[] mBindArgs;
+
     /**
      * Creates an SQL query with the sql string and the bind arguments.
      *
@@ -33,6 +38,7 @@ public final class SimpleSQLiteQuery implements SupportSQLiteQuery {
         mQuery = query;
         mBindArgs = bindArgs;
     }
+
     /**
      * Creates an SQL query without any bind arguments.
      *
@@ -41,34 +47,26 @@ public final class SimpleSQLiteQuery implements SupportSQLiteQuery {
     public SimpleSQLiteQuery(String query) {
         this(query, null);
     }
+
     @Override
     public String getSql() {
-        return mQuery;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public void bindTo(SupportSQLiteProgram statement) {
-        bind(statement, mBindArgs);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     @Override
     public int getArgCount() {
-        return mBindArgs == null ? 0 : mBindArgs.length;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    /**
-     * Binds the given arguments into the given sqlite statement.
-     *
-     * @param statement The sqlite statement
-     * @param bindArgs  The list of bind arguments
-     */
+
     public static void bind(SupportSQLiteProgram statement, Object[] bindArgs) {
-        if (bindArgs == null) {
-            return;
-        }
-        final int limit = bindArgs.length;
-        for (int i = 0; i < limit; i++) {
-            final Object arg = bindArgs[i];
-            bind(statement, i + 1, arg);
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
+
     private static void bind(SupportSQLiteProgram statement, int index, Object arg) {
         // extracted from android.database.sqlite.SQLiteConnection
         if (arg == null) {
@@ -92,9 +90,7 @@ public final class SimpleSQLiteQuery implements SupportSQLiteQuery {
         } else if (arg instanceof Boolean) {
             statement.bindLong(index, ((Boolean) arg) ? 1 : 0);
         } else {
-            throw new IllegalArgumentException("Cannot bind " + arg + " at index " + index
-                    + " Supported types: null, byte[], float, double, long, int, short, byte,"
-                    + " string");
+            throw new IllegalArgumentException("Cannot bind " + arg + " at index " + index + " Supported types: null, byte[], float, double, long, int, short, byte," + " string");
         }
     }
 }

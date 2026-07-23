@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 /**
- *
  */
 package com.abubusoft.kripton.processor.sqlite;
 
@@ -28,10 +27,8 @@ import com.abubusoft.kripton.processor.sqlite.transform.SQLTransformer;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-
 import java.util.Optional;
 import java.util.Set;
-
 import static com.abubusoft.kripton.processor.core.reflect.TypeUtility.typeName;
 
 /**
@@ -42,97 +39,14 @@ import static com.abubusoft.kripton.processor.core.reflect.TypeUtility.typeName;
  */
 public class SelectBeanHelper extends AbstractSelectCodeGenerator {
 
-  /*
+    /*
    * (non-Javadoc)
    *
    * @see com.abubusoft.kripton.processor.sqlite.AbstractSelectCodeGenerator#generateSpecializedPart(com.abubusoft.kripton.processor.sqlite.model.SQLiteModelMethod,
    * com.squareup.javapoet.TypeSpec.Builder, com.squareup.javapoet.MethodSpec.Builder, java.util.Set, boolean)
    */
-  @Override
-  public void generateSpecializedPart(SQLiteModelMethod method, TypeSpec.Builder classBuilder,
-                                      MethodSpec.Builder methodBuilder, Set<JQLProjection> fieldList, boolean mapFields) {
-    SQLiteEntity entity = method.getEntity();
-
-    // List<SQLProperty> fields = fieldList.value1;
-
-    // TypeName collectionClass;
-    TypeName entityClass = typeName(entity.getElement());
-
-    methodBuilder.addCode("\n");
-    methodBuilder.addCode("$T resultBean=null;\n", entityClass);
-    // immutable management
-    if (entity.isImmutablePojo()) {
-      methodBuilder.addCode("\n");
-      methodBuilder.addComment("initialize temporary variable for immutable POJO");
-      ImmutableUtility.generateImmutableVariableInit(entity, methodBuilder);
+    @Override
+    public void generateSpecializedPart(SQLiteModelMethod method, TypeSpec.Builder classBuilder, MethodSpec.Builder methodBuilder, Set<JQLProjection> fieldList, boolean mapFields) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-
-    methodBuilder.addCode("\n");
-
-    methodBuilder.beginControlFlow("if (_cursor.moveToFirst())");
-
-    // generate index from columns
-    methodBuilder.addCode("\n");
-    {
-      int i = 0;
-      for (JQLProjection a : fieldList) {
-        SQLProperty item = a.property;
-        methodBuilder.addStatement("int index$L=_cursor.getColumnIndex($S)", (i++), item.columnName);
-        if (item.hasTypeAdapter()) {
-          methodBuilder.addStatement("$T $LAdapter=$T.getAdapter($T.class)",
-                  item.typeAdapter.getAdapterTypeName(), item.getName(), SQLTypeAdapterUtils.class,
-                  item.typeAdapter.getAdapterTypeName());
-        }
-      }
-    }
-    methodBuilder.addCode("\n");
-
-    // immutable management
-    if (entity.isImmutablePojo()) {
-      methodBuilder.addComment("reset temporary variable for immutable POJO");
-      ImmutableUtility.generateImmutableVariableReset(entity, methodBuilder);
-    } else {
-      methodBuilder.addCode("resultBean=new $T();\n\n", entityClass);
-    }
-
-    // generate mapping
-    int i = 0;
-    for (JQLProjection a : fieldList) {
-      SQLProperty item = a.property;
-      if (item.isNullable()) {
-        methodBuilder.addCode("if (!_cursor.isNull(index$L)) { ", i);
-      }
-      SQLTransformer.cursor2Java(method.getParent().getEntity(), methodBuilder, entityClass, item, "resultBean", "_cursor", "index" + i + "");
-      methodBuilder.addCode(";");
-      if (item.isNullable()) {
-        methodBuilder.addCode(" }");
-      }
-      methodBuilder.addCode("\n");
-
-      i++;
-    }
-
-    // subqueries are executed after all
-    generateSubQueries(methodBuilder, method);
-
-    methodBuilder.addCode("\n");
-
-    // immutable management
-    if (entity.isImmutablePojo()) {
-      methodBuilder.addComment("define immutable POJO");
-      ImmutableUtility.generateImmutableEntityCreation(entity, methodBuilder, "resultBean", false);
-    }
-
-    methodBuilder.endControlFlow();
-
-    if (method.hasOptionalResult()) {
-      methodBuilder.addCode("return $T.ofNullable(resultBean);\n", Optional.class);
-    } else {
-      methodBuilder.addCode("return resultBean;\n");
-    }
-    // close try { open cursor
-    methodBuilder.endControlFlow();
-
-  }
-
 }

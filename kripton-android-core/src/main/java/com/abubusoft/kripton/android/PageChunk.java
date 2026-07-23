@@ -1,51 +1,39 @@
 package com.abubusoft.kripton.android;
 
-
 import java.util.List;
 
 public class PageChunk<E> implements Comparable<PageChunk<E>> {
-	private int pageNumber;
 
-	public int getPageNumber() {
-		return pageNumber;
-	}
+    private int pageNumber;
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + pageNumber;
-		return result;
-	}
+    public int getPageNumber() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		PageChunk other = (PageChunk) obj;
-		if (pageNumber != other.pageNumber)
-			return false;
-		return true;
-	}
+    @Override
+    public int hashCode() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	public List<E> getData() {
-		return data;
-	}
+    @SuppressWarnings("rawtypes")
+    @Override
+    public boolean equals(Object obj) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	private List<E> data;
+    public List<E> getData() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	public PageChunk(int pageNumber, List<E> data) {
-		this.pageNumber = pageNumber;
-		this.data = data;
-	}
+    private List<E> data;
 
-	@Override
-	public int compareTo(PageChunk<E> o) {
-		return this.pageNumber - o.pageNumber;
-	}
+    public PageChunk(int pageNumber, List<E> data) {
+        this.pageNumber = pageNumber;
+        this.data = data;
+    }
+
+    @Override
+    public int compareTo(PageChunk<E> o) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

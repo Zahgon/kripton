@@ -1,23 +1,24 @@
-/*******************************************************************************
- * Copyright 2016-2019 Francesco Benincasa (info@abubusoft.com)
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+/**
+ * ****************************************************************************
+ *  Copyright 2016-2019 Francesco Benincasa (info@abubusoft.com)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ *  use this file except in compliance with the License.  You may obtain a copy
+ *  of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ *  License for the specific language governing permissions and limitations under
+ *  the License.
+ * ****************************************************************************
+ */
 package com.abubusoft.kripton.processor.bind.model.many2many;
 
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-
 import com.abubusoft.kripton.android.annotation.BindDao;
 import com.abubusoft.kripton.android.annotation.BindDaoMany2Many;
 import com.abubusoft.kripton.common.CaseFormat;
@@ -30,195 +31,125 @@ import com.abubusoft.kripton.processor.sqlite.model.SQLProperty;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeName;
 
-
 /**
  * The Class M2MEntity.
  */
 public class M2MEntity extends M2MBase {
-	
-	/**
-	 * object must be immutable
-	 */
-	public boolean immutable;
-	
-	public TypeName propertyPrimaryKey;
 
-	public TypeName propertyKey1;
+    /**
+     * object must be immutable
+     */
+    public boolean immutable;
 
-	public TypeName propertyKey2;
+    public TypeName propertyPrimaryKey;
 
-	/** The package name. */
-	private String packageName;
+    public TypeName propertyKey1;
 
-	/** The entity 1 name. */
-	public ClassName entity1Name;
+    public TypeName propertyKey2;
 
-	/** The entity 2 name. */
-	public ClassName entity2Name;
+    /**
+     * The package name.
+     */
+    private String packageName;
 
-	/** The id name. */
-	public String idName;
+    /**
+     * The entity 1 name.
+     */
+    public ClassName entity1Name;
 
-	/**
-	 * Gets the package name.
-	 *
-	 * @return the package name
-	 */
-	public String getPackageName() {
-		return packageName;
-	}
+    /**
+     * The entity 2 name.
+     */
+    public ClassName entity2Name;
 
-	/** The name. */
-	public String name;
+    /**
+     * The id name.
+     */
+    public String idName;
 
-	/** The table name. */
-	public String tableName;
+    public String getPackageName() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/** The dao name. */
-	public ClassName daoName;
+    /**
+     * The name.
+     */
+    public String name;
 
-	/** The need to create. */
-	public boolean needToCreate;
-	
-	/** The dao element. */
-	public TypeElement daoElement;
+    /**
+     * The table name.
+     */
+    public String tableName;
 
-	/** The generate methods. */
-	public boolean generateMethods;
+    /**
+     * The dao name.
+     */
+    public ClassName daoName;
 
-	/**
-	 * Instantiates a new m 2 M entity.
-	 *
-	 * @param daoElement the dao element
-	 * @param packageName the package name
-	 * @param entityName the entity name
-	 * @param daoClazzName the dao clazz name
-	 * @param entity1ClazzName the entity 1 clazz name
-	 * @param entity2ClazzName the entity 2 clazz name
-	 * @param idName the id name
-	 * @param tableName the table name
-	 * @param needToCreate the need to create
-	 * @param generatedMethods the generated methods
-	 */
-	public M2MEntity(TypeElement daoElement, String packageName, String entityName, ClassName daoClazzName, ClassName entity1ClazzName, ClassName entity2ClazzName, String idName, String tableName, boolean needToCreate, boolean generatedMethods, boolean immutable) {
-		this.packageName = packageName;
-		this.entity1Name = entity1ClazzName;
-		this.entity2Name = entity2ClazzName;
-		this.daoName = daoClazzName;
-		this.idName = idName;
-		this.name = entityName;
-		this.tableName = StringUtils.hasText(tableName) ? tableName : (CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, this.name));
-		this.needToCreate = needToCreate;
-		this.daoElement=daoElement;
-		this.generateMethods=generatedMethods;
-		this.immutable=immutable;
-	}
+    /**
+     * The need to create.
+     */
+    public boolean needToCreate;
 
-	/**
-	 * Extract class name.
-	 *
-	 * @param fullName the full name
-	 * @return the string
-	 */
-	public static String extractClassName(String fullName) {
-		int l = fullName.lastIndexOf(".");
+    /**
+     * The dao element.
+     */
+    public TypeElement daoElement;
 
-		return fullName.substring(l + 1);
-	}
+    /**
+     * The generate methods.
+     */
+    public boolean generateMethods;
 
-	/**
-	 * Gets the class name.
-	 *
-	 * @return the class name
-	 */
-	public ClassName getClassName() {
-		return TypeUtility.className(this.packageName, this.name);
-	}
+    /**
+     * Instantiates a new m 2 M entity.
+     *
+     * @param daoElement the dao element
+     * @param packageName the package name
+     * @param entityName the entity name
+     * @param daoClazzName the dao clazz name
+     * @param entity1ClazzName the entity 1 clazz name
+     * @param entity2ClazzName the entity 2 clazz name
+     * @param idName the id name
+     * @param tableName the table name
+     * @param needToCreate the need to create
+     * @param generatedMethods the generated methods
+     */
+    public M2MEntity(TypeElement daoElement, String packageName, String entityName, ClassName daoClazzName, ClassName entity1ClazzName, ClassName entity2ClazzName, String idName, String tableName, boolean needToCreate, boolean generatedMethods, boolean immutable) {
+        this.packageName = packageName;
+        this.entity1Name = entity1ClazzName;
+        this.entity2Name = entity2ClazzName;
+        this.daoName = daoClazzName;
+        this.idName = idName;
+        this.name = entityName;
+        this.tableName = StringUtils.hasText(tableName) ? tableName : (CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, this.name));
+        this.needToCreate = needToCreate;
+        this.daoElement = daoElement;
+        this.generateMethods = generatedMethods;
+        this.immutable = immutable;
+    }
 
-	/**
-	 * Works with @BindDaoMany2Many and @BindDao to extract entity name.
-	 * @param schema 
-	 *
-	 * @param daoElement the dao element
-	 * @return the m 2 M entity
-	 */
-	public static M2MEntity extractEntityManagedByDAO(TypeElement daoElement) {
-		ClassName entity1 = null;
-		ClassName entity2 = null;
-		String prefixId = null;
-		String tableName = null;
-		String entityName = null;
-		PackageElement pkg = null;
-		String packageName = null;
-		boolean needToCreate = true;
-		boolean generatedMethods=true;
-		boolean immutable=true;
-		
-		
-		if (daoElement.getAnnotation(BindDaoMany2Many.class) != null) {
-			entity1 = TypeUtility.className(AnnotationUtility.extractAsClassName(daoElement, BindDaoMany2Many.class, AnnotationAttributeType.ENTITY_1));
-			entity2 = TypeUtility.className(AnnotationUtility.extractAsClassName(daoElement, BindDaoMany2Many.class, AnnotationAttributeType.ENTITY_2));
-			prefixId = AnnotationUtility.extractAsString(daoElement, BindDaoMany2Many.class, AnnotationAttributeType.ID_NAME);
-			tableName = AnnotationUtility.extractAsString(daoElement, BindDaoMany2Many.class, AnnotationAttributeType.TABLE_NAME);
-			tableName = AnnotationUtility.extractAsString(daoElement, BindDaoMany2Many.class, AnnotationAttributeType.TABLE_NAME);
-			immutable = AnnotationUtility.extractAsBoolean(daoElement, BindDaoMany2Many.class, AnnotationAttributeType.IMMUTABLE);
-			
-			generatedMethods=AnnotationUtility.extractAsBoolean(daoElement, BindDaoMany2Many.class, AnnotationAttributeType.METHODS);
-			
-			entityName = entity1.simpleName() + entity2.simpleName();
-			pkg = BaseProcessor.elementUtils.getPackageOf(daoElement);
-			packageName = pkg.isUnnamed() ? null : pkg.getQualifiedName().toString();
-		}
+    public static String extractClassName(String fullName) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		if (daoElement.getAnnotation(BindDao.class) != null) {
-			// we have @BindDao
-			String derived = AnnotationUtility.extractAsClassName(daoElement, BindDao.class, AnnotationAttributeType.VALUE);
-			ClassName clazz = TypeUtility.className(derived);
+    public ClassName getClassName() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-			packageName = clazz.packageName();
-			entityName = clazz.simpleName();
+    public static M2MEntity extractEntityManagedByDAO(TypeElement daoElement) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-			String tableTemp = AnnotationUtility.extractAsClassName(daoElement, BindDao.class, AnnotationAttributeType.TABLE_NAME);
-			if (StringUtils.hasText(tableTemp)) {
-				tableName = tableTemp;
-			}
+    public String getQualifiedName() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-			needToCreate = false;
-		}
+    public String getSimpleName() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-		M2MEntity entity = new M2MEntity(daoElement, packageName, entityName, TypeUtility.className(daoElement.asType().toString()), entity1, entity2, prefixId, tableName, needToCreate, generatedMethods, immutable);
-
-		return entity;
-	}
-
-	/**
-	 * Gets the qualified name.
-	 *
-	 * @return the qualified name
-	 */
-	public String getQualifiedName() {
-		if (StringUtils.hasText(packageName)) {
-			return packageName+"."+name;
-		}
-		return name;
-	}
-
-	/**
-	 * Gets the simple name.
-	 *
-	 * @return the simple name
-	 */
-	public String getSimpleName() {
-		return name;
-	}
-	
-	/**
-	 * Gets the dao qualified name.
-	 *
-	 * @return the dao qualified name
-	 */
-	public String getDaoQualifiedName() {
-		return daoElement.getQualifiedName().toString();
-	}
-
+    public String getDaoQualifiedName() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.paging;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
 final class PagedStorage<T> extends AbstractList<T> {
+
     /**
      * Lists instances are compared (with instance equality) to PLACEHOLDER_LIST to check if an item
      * in that position is already loading. We use a singleton placeholder list that is distinct
@@ -34,6 +33,7 @@ final class PagedStorage<T> extends AbstractList<T> {
 
     // Always set
     private int mLeadingNullCount;
+
     /**
      * List of pages in storage.
      *
@@ -46,9 +46,11 @@ final class PagedStorage<T> extends AbstractList<T> {
      *     mPages may have nulls, or placeholder (empty) pages while content is loading.
      */
     private final ArrayList<List<T>> mPages;
+
     private int mTrailingNullCount;
 
     private int mPositionOffset;
+
     /**
      * Number of items represented by {@link #mPages}. If tiling is enabled, unloaded items in
      * {@link #mPages} may be null, but this value still counts them.
@@ -59,6 +61,7 @@ final class PagedStorage<T> extends AbstractList<T> {
     private int mPageSize;
 
     private int mNumberPrepended;
+
     private int mNumberAppended;
 
     PagedStorage() {
@@ -89,7 +92,7 @@ final class PagedStorage<T> extends AbstractList<T> {
     }
 
     PagedStorage<T> snapshot() {
-        return new PagedStorage<>(this);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     private void init(int leadingNulls, List<T> page, int trailingNulls, int positionOffset) {
@@ -97,281 +100,110 @@ final class PagedStorage<T> extends AbstractList<T> {
         mPages.clear();
         mPages.add(page);
         mTrailingNullCount = trailingNulls;
-
         mPositionOffset = positionOffset;
         mStorageCount = page.size();
-
         // initialized as tiled. There may be 3 nulls, 2 items, but we still call this tiled
         // even if it will break if nulls convert.
         mPageSize = page.size();
-
         mNumberPrepended = 0;
         mNumberAppended = 0;
     }
 
-    void init(int leadingNulls, @NonNull List<T> page, int trailingNulls, int positionOffset,
-            @NonNull Callback callback) {
-        init(leadingNulls, page, trailingNulls, positionOffset);
-        callback.onInitialized(size());
+    void init(int leadingNulls, @NonNull List<T> page, int trailingNulls, int positionOffset, @NonNull Callback callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     public T get(int i) {
-        if (i < 0 || i >= size()) {
-            throw new IndexOutOfBoundsException("Index: " + i + ", Size: " + size());
-        }
-
-        // is it definitely outside 'mPages'?
-        int localIndex = i - mLeadingNullCount;
-        if (localIndex < 0 || localIndex >= mStorageCount) {
-            return null;
-        }
-
-        int localPageIndex;
-        int pageInternalIndex;
-
-        if (isTiled()) {
-            // it's inside mPages, and we're tiled. Jump to correct tile.
-            localPageIndex = localIndex / mPageSize;
-            pageInternalIndex = localIndex % mPageSize;
-        } else {
-            // it's inside mPages, but page sizes aren't regular. Walk to correct tile.
-            // Pages can only be null while tiled, so accessing page count is safe.
-            pageInternalIndex = localIndex;
-            final int localPageCount = mPages.size();
-            for (localPageIndex = 0; localPageIndex < localPageCount; localPageIndex++) {
-                int pageSize = mPages.get(localPageIndex).size();
-                if (pageSize > pageInternalIndex) {
-                    // stop, found the page
-                    break;
-                }
-                pageInternalIndex -= pageSize;
-            }
-        }
-
-        List<T> page = mPages.get(localPageIndex);
-        if (page == null || page.size() == 0) {
-            // can only occur in tiled case, with untouched inner/placeholder pages
-            return null;
-        }
-        return page.get(pageInternalIndex);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Returns true if all pages are the same size, except for the last, which may be smaller
-     */
     boolean isTiled() {
-        return mPageSize > 0;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     int getLeadingNullCount() {
-        return mLeadingNullCount;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     int getTrailingNullCount() {
-        return mTrailingNullCount;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     int getStorageCount() {
-        return mStorageCount;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     int getNumberAppended() {
-        return mNumberAppended;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     int getNumberPrepended() {
-        return mNumberPrepended;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     int getPageCount() {
-        return mPages.size();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     interface Callback {
+
         void onInitialized(int count);
+
         void onPagePrepended(int leadingNulls, int changed, int added);
+
         void onPageAppended(int endPosition, int changed, int added);
+
         void onPagePlaceholderInserted(int pageIndex);
+
         void onPageInserted(int start, int count);
     }
 
     int getPositionOffset() {
-        return mPositionOffset;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     public int size() {
-        return mLeadingNullCount + mStorageCount + mTrailingNullCount;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     int computeLeadingNulls() {
-        int total = mLeadingNullCount;
-        final int pageCount = mPages.size();
-        for (int i = 0; i < pageCount; i++) {
-            List page = mPages.get(i);
-            if (page != null && page != PLACEHOLDER_LIST) {
-                break;
-            }
-            total += mPageSize;
-        }
-        return total;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     int computeTrailingNulls() {
-        int total = mTrailingNullCount;
-        for (int i = mPages.size() - 1; i >= 0; i--) {
-            List page = mPages.get(i);
-            if (page != null && page != PLACEHOLDER_LIST) {
-                break;
-            }
-            total += mPageSize;
-        }
-        return total;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     // ---------------- Contiguous API -------------------
-
     T getFirstLoadedItem() {
-        // safe to access first page's first item here:
-        // If contiguous, mPages can't be empty, can't hold null Pages, and items can't be empty
-        return mPages.get(0).get(0);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     T getLastLoadedItem() {
-        // safe to access last page's last item here:
-        // If contiguous, mPages can't be empty, can't hold null Pages, and items can't be empty
-        List<T> page = mPages.get(mPages.size() - 1);
-        return page.get(page.size() - 1);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     void prependPage(@NonNull List<T> page, @NonNull Callback callback) {
-        final int count = page.size();
-        if (count == 0) {
-            // Nothing returned from source, stop loading in this direction
-            return;
-        }
-        if (mPageSize > 0 && count != mPageSize) {
-            if (mPages.size() == 1 && count > mPageSize) {
-                // prepending to a single item - update current page size to that of 'inner' page
-                mPageSize = count;
-            } else {
-                // no longer tiled
-                mPageSize = -1;
-            }
-        }
-
-        mPages.add(0, page);
-        mStorageCount += count;
-
-        final int changedCount = Math.min(mLeadingNullCount, count);
-        final int addedCount = count - changedCount;
-
-        if (changedCount != 0) {
-            mLeadingNullCount -= changedCount;
-        }
-        mPositionOffset -= addedCount;
-        mNumberPrepended += count;
-
-        callback.onPagePrepended(mLeadingNullCount, changedCount, addedCount);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     void appendPage(@NonNull List<T> page, @NonNull Callback callback) {
-        final int count = page.size();
-        if (count == 0) {
-            // Nothing returned from source, stop loading in this direction
-            return;
-        }
-
-        if (mPageSize > 0) {
-            // if the previous page was smaller than mPageSize,
-            // or if this page is larger than the previous, disable tiling
-            if (mPages.get(mPages.size() - 1).size() != mPageSize
-                    || count > mPageSize) {
-                mPageSize = -1;
-            }
-        }
-
-        mPages.add(page);
-        mStorageCount += count;
-
-        final int changedCount = Math.min(mTrailingNullCount, count);
-        final int addedCount = count - changedCount;
-
-        if (changedCount != 0) {
-            mTrailingNullCount -= changedCount;
-        }
-        mNumberAppended += count;
-        callback.onPageAppended(mLeadingNullCount + mStorageCount - count,
-                changedCount, addedCount);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     // ------------------ Non-Contiguous API (tiling required) ----------------------
-
-    void initAndSplit(int leadingNulls, @NonNull List<T> multiPageList,
-            int trailingNulls, int positionOffset, int pageSize, @NonNull Callback callback) {
-
-        int pageCount = (multiPageList.size() + (pageSize - 1)) / pageSize;
-        for (int i = 0; i < pageCount; i++) {
-            int beginInclusive = i * pageSize;
-            int endExclusive = Math.min(multiPageList.size(), (i + 1) * pageSize);
-
-            List<T> sublist = multiPageList.subList(beginInclusive, endExclusive);
-
-            if (i == 0) {
-                // Trailing nulls for first page includes other pages in multiPageList
-                int initialTrailingNulls = trailingNulls + multiPageList.size() - sublist.size();
-                init(leadingNulls, sublist, initialTrailingNulls, positionOffset);
-            } else {
-                int insertPosition = leadingNulls + beginInclusive;
-                insertPage(insertPosition, sublist, null);
-            }
-        }
-        callback.onInitialized(size());
+    void initAndSplit(int leadingNulls, @NonNull List<T> multiPageList, int trailingNulls, int positionOffset, int pageSize, @NonNull Callback callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     public void insertPage(int position, @NonNull List<T> page, @Nullable Callback callback) {
-        final int newPageSize = page.size();
-        if (newPageSize != mPageSize) {
-            // differing page size is OK in 2 cases, when the page is being added:
-            // 1) to the end (in which case, ignore new smaller size)
-            // 2) only the last page has been added so far (in which case, adopt new bigger size)
-
-            int size = size();
-            boolean addingLastPage = position == (size - size % mPageSize)
-                    && newPageSize < mPageSize;
-            boolean onlyEndPagePresent = mTrailingNullCount == 0 && mPages.size() == 1
-                    && newPageSize > mPageSize;
-
-            // OK only if existing single page, and it's the last one
-            if (!onlyEndPagePresent && !addingLastPage) {
-                throw new IllegalArgumentException("page introduces incorrect tiling");
-            }
-            if (onlyEndPagePresent) {
-                mPageSize = newPageSize;
-            }
-        }
-
-        int pageIndex = position / mPageSize;
-
-        allocatePageRange(pageIndex, pageIndex);
-
-        int localPageIndex = pageIndex - mLeadingNullCount / mPageSize;
-
-        List<T> oldPage = mPages.get(localPageIndex);
-        if (oldPage != null && oldPage != PLACEHOLDER_LIST) {
-            throw new IllegalArgumentException(
-                    "Invalid position " + position + ": data already loaded");
-        }
-        mPages.set(localPageIndex, page);
-        if (callback != null) {
-            callback.onPageInserted(position, page.size());
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     private void allocatePageRange(final int minimumPage, final int maximumPage) {
         int leadingNullPages = mLeadingNullCount / mPageSize;
-
         if (minimumPage < leadingNullPages) {
             for (int i = 0; i < leadingNullPages - minimumPage; i++) {
                 mPages.add(0, null);
@@ -379,12 +211,10 @@ final class PagedStorage<T> extends AbstractList<T> {
             int newStorageAllocated = (leadingNullPages - minimumPage) * mPageSize;
             mStorageCount += newStorageAllocated;
             mLeadingNullCount -= newStorageAllocated;
-
             leadingNullPages = minimumPage;
         }
         if (maximumPage >= leadingNullPages + mPages.size()) {
-            int newStorageAllocated = Math.min(mTrailingNullCount,
-                    (maximumPage + 1 - (leadingNullPages + mPages.size())) * mPageSize);
+            int newStorageAllocated = Math.min(mTrailingNullCount, (maximumPage + 1 - (leadingNullPages + mPages.size())) * mPageSize);
             for (int i = mPages.size(); i <= maximumPage - leadingNullPages; i++) {
                 mPages.add(mPages.size(), null);
             }
@@ -393,59 +223,16 @@ final class PagedStorage<T> extends AbstractList<T> {
         }
     }
 
-    public void allocatePlaceholders(int index, int prefetchDistance,
-            int pageSize, Callback callback) {
-        if (pageSize != mPageSize) {
-            if (pageSize < mPageSize) {
-                throw new IllegalArgumentException("Page size cannot be reduced");
-            }
-            if (mPages.size() != 1 || mTrailingNullCount != 0) {
-                // not in single, last page allocated case - can't change page size
-                throw new IllegalArgumentException(
-                        "Page size can change only if last page is only one present");
-            }
-            mPageSize = pageSize;
-        }
-
-        final int maxPageCount = (size() + mPageSize - 1) / mPageSize;
-        int minimumPage = Math.max((index - prefetchDistance) / mPageSize, 0);
-        int maximumPage = Math.min((index + prefetchDistance) / mPageSize, maxPageCount - 1);
-
-        allocatePageRange(minimumPage, maximumPage);
-        int leadingNullPages = mLeadingNullCount / mPageSize;
-        for (int pageIndex = minimumPage; pageIndex <= maximumPage; pageIndex++) {
-            int localPageIndex = pageIndex - leadingNullPages;
-            if (mPages.get(localPageIndex) == null) {
-                //noinspection unchecked
-                mPages.set(localPageIndex, PLACEHOLDER_LIST);
-                callback.onPagePlaceholderInserted(pageIndex);
-            }
-        }
+    public void allocatePlaceholders(int index, int prefetchDistance, int pageSize, Callback callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     public boolean hasPage(int pageSize, int index) {
-        // NOTE: we pass pageSize here to avoid in case mPageSize
-        // not fully initialized (when last page only one loaded)
-        int leadingNullPages = mLeadingNullCount / pageSize;
-
-        if (index < leadingNullPages || index >= leadingNullPages + mPages.size()) {
-            return false;
-        }
-
-        List<T> page = mPages.get(index - leadingNullPages);
-
-        return page != null && page != PLACEHOLDER_LIST;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     public String toString() {
-        StringBuilder ret = new StringBuilder("leading " + mLeadingNullCount
-                + ", storage " + mStorageCount
-                + ", trailing " + getTrailingNullCount());
-
-        for (int i = 0; i < mPages.size(); i++) {
-            ret.append(" ").append(mPages.get(i));
-        }
-        return ret.toString();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

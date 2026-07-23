@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.arch.core.executor;
 
 import android.os.Handler;
 import android.os.Looper;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
  * The Class DefaultTaskExecutor.
- *
- * 
  */
 public class DefaultTaskExecutor extends TaskExecutor {
-    
-    /** The m lock. */
+
+    /**
+     * The m lock.
+     */
     private final Object mLock = new Object();
-    
-    /** The m disk IO. */
+
+    /**
+     * The m disk IO.
+     */
     private ExecutorService mDiskIO = Executors.newFixedThreadPool(2);
 
-    /** The m main handler. */
+    /**
+     * The m main handler.
+     */
     private volatile Handler mMainHandler;
 
     /* (non-Javadoc)
@@ -43,7 +45,7 @@ public class DefaultTaskExecutor extends TaskExecutor {
      */
     @Override
     public void executeOnDiskIO(Runnable runnable) {
-        mDiskIO.execute(runnable);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
@@ -51,15 +53,7 @@ public class DefaultTaskExecutor extends TaskExecutor {
      */
     @Override
     public void postToMainThread(Runnable runnable) {
-        if (mMainHandler == null) {
-            synchronized (mLock) {
-                if (mMainHandler == null) {
-                    mMainHandler = new Handler(Looper.getMainLooper());
-                }
-            }
-        }
-        //noinspection ConstantConditions
-        mMainHandler.post(runnable);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
@@ -67,6 +61,6 @@ public class DefaultTaskExecutor extends TaskExecutor {
      */
     @Override
     public boolean isMainThread() {
-        return Looper.getMainLooper().getThread() == Thread.currentThread();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

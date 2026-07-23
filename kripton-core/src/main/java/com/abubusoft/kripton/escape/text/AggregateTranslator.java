@@ -19,20 +19,21 @@ package com.abubusoft.kripton.escape.text;
 import java.io.IOException;
 import java.io.Writer;
 
-
 /**
- * Executes a sequence of translators one after the other. Execution ends whenever 
+ * Executes a sequence of translators one after the other. Execution ends whenever
  * the first translator consumes codepoints from the input.
- * 
+ *
  * @since 3.0
  */
 public class AggregateTranslator extends CharSequenceTranslator {
 
-    /** The translators. */
+    /**
+     * The translators.
+     */
     private final CharSequenceTranslator[] translators;
 
     /**
-     * Specify the translators to be used at creation time. 
+     * Specify the translators to be used at creation time.
      *
      * @param translators CharSequenceTranslator array to aggregate
      */
@@ -40,20 +41,8 @@ public class AggregateTranslator extends CharSequenceTranslator {
         this.translators = ArrayUtils.clone(translators);
     }
 
-    /**
-     * The first translator to consume codepoints from the input is the 'winner'. 
-     * Execution stops with the number of consumed codepoints being returned. 
-     * {@inheritDoc}
-     */
     @Override
     public int translate(final CharSequence input, final int index, final Writer out) throws IOException {
-        for (final CharSequenceTranslator translator : translators) {
-            final int consumed = translator.translate(input, index, out);
-            if(consumed != 0) {
-                return consumed;
-            }
-        }
-        return 0;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-
 }

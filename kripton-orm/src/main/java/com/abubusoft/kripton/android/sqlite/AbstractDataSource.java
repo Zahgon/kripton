@@ -29,7 +29,6 @@ import com.abubusoft.kripton.android.Logger;
 import com.abubusoft.kripton.common.Pair;
 import com.abubusoft.kripton.common.StringUtils;
 import com.abubusoft.kripton.exception.KriptonRuntimeException;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,6 +76,7 @@ public abstract class AbstractDataSource implements AutoCloseable {
      * event occurs, that object's appropriate method is invoked.
      */
     public interface OnErrorListener {
+
         /**
          * Manages error situations.
          *
@@ -162,7 +162,6 @@ public abstract class AbstractDataSource implements AutoCloseable {
         throw (new KriptonRuntimeException(e));
     };
 
-
     /**
      * The open counter.
      */
@@ -185,10 +184,10 @@ public abstract class AbstractDataSource implements AutoCloseable {
 
         @Override
         protected TypeStatus initialValue() {
-            return TypeStatus.CLOSED;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-
     };
+
     /**
      * <p>
      * database version
@@ -211,7 +210,6 @@ public abstract class AbstractDataSource implements AutoCloseable {
      */
     protected AbstractDataSource(String name, int version, DataSourceOptions options) {
         DataSourceOptions optionsValue = (options != null) ? options : DataSourceOptions.builder().build();
-
         if (optionsValue.inMemory) {
             this.name = null;
         } else if (StringUtils.hasText(optionsValue.name)) {
@@ -219,51 +217,22 @@ public abstract class AbstractDataSource implements AutoCloseable {
         } else {
             this.name = name;
         }
-
         this.version = version;
-
         // create new SQLContext
         this.context = new SQLContextImpl(this);
-
         this.options = optionsValue;
         this.logEnabled = optionsValue.logEnabled;
-
         if (this.logEnabled) {
             Logger.debug("%s is created with %s", getClass().getName(), optionsValue.toString());
         }
     }
 
     protected void beginLock() {
-        lockDb.lock();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Builds the task list.
-     *
-     * @param previousVersion the previous version
-     * @param currentVersion  the current version
-     * @return the list
-     */
     protected List<SQLiteUpdateTask> buildTaskList(int previousVersion, int currentVersion) {
-        List<SQLiteUpdateTask> result = new ArrayList<>();
-
-        for (Pair<Integer, ? extends SQLiteUpdateTask> item : this.options.updateTasks) {
-            if (item.value0 - 1 == previousVersion) {
-                result.add(item.value1);
-                previousVersion = item.value0;
-            }
-
-            if (previousVersion == currentVersion)
-                break;
-        }
-
-        if (previousVersion != currentVersion) {
-            Logger.warn(String.format("Can not find version update task from version %s to version %s", previousVersion,
-                    currentVersion));
-        }
-
-        return result;
-
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -271,13 +240,8 @@ public abstract class AbstractDataSource implements AutoCloseable {
      */
     public abstract void clearCompiledStatements();
 
-    /**
-     * Context.
-     *
-     * @return the SQL context
-     */
     public SQLContext getContext() {
-        return context;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /*
@@ -287,139 +251,27 @@ public abstract class AbstractDataSource implements AutoCloseable {
      */
     @Override
     public void close() {
-        beginLock();
-        try {
-            if (openCounter.decrementAndGet() <= 0) {
-                if (!options.neverClose) {
-                    if (!this.options.inMemory) {
-                        // Closing database
-                        if (database != null) {
-                            clearCompiledStatements();
-                            sqliteHelper.close();
-                        }
-                        database = null;
-                    }
-                    if (logEnabled)
-                        Logger.info("database CLOSED (%s) (connections: %s)", status.get(), openCounter.intValue());
-                } else {
-                    openCounter.set(1);
-                    if (logEnabled)
-                        Logger.info("database VIRTUALLY CLOSED (%s) (connections: %s)", status.get(), openCounter.intValue());
-                }
-            } else {
-                if (logEnabled)
-                    Logger.info("database RELEASED (%s) (connections: %s)", status.get(), openCounter.intValue());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw (e);
-        } finally {
-            manageStatus();
-            endLock();
-        }
-
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     protected void closeThreadSafeMode(Pair<Boolean, SupportSQLiteDatabase> status) {
-        if (status.value0) {
-            close();
-        } else {
-            beginLock();
-            // we unlock lockReadWriteAccess, so we can include this code in
-            manageStatus();
-            endLock();
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Content values.
-     *
-     * @param compiledStatement the compiled statement
-     * @return the kripton content values
-     */
     protected KriptonContentValues contentValues(SupportSQLiteStatement compiledStatement) {
-        return context.contentValues(compiledStatement);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Content values for content provider.
-     *
-     * @param values the values
-     * @return the kripton content values
-     */
     protected KriptonContentValues contentValuesForContentProvider(ContentValues values) {
-        return context.contentValuesForContentProvider(values);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Content values for update.
-     *
-     * @param compiledStatement the compiled statement
-     * @return the kripton content values
-     */
     protected KriptonContentValues contentValuesForUpdate(SupportSQLiteStatement compiledStatement) {
-        return context.contentValuesForUpdate(compiledStatement);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Creates the helper.
-     */
     protected void createHelper() {
-        if (KriptonLibrary.getContext() == null)
-            throw new KriptonRuntimeException(
-                    "Kripton library is not properly initialized. Please use KriptonLibrary.init(context) somewhere at application startup");
-
-        if (this.logEnabled) {
-            if (options.inMemory) {
-                Logger.info("In-memory database");
-            } else {
-                File dbFile = KriptonLibrary.getContext().getDatabasePath(name);
-                Logger.info("Database file %s", dbFile.getAbsolutePath());
-            }
-        }
-
-        Builder config = SupportSQLiteOpenHelper.Configuration.builder(KriptonLibrary.getContext()).name(name)
-                .callback(new SupportSQLiteOpenHelper.Callback(version) {
-
-                    @Override
-                    public void onConfigure(@NonNull SupportSQLiteDatabase db) {
-                        AbstractDataSource.this.onConfigure(db);
-                    }
-
-                    @Override
-                    public void onCorruption(@NonNull SupportSQLiteDatabase db) {
-                        AbstractDataSource.this.onCorruption(db);
-                    }
-
-                    @Override
-                    public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                        sqliteHelper.setWriteAheadLoggingEnabled(true);
-                        AbstractDataSource.this.onCreate(db);
-                    }
-
-                    @Override
-                    public void onDowngrade(@NonNull SupportSQLiteDatabase db, int oldVersion, int newVersion) {
-                        AbstractDataSource.this.onDowngrade(db, oldVersion, newVersion);
-                    }
-
-                    @Override
-                    public void onOpen(@NonNull SupportSQLiteDatabase db) {
-                        sqliteHelper.setWriteAheadLoggingEnabled(true);
-                        AbstractDataSource.this.onOpen(db);
-                    }
-
-                    @Override
-                    public void onUpgrade(@NonNull SupportSQLiteDatabase db, int oldVersion, int newVersion) {
-                        AbstractDataSource.this.onUpgrade(db, oldVersion, newVersion);
-                    }
-                });
-
-        sqliteHelper = options.openHelperFactory.create(config.build());
-
-        if (this.logEnabled) {
-            Logger.debug("Database helper factory class is %s", options.openHelperFactory.getClass().getName());
-            Logger.debug("Database helper class is %s", sqliteHelper.getClass().getName());
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     private void deleteDatabaseFile(String fileName) {
@@ -453,119 +305,57 @@ public abstract class AbstractDataSource implements AutoCloseable {
     }
 
     protected void endLock() {
-        lockDb.unlock();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Force close.
-     */
     void forceClose() {
-        openCounter.set(0);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>
-     * Return database object or runtimeexception if no database is opened.
-     * </p>
-     *
-     * @return the SQ lite database
-     */
     public SupportSQLiteDatabase getDatabase() {
-        if (database == null)
-            throw (new KriptonRuntimeException(
-                    "No database connection is opened before use " + this.getClass().getCanonicalName()));
-        return database;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     public String getName() {
-        return name;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Get error listener, in transations.
-     *
-     * @return the on error listener
-     */
     public OnErrorListener getOnErrorListener() {
-        return onErrorListener;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Gets the version.
-     *
-     * @return the version
-     */
     public int getVersion() {
-        return version;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>
-     * True if dataSource is just created
-     * </p>
-     * .
-     *
-     * @return true, if is just created
-     */
     public boolean isJustCreated() {
-        return justCreated;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Checks if is log enabled.
-     *
-     * @return true, if is log enabled
-     */
     public boolean isLogEnabled() {
-        return context.isLogEnabled();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>
-     * return true if database is already opened.
-     * </p>
-     *
-     * @return true if database is opened, otherwise false
-     */
     public boolean isOpen() {
-        return database != null && database.isOpen() && database.isDbLockedByCurrentThread();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Return <code>true</code> if any operation is running on datasource,
-     * <code>false</code> if database is currently closed.
-     *
-     * @return
-     */
     public boolean isAnyPendingOperation() {
-        return openCounter.get() > 0;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>
-     * return true if database is already opened in write mode.
-     * </p>
-     *
-     * @return true if database is opened, otherwise false
-     */
     public boolean isOpenInWriteMode() {
-        return database != null && database.isOpen() && !database.isReadOnly() && database.isDbLockedByCurrentThread();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Checks if is upgraded version.
-     *
-     * @return the upgradedVersion
-     */
     public boolean isUpgradedVersion() {
-        return versionChanged;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
-     *
      */
     private void manageStatus() {
-        switch (status.get()) {
+        switch(status.get()) {
             case READ_AND_WRITE_OPENED:
                 if (database == null)
                     status.set(TypeStatus.CLOSED);
@@ -589,85 +379,12 @@ public abstract class AbstractDataSource implements AutoCloseable {
      */
     public abstract boolean hasForeignKeys();
 
-    /**
-     * On configure.
-     *
-     * @param database the database
-     */
     protected void onConfigure(SupportSQLiteDatabase database) {
-        // configure database
-        if (options.databaseLifecycleHandler != null) {
-            options.databaseLifecycleHandler.onConfigure(database);
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * The method invoked when database corruption is detected. Default
-     * implementation will delete the database file.
-     *
-     * @param db the {@link SupportSQLiteDatabase} object representing the
-     *           database on which corruption is detected.
-     */
     protected void onCorruption(@NonNull SupportSQLiteDatabase db) {
-        // the following implementation is taken from {@link
-        // DefaultDatabaseErrorHandler}.
-        if (this.logEnabled) {
-            Logger.fatal("Corruption reported by sqlite on database: " + db.getPath());
-        }
-        try {
-            if (options.databaseLifecycleHandler != null) {
-                options.databaseLifecycleHandler.onCorruption(db);
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
-        // is the corruption detected even before database could be 'opened'?
-        if (!db.isOpen()) {
-            // database files are not even openable. delete this database file.
-            // NOTE if the database has attached databases, then any of them
-            // could be corrupt.
-            // and not deleting all of them could cause corrupted database file
-            // to remain and
-            // make the application crash on database open operation. To avoid
-            // this problem,
-            // the application should provide its own {@link
-            // DatabaseErrorHandler} impl class
-            // to delete ALL files of the database (including the attached
-            // databases).
-            deleteDatabaseFile(db.getPath());
-            return;
-        }
-        List<android.util.Pair<String, String>> attachedDbs = null;
-        try {
-            // Close the database, which will cause subsequent operations to
-            // fail.
-            // before that, get the attached database list first.
-            try {
-                attachedDbs = db.getAttachedDbs();
-            } catch (SQLiteException e) {
-                /* ignore */
-            }
-            try {
-                db.close();
-            } catch (IOException e) {
-                /* ignore */
-            }
-        } finally {
-            // Delete all files of this corrupt database and/or attached
-            // databases
-            if (attachedDbs != null) {
-                for (android.util.Pair<String, String> p : attachedDbs) {
-                    deleteDatabaseFile(p.second);
-                }
-            } else {
-                // attachedDbs = null is possible when the database is so
-                // corrupt that even
-                // "PRAGMA database_list;" also fails. delete the main database
-                // file
-                deleteDatabaseFile(db.getPath());
-            }
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -677,227 +394,51 @@ public abstract class AbstractDataSource implements AutoCloseable {
      */
     protected abstract void onCreate(SupportSQLiteDatabase database);
 
-    /**
-     * On downgrade.
-     *
-     * @param db         the db
-     * @param oldVersion the old version
-     * @param newVersion the new version
-     */
     protected void onDowngrade(SupportSQLiteDatabase db, int oldVersion, int newVersion) {
-        if (options.databaseLifecycleHandler != null) {
-            options.databaseLifecycleHandler.onUpdate(db, oldVersion, newVersion, false);
-            versionChanged = true;
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     protected void onOpen(SupportSQLiteDatabase db) {
-        if (AbstractDataSource.this.options.databaseLifecycleHandler != null) {
-            AbstractDataSource.this.options.databaseLifecycleHandler.onOpen(db);
-            versionChanged = true;
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * On session closed.
-     *
-     * @return the sets the
-     */
     protected Set<Integer> onSessionClosed() {
-        return this.context.onSessionClosed();
-
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * On session opened.
-     */
     protected void onSessionOpened() {
-        this.context.onSessionOpened();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * On upgrade.
-     *
-     * @param db         the db
-     * @param oldVersion the old version
-     * @param newVersion the new version
-     */
     protected void onUpgrade(SupportSQLiteDatabase db, int oldVersion, int newVersion) {
-        if (AbstractDataSource.this.options.databaseLifecycleHandler != null) {
-            AbstractDataSource.this.options.databaseLifecycleHandler.onUpdate(db, oldVersion, newVersion, true);
-            versionChanged = true;
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Open a database, if it is needed in
-     *
-     * @param writeMode
-     * @return
-     */
     protected Pair<Boolean, SupportSQLiteDatabase> openDatabaseThreadSafeMode(boolean writeMode) {
-        Pair<Boolean, SupportSQLiteDatabase> result = new Pair<>();
-
-        try {
-            // lock entire operation set
-            beginLock();
-            boolean needToOpened = writeMode ? !this.isOpenInWriteMode() : !this.isOpen();
-            result.value0 = needToOpened;
-            // in this part we can not lock lockReadWriteAccess, otherwise it
-            // may be a
-            // blocking race
-            // we lock lockReadWriteAccess after we release
-            if (needToOpened) {
-                if (writeMode) {
-                    result.value1 = openWritableDatabase(false);
-                } else {
-                    result.value1 = openReadOnlyDatabase(false);
-                }
-            } else {
-                result.value1 = this.getDatabase();
-            }
-
-        } finally {
-            // unlock entire operation set
-            endLock();
-
-            if (writeMode) {
-                lockReadWriteAccess.lock();
-            } else {
-                lockReadAccess.lock();
-            }
-
-        }
-
-        return result;
-
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     public SupportSQLiteDatabase openReadOnlyDatabase() {
-        if (!this.options.neverClose) {
-            return openReadOnlyDatabase(true);
-        } else {
-            return openWritableDatabase(true);
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>
-     * Open a read only database.
-     * </p>
-     *
-     * @return read only database
-     */
     protected SupportSQLiteDatabase openReadOnlyDatabase(boolean lock) {
-        if (lock) {
-            // if I lock this in dbLock. the last one remains locked too
-            lockReadAccess.lock();
-
-            beginLock();
-        }
-
-        try {
-            if (sqliteHelper == null)
-                createHelper();
-
-            status.set(TypeStatus.READ_ONLY_OPENED);
-
-            if (openCounter.incrementAndGet() == 1) {
-                // open new read database
-                if (database == null) {
-                    sqliteHelper.setWriteAheadLoggingEnabled(true);
-                    database = sqliteHelper.getReadableDatabase();
-                    database.setForeignKeyConstraintsEnabled(hasForeignKeys());
-                }
-                if (logEnabled)
-                    Logger.info("database OPEN %s (connections: %s)", status.get(), (openCounter.intValue() - 1));
-            } else {
-                if (logEnabled)
-                    Logger.info("database REUSE %s (connections: %s)", status.get(), (openCounter.intValue() - 1));
-            }
-        } catch (Throwable e) {
-            if (logEnabled) {
-                Logger.fatal("database error during open operation: %s", e.getMessage());
-                e.printStackTrace();
-            }
-            throw (e);
-        } finally {
-            if (lock)
-                endLock();
-
-        }
-
-        return database;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>
-     * open a writable database.
-     * </p>
-     *
-     * @return writable database
-     */
     public SupportSQLiteDatabase openWritableDatabase() {
-        return openWritableDatabase(true);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     protected SupportSQLiteDatabase openWritableDatabase(boolean lock) {
-        if (lock) {
-            lockReadWriteAccess.lock();
-
-            // if I lock this in dbLock.. the last one remains locked too
-            beginLock();
-        }
-
-        try {
-            if (sqliteHelper == null)
-                createHelper();
-
-            status.set(TypeStatus.READ_AND_WRITE_OPENED);
-
-            if (openCounter.incrementAndGet() == 1) {
-                // open new write database
-                if (database == null) {
-                    sqliteHelper.setWriteAheadLoggingEnabled(true);
-                    database = sqliteHelper.getWritableDatabase();
-                    database.setForeignKeyConstraintsEnabled(hasForeignKeys());
-                }
-                if (logEnabled)
-                    Logger.info("database OPEN %s (connections: %s)", status.get(), (openCounter.intValue() - 1));
-            } else {
-                if (logEnabled)
-                    Logger.info("database REUSE %s (connections: %s)", status.get(), (openCounter.intValue() - 1));
-            }
-        } catch (Throwable e) {
-            if (logEnabled) {
-                Logger.fatal("database error during open operation: %s", e.getMessage());
-                e.printStackTrace();
-            }
-            throw (e);
-        } finally {
-            if (lock)
-                endLock();
-        }
-
-        return database;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Set error listener for transactions.
-     *
-     * @param onErrorListener the new on error listener
-     */
     public void setOnErrorListener(OnErrorListener onErrorListener) {
-        this.onErrorListener = onErrorListener;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Sql builder.
-     *
-     * @return the string builder
-     */
     protected StringBuilder sqlBuilder() {
-        return context.sqlBuilder();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-
 }

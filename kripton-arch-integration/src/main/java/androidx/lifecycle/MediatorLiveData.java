@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.lifecycle;
-
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.arch.core.executor.internal.SafeIterableMap;
-
 import java.util.Map;
 
 /**
@@ -66,50 +63,20 @@ import java.util.Map;
  * @param <T> The type of data hold by this instance
  */
 public class MediatorLiveData<T> extends MutableLiveData<T> {
-    
-    /** The m sources. */
+
+    /**
+     * The m sources.
+     */
     private SafeIterableMap<LiveData<?>, Source<?>> mSources = new SafeIterableMap<>();
 
-    /**
-     * Starts to listen the given {@code source} LiveData, {@code onChanged} observer will be called
-     * when {@code source} value was changed.
-     * <p>
-     * {@code onChanged} callback will be called only when this {@code MediatorLiveData} is active.
-     * <p> If the given LiveData is already added as a source but with a different Observer,
-     * {@link IllegalArgumentException} will be thrown.
-     *
-     * @param <S>       The type of data hold by {@code source} LiveData
-     * @param source    the {@code LiveData} to listen to
-     * @param onChanged The observer that will receive the events
-     */
     @MainThread
     public <S> void addSource(@NonNull LiveData<S> source, @NonNull Observer<S> onChanged) {
-        Source<S> e = new Source<>(source, onChanged);
-        Source<?> existing = mSources.putIfAbsent(source, e);
-        if (existing != null && existing.mObserver != onChanged) {
-            throw new IllegalArgumentException(
-                    "This source was already added with the different observer");
-        }
-        if (existing != null) {
-            return;
-        }
-        if (hasActiveObservers()) {
-            e.plug();
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Stops to listen the given {@code LiveData}.
-     *
-     * @param <S>      the type of data hold by {@code source} LiveData
-     * @param toRemote {@code LiveData} to stop to listen
-     */
     @MainThread
     public <S> void removeSource(@NonNull LiveData<S> toRemote) {
-        Source<?> source = mSources.remove(toRemote);
-        if (source != null) {
-            source.unplug();
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
@@ -117,9 +84,7 @@ public class MediatorLiveData<T> extends MutableLiveData<T> {
      */
     @Override
     protected void onActive() {
-        for (Map.Entry<LiveData<?>, Source<?>> source : mSources) {
-            source.getValue().plug();
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
@@ -127,9 +92,7 @@ public class MediatorLiveData<T> extends MutableLiveData<T> {
      */
     @Override
     protected void onInactive() {
-        for (Map.Entry<LiveData<?>, Source<?>> source : mSources) {
-            source.getValue().unplug();
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -138,14 +101,20 @@ public class MediatorLiveData<T> extends MutableLiveData<T> {
      * @param <V> the value type
      */
     private static class Source<V> implements Observer<V> {
-        
-        /** The m live data. */
+
+        /**
+         * The m live data.
+         */
         final LiveData<V> mLiveData;
-        
-        /** The m observer. */
+
+        /**
+         * The m observer.
+         */
         final Observer<V> mObserver;
-        
-        /** The m version. */
+
+        /**
+         * The m version.
+         */
         int mVersion = START_VERSION;
 
         /**
@@ -159,18 +128,12 @@ public class MediatorLiveData<T> extends MutableLiveData<T> {
             mObserver = observer;
         }
 
-        /**
-         * Plug.
-         */
         void plug() {
-            mLiveData.observeForever(this);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Unplug.
-         */
         void unplug() {
-            mLiveData.removeObserver(this);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         /* (non-Javadoc)
@@ -178,10 +141,7 @@ public class MediatorLiveData<T> extends MutableLiveData<T> {
          */
         @Override
         public void onChanged(@Nullable V v) {
-            if (mVersion != mLiveData.getVersion()) {
-                mVersion = mLiveData.getVersion();
-                mObserver.onChanged(v);
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
 }

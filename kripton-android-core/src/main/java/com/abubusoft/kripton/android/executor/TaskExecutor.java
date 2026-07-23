@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.abubusoft.kripton.android.executor;
 
 import androidx.annotation.NonNull;
-
 
 /**
  * A task executor that can divide tasks into logical groups.
@@ -27,6 +25,7 @@ import androidx.annotation.NonNull;
  * TODO: Don't use this from outside, we don't know what the API will look like yet.
  */
 public abstract class TaskExecutor {
+
     /**
      * Executes the given task in the disk IO thread pool.
      *
@@ -41,19 +40,8 @@ public abstract class TaskExecutor {
      */
     public abstract void postToMainThread(@NonNull Runnable runnable);
 
-    /**
-     * Executes the given task on the main thread.
-     * <p>
-     * If the current thread is a main thread, immediately runs the given runnable.
-     *
-     * @param runnable The runnable to run on the main thread.
-     */
     public void executeOnMainThread(@NonNull Runnable runnable) {
-        if (isMainThread()) {
-            runnable.run();
-        } else {
-            postToMainThread(runnable);
-        }
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**

@@ -1,28 +1,28 @@
-/*******************************************************************************
- * Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
+/**
+ * ****************************************************************************
+ *  Copyright 2015, 2017 Francesco Benincasa (info@abubusoft.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * *****************************************************************************
+ */
 package com.abubusoft.kripton.android.sqlite;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.abubusoft.kripton.android.KriptonLibrary;
 import com.abubusoft.kripton.android.Logger;
 import com.abubusoft.kripton.common.Pair;
-
 import android.content.Context;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
@@ -62,7 +62,7 @@ public class DataSourceOptions {
 
     /**
      * if true, datasource is closed if unused
-     **/
+     */
     public final boolean neverClose;
 
     /**
@@ -83,26 +83,11 @@ public class DataSourceOptions {
 
     @Override
     public String toString() {
-        return "DataSourceOptions{" +
-                "logEnabled=" + logEnabled +
-                ", databaseLifecycleHandler=" + databaseLifecycleHandler +
-                ", updateTasks=" + updateTasks +
-                ", populator=" + populator +
-                ", inMemory=" + inMemory +
-                ", neverClose=" + neverClose +
-                ", name='" + name + '\'' +
-                ", openHelperFactory=" + openHelperFactory +
-                ", forceBuild=" + forceBuild +
-                '}';
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Builder.
-     *
-     * @return the builder
-     */
     public static Builder builder() {
-        return new Builder();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -157,207 +142,63 @@ public class DataSourceOptions {
         private SupportSQLiteOpenHelper.Factory openHelperFactory = new KriptonSQLiteHelperFactory();
 
         public Builder openHelperFactory(SupportSQLiteOpenHelper.Factory openHelperFactory) {
-            this.openHelperFactory = openHelperFactory;
-            return this;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Name.
-         *
-         * @param value the value
-         * @return the builder
-         */
         public Builder name(String value) {
-            this.name = value;
-            return this;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Log.
-         *
-         * @param value the value
-         * @return the builder
-         */
         public Builder log(boolean value) {
-            this.logEnabled = value;
-            return this;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * <p>
-         * If <code>true</code> force instance to be created. Default is
-         * <code>false</code>.
-         * </p>
-         * <p>
-         * Add force instance properties to force instance creation during
-         * datasource build.
-         * </p>
-         * <p>
-         * It can be very usefull when you need to cipher an existing database
-         * and you need to open the db before set the upgrade
-         * </p>
-         * .
-         *
-         * @param value the value
-         * @return the builder
-         */
         public Builder forceBuild(boolean value) {
-            this.forceBuild = value;
-            return this;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Database lifecycle handler.
-         *
-         * @param value the value
-         * @return the builder
-         */
         public Builder databaseLifecycleHandler(DatabaseLifecycleHandler value) {
-            this.databaseLifecycleHandler = value;
-            return this;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Populator.
-         *
-         * @param populator the populator
-         * @return the builder
-         */
         public Builder populator(SQLitePopulator populator) {
-            this.populator = populator;
-            return this;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * In memory.
-         *
-         * @param inMemory the in memory
-         * @return the builder
-         */
         public Builder inMemory(boolean inMemory) {
-            this.inMemory = inMemory;
-            return this;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Retrieve from a raw resource a list of comma separated sql commands
-         * to execute. File can contains -- or multiline comments.
-         *
-         * @param targetVersion the version of database we want to reach
-         * @param context       the context
-         * @param resRawId      the res raw id
-         * @return the builder
-         */
         public Builder addUpdateTask(int targetVersion, Context context, int resRawId) {
-            return addUpdateTask(targetVersion, context.getResources().openRawResource(resRawId));
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Retrieve from a raw resource a list of comma separated sql commands
-         * to execute. File can contains -- or multiline comments.
-         *
-         * @param targetVersion the version of database we want to reach
-         * @param resRawId      the res raw id
-         * @return the builder
-         */
         public Builder addUpdateTask(int targetVersion, int resRawId) {
-            return addUpdateTask(targetVersion, KriptonLibrary.getContext().getResources().openRawResource(resRawId));
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Retrieve from a raw resource a list of comma separated sql commands
-         * to execute. No comment are allowed. Only sql.
-         *
-         * @param targetVersion  the version of database we want to reach
-         * @param sqlCommandList sql command to execute
-         * @return the builder
-         */
         public Builder addUpdateTask(final int targetVersion, final List<String> sqlCommandList) {
-            SQLiteUpdateTask task = new SQLiteUpdateTask() {
-
-                @Override
-                public void execute(SupportSQLiteDatabase database, int previousVersion, int currentVersion) {
-                    for (String item : sqlCommandList) {
-                        Logger.info(item);
-                        database.execSQL(item);
-                    }
-
-                }
-            };
-
-            this.updateTasks.add(new Pair<>(targetVersion, task));
-
-            return this;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Adds the update task.
-         *
-         * @param targetVersion the initial version of database
-         * @param task          the task
-         * @return the builder
-         */
         public Builder addUpdateTask(int targetVersion, SQLiteUpdateTask task) {
-
-            this.updateTasks.add(new Pair<>(targetVersion, task));
-            return this;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * task to execute upgrade from currentVersion-1 to currentVersion.
-         *
-         * @param targetVersion the version of database we want to reach
-         * @param inputStream   the input stream
-         * @return the builder
-         */
         public Builder addUpdateTask(int targetVersion, InputStream inputStream) {
-            SQLiteUpdateTaskFromFile task = new SQLiteUpdateTaskFromFile(inputStream);
-
-            this.updateTasks.add(new Pair<>(targetVersion, task));
-
-            return this;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Builds the.
-         *
-         * @return the data source options
-         */
         public DataSourceOptions build() {
-            return new DataSourceOptions(name, databaseLifecycleHandler, updateTasks, logEnabled, populator, inMemory,
-                    openHelperFactory, forceBuild, neverClose);
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Create builder from data source
-         *
-         * @param source
-         * @return
-         */
         public Builder createFrom(DataSourceOptions source) {
-            Builder builder = new Builder();
-
-            builder.logEnabled = source.logEnabled;
-            builder.databaseLifecycleHandler = source.databaseLifecycleHandler;
-            builder.updateTasks = source.updateTasks;
-            builder.populator = source.populator;
-            builder.inMemory = source.inMemory;
-            builder.openHelperFactory = source.openHelperFactory;
-            builder.name = source.name;
-            builder.neverClose = source.neverClose;
-
-            return builder;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
-        /**
-         * Check if datasource need to be close if unused (true), false oderwise
-         *
-         * @param neverClose
-         * @return
-         */
         public Builder neverClose(boolean neverClose) {
-            this.neverClose = neverClose;
-            return this;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
 
@@ -373,9 +214,7 @@ public class DataSourceOptions {
      * @param openHelperFactory
      * @param forceBuild               force the build method to rebuild the instance
      */
-    private DataSourceOptions(String name, DatabaseLifecycleHandler databaseLifecycleHandler,
-                              List<Pair<Integer, ? extends SQLiteUpdateTask>> updateTasks, boolean log, SQLitePopulator populator,
-                              boolean inMemory, Factory openHelperFactory, boolean forceBuild, boolean neverClose) {
+    private DataSourceOptions(String name, DatabaseLifecycleHandler databaseLifecycleHandler, List<Pair<Integer, ? extends SQLiteUpdateTask>> updateTasks, boolean log, SQLitePopulator populator, boolean inMemory, Factory openHelperFactory, boolean forceBuild, boolean neverClose) {
         this.logEnabled = log;
         this.databaseLifecycleHandler = databaseLifecycleHandler;
         this.updateTasks = updateTasks;
@@ -386,5 +225,4 @@ public class DataSourceOptions {
         this.name = name;
         this.neverClose = neverClose;
     }
-
 }

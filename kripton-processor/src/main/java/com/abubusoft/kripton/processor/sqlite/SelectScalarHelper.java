@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 /**
- *
  */
 package com.abubusoft.kripton.processor.sqlite;
 
@@ -27,10 +26,8 @@ import com.abubusoft.kripton.processor.sqlite.transform.SQLTransformer;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-
 import java.util.Optional;
 import java.util.Set;
-
 
 /**
  * Manage query with only one value.
@@ -40,61 +37,14 @@ import java.util.Set;
  */
 public class SelectScalarHelper extends AbstractSelectCodeGenerator {
 
-  /*
+    /*
    * (non-Javadoc)
    *
    * @see com.abubusoft.kripton.processor.sqlite.SQLiteSelectBuilder.
    * SelectCodeGenerator#generate(com.squareup.javapoet.MethodSpec.Builder)
    */
-  @Override
-  public void generateSpecializedPart(SQLiteModelMethod method, TypeSpec.Builder classBuilder, MethodSpec.Builder methodBuilder, Set<JQLProjection> fieldList, boolean mapFields) {
-    // if optional, return the result type inside optional
-  	TypeName returnTypeName = method.getOptionalReturnClass();
-
-    //ASSERT: returnType is a supported type
-
-    // no column or too many columns
-    AssertKripton.assertTrueOrInvalidMethodSignException(fieldList.size() == 1, method, "no way to understand which field is the result for this method");
-
-    SQLTransform t = SQLTransformer.lookup(returnTypeName);
-
-    methodBuilder.addCode("$T result=", returnTypeName);
-    t.generateDefaultValue(methodBuilder);
-    methodBuilder.addCode(";\n");
-
-    methodBuilder.addCode("\n");
-    // methodBuilder.beginControlFlow("try");
-    methodBuilder.beginControlFlow("if (_cursor.moveToFirst())");
-
-    // generate index from columns
-    methodBuilder.addCode("\n");
-
-    if (TypeUtility.isNullable(returnTypeName)) {
-      if (method.hasOptionalResult()) {
-        methodBuilder.addCode("if (_cursor.isNull(0)) { return $T.empty();}\n", Optional.class);
-      } else {
-        methodBuilder.addCode("if (_cursor.isNull(0)) { return null; }\n");
-      }
-    } else {
-      methodBuilder.addCode("if (_cursor.isNull(0)) { return ");
-      t.generateDefaultValue(methodBuilder);
-      methodBuilder.addCode("; }\n", t);
+    @Override
+    public void generateSpecializedPart(SQLiteModelMethod method, TypeSpec.Builder classBuilder, MethodSpec.Builder methodBuilder, Set<JQLProjection> fieldList, boolean mapFields) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    methodBuilder.addCode("result=");
-    t.generateReadValueFromCursor(methodBuilder, method.getParent(), returnTypeName, "_cursor", "0");
-    methodBuilder.addCode(";\n");
-
-    // end cursor
-    methodBuilder.endControlFlow();
-
-    if (method.hasOptionalResult()) {
-      methodBuilder.addCode("return $T.ofNullable(result);\n", Optional.class);
-    } else {
-      methodBuilder.addCode("return result;\n");
-    }
-
-    // end method
-    methodBuilder.endControlFlow();
-  }
-
 }

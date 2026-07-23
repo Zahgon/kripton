@@ -13,41 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.paging;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import java.util.concurrent.Executor;
 
 abstract class ContiguousDataSource<Key, Value> extends DataSource<Key, Value> {
+
     @Override
     boolean isContiguous() {
-        return true;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    abstract void dispatchLoadInitial(
-            @Nullable Key key,
-            int initialLoadSize,
-            int pageSize,
-            boolean enablePlaceholders,
-            @NonNull Executor mainThreadExecutor,
-            @NonNull PageResult.Receiver<Value> receiver);
+    abstract void dispatchLoadInitial(@Nullable Key key, int initialLoadSize, int pageSize, boolean enablePlaceholders, @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<Value> receiver);
 
-    abstract void dispatchLoadAfter(
-            int currentEndIndex,
-            @NonNull Value currentEndItem,
-            int pageSize,
-            @NonNull Executor mainThreadExecutor,
-            @NonNull PageResult.Receiver<Value> receiver);
+    abstract void dispatchLoadAfter(int currentEndIndex, @NonNull Value currentEndItem, int pageSize, @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<Value> receiver);
 
-    abstract void dispatchLoadBefore(
-            int currentBeginIndex,
-            @NonNull Value currentBeginItem,
-            int pageSize,
-            @NonNull Executor mainThreadExecutor,
-            @NonNull PageResult.Receiver<Value> receiver);
+    abstract void dispatchLoadBefore(int currentBeginIndex, @NonNull Value currentBeginItem, int pageSize, @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<Value> receiver);
 
     /**
      * Get the key from either the position, or item, or null if position/item invalid.

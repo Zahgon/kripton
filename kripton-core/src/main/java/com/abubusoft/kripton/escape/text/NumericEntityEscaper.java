@@ -19,7 +19,6 @@ package com.abubusoft.kripton.escape.text;
 import java.io.IOException;
 import java.io.Writer;
 
-
 /**
  * Translates codepoints to their XML numeric entity escaped value.
  *
@@ -27,13 +26,19 @@ import java.io.Writer;
  */
 public class NumericEntityEscaper extends CodePointTranslator {
 
-    /** The below. */
+    /**
+     * The below.
+     */
     private final int below;
-    
-    /** The above. */
+
+    /**
+     * The above.
+     */
     private final int above;
-    
-    /** The between. */
+
+    /**
+     * The between.
+     */
     private final boolean between;
 
     /**
@@ -59,66 +64,24 @@ public class NumericEntityEscaper extends CodePointTranslator {
         this(0, Integer.MAX_VALUE, true);
     }
 
-    /**
-     * <p>Constructs a <code>NumericEntityEscaper</code> below the specified value (exclusive). </p>
-     *
-     * @param codepoint below which to escape
-     * @return the newly created {@code NumericEntityEscaper} instance
-     */
     public static NumericEntityEscaper below(final int codepoint) {
-        return outsideOf(codepoint, Integer.MAX_VALUE);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Constructs a <code>NumericEntityEscaper</code> above the specified value (exclusive). </p>
-     *
-     * @param codepoint above which to escape
-     * @return the newly created {@code NumericEntityEscaper} instance
-     */
     public static NumericEntityEscaper above(final int codepoint) {
-        return outsideOf(0, codepoint);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Constructs a <code>NumericEntityEscaper</code> between the specified values (inclusive). </p>
-     *
-     * @param codepointLow above which to escape
-     * @param codepointHigh below which to escape
-     * @return the newly created {@code NumericEntityEscaper} instance
-     */
     public static NumericEntityEscaper between(final int codepointLow, final int codepointHigh) {
-        return new NumericEntityEscaper(codepointLow, codepointHigh, true);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * <p>Constructs a <code>NumericEntityEscaper</code> outside of the specified values (exclusive). </p>
-     *
-     * @param codepointLow below which to escape
-     * @param codepointHigh above which to escape
-     * @return the newly created {@code NumericEntityEscaper} instance
-     */
     public static NumericEntityEscaper outsideOf(final int codepointLow, final int codepointHigh) {
-        return new NumericEntityEscaper(codepointLow, codepointHigh, false);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean translate(final int codepoint, final Writer out) throws IOException {
-        if(between) {
-            if (codepoint < below || codepoint > above) {
-                return false;
-            }
-        } else {
-            if (codepoint >= below && codepoint <= above) {
-                return false;
-            }
-        }
-
-        out.write("&#");
-        out.write(Integer.toString(codepoint, 10));
-        out.write(';');
-        return true;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

@@ -3,19 +3,15 @@ package com.abubusoft.kripton.common.time;
 import java.time.OffsetTime;
 
 public abstract class OffsetTimeUtils {
-  private OffsetTimeUtils() {
 
-  }
+    private OffsetTimeUtils() {
+    }
 
-  public static OffsetTime read(String value) {
-    if (value == null) return null;
+    public static OffsetTime read(String value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-    return OffsetTime.parse(value);
-  }
-
-  public static String write(OffsetTime value) {
-    if (value == null) return null;
-
-    return value.toString();
-  }
+    public static String write(OffsetTime value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

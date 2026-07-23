@@ -25,73 +25,44 @@
  * \________(____  /\_/  (____  / /_______  /\____|__  /_______  / / ______|
  *               \/           \/          \/         \/        \/  \/
  */
-
 package com.abubusoft.kripton.common;
 
 import java.io.ByteArrayInputStream;
-
 
 /**
  * The Class DynamicByteBuffer.
  */
 public class DynamicByteBuffer {
 
-    /**
-     * Creates the.
-     *
-     * @param buffer the buffer
-     * @return the dynamic byte buffer
-     */
-    public static DynamicByteBuffer create(byte[] buffer ) {
-        DynamicByteBuffer buf = new DynamicByteBuffer( buffer.length );
-        buf.buffer = buffer;
-        return buf;
+    public static DynamicByteBuffer create(byte[] buffer) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-    
-    /**
-     * Creates the.
-     *
-     * @return the dynamic byte buffer
-     */
+
     public static DynamicByteBuffer create() {
-        return new DynamicByteBuffer(2048);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
+    public static DynamicByteBuffer create(int capacity) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-    /**
-     * Creates the.
-     *
-     * @param capacity the capacity
-     * @return the dynamic byte buffer
-     */
-    public static DynamicByteBuffer create( int capacity ) {
-        return new DynamicByteBuffer( capacity );
+    public static DynamicByteBuffer createExact(final int capacity) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
-     * Creates the exact.
-     *
-     * @param capacity the capacity
-     * @return the dynamic byte buffer
+     * The buffer.
      */
-    public static DynamicByteBuffer createExact( final int capacity ) {
-        return new DynamicByteBuffer( capacity ) {
-            public DynamicByteBuffer add( byte[] chars ) {
-                DynamicByteBufferHelper._idx( buffer, length, chars );
-                length += chars.length;
-                return this;
-            }
-        };
-    }
-
-
-    /** The buffer. */
     protected byte[] buffer;
 
-    /** The capacity. */
+    /**
+     * The capacity.
+     */
     protected int capacity = 16;
 
-    /** The length. */
+    /**
+     * The length.
+     */
     protected int length = 0;
 
     /**
@@ -101,329 +72,74 @@ public class DynamicByteBuffer {
         init();
     }
 
-
     /**
      * Instantiates a new dynamic byte buffer.
      *
      * @param capacity the capacity
      */
-    protected DynamicByteBuffer( int capacity ) {
+    protected DynamicByteBuffer(int capacity) {
         this.capacity = capacity;
         init();
     }
 
-    /**
-     * Adds the.
-     *
-     * @param value the value
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer add( byte value ) {
-
-        if ( 1 + length < capacity ) {
-            DynamicByteBufferHelper.idx( buffer, length, value );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper.idx( buffer, length, value );
-        }
-
-        length += 1;
-
-        return this;
-
+    public DynamicByteBuffer add(byte value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-
-    /**
-     * Adds the.
-     *
-     * @param array the array
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer add( byte[] array ) {
-        if ( array.length + this.length < capacity ) {
-            DynamicByteBufferHelper._idx( buffer, length, array );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + array.length );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper._idx( buffer, length, array );
-
-        }
-        length += array.length;
-        return this;
+    public DynamicByteBuffer add(byte[] array) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-
-    /**
-     * Adds the.
-     *
-     * @param array the array
-     * @param length the length
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer add( final byte[] array, final int length ) {
-        if ( ( this.length + length ) < capacity ) {
-            DynamicByteBufferHelper._idx( buffer, this.length, array, length );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + length );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper._idx( buffer, length, array, length );
-
-        }
-        this.length += length;
-        return this;
+    public DynamicByteBuffer add(final byte[] array, final int length) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-
-    /**
-     * Adds the.
-     *
-     * @param array the array
-     * @param offset the offset
-     * @param length the length
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer add( byte[] array, final int offset, final int length ) {
-        if ( ( this.length + length ) < capacity ) {
-            DynamicByteBufferHelper._idx( buffer, length, array, offset, length );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + length );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper._idx( buffer, length, array, offset, length );
-
-        }
-        this.length += length;
-        return this;
+    public DynamicByteBuffer add(byte[] array, final int offset, final int length) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-
-    /**
-     * Adds the.
-     *
-     * @param value the value
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer add( char value ) {
-
-        if ( 2 + length < capacity ) {
-            DynamicByteBufferHelper.charTo( buffer, length, value );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + 2 );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper.charTo( buffer, length, value );
-        }
-
-        length += 2;
-        return this;
-
-
+    public DynamicByteBuffer add(char value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-
-    /**
-     * Adds the.
-     *
-     * @param value the value
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer add( double value ) {
-
-        if ( 8 + length < capacity ) {
-            DynamicByteBufferHelper.doubleTo( buffer, length, value );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + 8 );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper.doubleTo( buffer, length, value );
-        }
-
-        length += 8;
-        return this;
-
+    public DynamicByteBuffer add(double value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Adds the.
-     *
-     * @param value the value
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer add( float value ) {
-
-        if ( 4 + length < capacity ) {
-            DynamicByteBufferHelper.floatTo( buffer, length, value );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + 4 );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper.floatTo( buffer, length, value );
-        }
-
-        length += 4;
-        return this;
-
-
+    public DynamicByteBuffer add(float value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Adds the.
-     *
-     * @param value the value
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer add( int value ) {
-
-        if ( 4 + length < capacity ) {
-            DynamicByteBufferHelper.intTo( buffer, length, value );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + 4 );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper.intTo( buffer, length, value );
-        }
-
-        length += 4;
-        return this;
-
-
+    public DynamicByteBuffer add(int value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Adds the.
-     *
-     * @param value the value
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer add( long value ) {
-
-        if ( 8 + length < capacity ) {
-            DynamicByteBufferHelper.longTo( buffer, length, value );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + 8 );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper.longTo( buffer, length, value );
-        }
-
-        length += 8;
-        return this;
-
+    public DynamicByteBuffer add(long value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Adds the.
-     *
-     * @param value the value
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer add( short value ) {
-
-        if ( 2 + length < capacity ) {
-            DynamicByteBufferHelper.shortTo( buffer, length, value );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + 2 );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper.shortTo( buffer, length, value );
-        }
-
-        length += 2;
-        return this;
-
-
+    public DynamicByteBuffer add(short value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Adds the.
-     *
-     * @param str the str
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer add( String str ) {
-        this.add( DynamicByteBufferHelper.bytes( str ) );
-        return this;
-
+    public DynamicByteBuffer add(String str) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-
-    /**
-     * Adds the byte.
-     *
-     * @param value the value
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer addByte( int value ) {
-        this.add( ( byte ) value );
-        return this;
+    public DynamicByteBuffer addByte(int value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-
-    /**
-     * Adds the unsigned byte.
-     *
-     * @param value the value
-     */
-    public void addUnsignedByte( short value ) {
-        if ( 1 + length < capacity ) {
-            DynamicByteBufferHelper.unsignedByteTo( buffer, length, value );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + 1 );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper.unsignedByteTo( buffer, length, value );
-        }
-
-        length += 1;
-
+    public void addUnsignedByte(short value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Adds the unsigned int.
-     *
-     * @param value the value
-     * @return the dynamic byte buffer
-     */
-    public DynamicByteBuffer addUnsignedInt( long value ) {
-
-        if ( 4 + length < capacity ) {
-            DynamicByteBufferHelper.unsignedIntTo( buffer, length, value );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + 4 );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper.unsignedIntTo( buffer, length, value );
-        }
-
-        length += 4;
-        return this;
-
+    public DynamicByteBuffer addUnsignedInt(long value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Adds the unsigned short.
-     *
-     * @param value the value
-     */
-    public void addUnsignedShort( int value ) {
-
-        if ( 2 + length < capacity ) {
-            DynamicByteBufferHelper.unsignedShortTo( buffer, length, value );
-        } else {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + 2 );
-            capacity = buffer.length;
-
-            DynamicByteBufferHelper.unsignedShortTo( buffer, length, value );
-        }
-
-        length += 2;
-
-
+    public void addUnsignedShort(int value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -432,12 +148,12 @@ public class DynamicByteBuffer {
      * @param values the values
      * @param byteSize the byte size
      */
-    private void doWriteDoubleArray( double[] values, int byteSize ) {
-        if ( !( byteSize + length < capacity ) ) {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + byteSize );
+    private void doWriteDoubleArray(double[] values, int byteSize) {
+        if (!(byteSize + length < capacity)) {
+            buffer = DynamicByteBufferHelper.grow(buffer, buffer.length * 2 + byteSize);
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            this.add( values[ index ] );
+        for (int index = 0; index < values.length; index++) {
+            this.add(values[index]);
         }
     }
 
@@ -447,12 +163,12 @@ public class DynamicByteBuffer {
      * @param values the values
      * @param byteSize the byte size
      */
-    private void doWriteFloatArray( float[] values, int byteSize ) {
-        if ( !( byteSize + length < capacity ) ) {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + byteSize );
+    private void doWriteFloatArray(float[] values, int byteSize) {
+        if (!(byteSize + length < capacity)) {
+            buffer = DynamicByteBufferHelper.grow(buffer, buffer.length * 2 + byteSize);
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            this.add( values[ index ] );
+        for (int index = 0; index < values.length; index++) {
+            this.add(values[index]);
         }
     }
 
@@ -462,12 +178,12 @@ public class DynamicByteBuffer {
      * @param values the values
      * @param byteSize the byte size
      */
-    private void doWriteIntArray( int[] values, int byteSize ) {
-        if ( !( byteSize + length < capacity ) ) {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + byteSize );
+    private void doWriteIntArray(int[] values, int byteSize) {
+        if (!(byteSize + length < capacity)) {
+            buffer = DynamicByteBufferHelper.grow(buffer, buffer.length * 2 + byteSize);
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            this.add( values[ index ] );
+        for (int index = 0; index < values.length; index++) {
+            this.add(values[index]);
         }
     }
 
@@ -477,12 +193,12 @@ public class DynamicByteBuffer {
      * @param values the values
      * @param byteSize the byte size
      */
-    private void doWriteLongArray( long[] values, int byteSize ) {
-        if ( !( byteSize + length < capacity ) ) {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + byteSize );
+    private void doWriteLongArray(long[] values, int byteSize) {
+        if (!(byteSize + length < capacity)) {
+            buffer = DynamicByteBufferHelper.grow(buffer, buffer.length * 2 + byteSize);
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            this.add( values[ index ] );
+        for (int index = 0; index < values.length; index++) {
+            this.add(values[index]);
         }
     }
 
@@ -492,12 +208,12 @@ public class DynamicByteBuffer {
      * @param values the values
      * @param byteSize the byte size
      */
-    private void doWriteShortArray( short[] values, int byteSize ) {
-        if ( !( byteSize + length < capacity ) ) {
-            buffer = DynamicByteBufferHelper.grow( buffer, buffer.length * 2 + byteSize );
+    private void doWriteShortArray(short[] values, int byteSize) {
+        if (!(byteSize + length < capacity)) {
+            buffer = DynamicByteBufferHelper.grow(buffer, buffer.length * 2 + byteSize);
         }
-        for ( int index = 0; index < values.length; index++ ) {
-            this.add( values[ index ] );
+        for (int index = 0; index < values.length; index++) {
+            this.add(values[index]);
         }
     }
 
@@ -505,449 +221,177 @@ public class DynamicByteBuffer {
      * Inits the.
      */
     private void init() {
-        buffer = new byte[ capacity ];
+        buffer = new byte[capacity];
     }
 
-    /**
-     * Input.
-     *
-     * @return the byte array input stream
-     */
     public ByteArrayInputStream input() {
-    	return new ByteArrayInputStream(this.buffer);        
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Len.
-     *
-     * @return the int
-     */
     public int len() {
-        return length;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Read and reset.
-     *
-     * @return the byte[]
-     */
     public byte[] readAndReset() {
-        byte[] bytes = this.buffer;
-        this.buffer = null;
-        return bytes;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Read for recycle.
-     *
-     * @return the byte[]
-     */
     public byte[] readForRecycle() {
-        this.length = 0;
-        return this.buffer;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Slc.
-     *
-     * @param startIndex the start index
-     * @param endIndex the end index
-     * @return the byte[]
-     */
-    public byte[] slc( int startIndex, int endIndex ) {
-        return DynamicByteBufferHelper.slc( this.buffer, startIndex, endIndex );
+    public byte[] slc(int startIndex, int endIndex) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * To bytes.
-     *
-     * @return the byte[]
-     */
     public byte[] toBytes() {
-        return DynamicByteBufferHelper.slc( this.buffer, 0, length );
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        int len = len();
-
-        char[] chars = new char[ buffer.length ];
-        for ( int index = 0; index < chars.length; index++ ) {
-            chars[ index ] = ( char ) buffer[ index ];
-        }
-        return new String( chars, 0, len );
-        //return new String ( this.buffer, 0, len, StandardCharsets.UTF_8 );
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write.
-     *
-     * @param b the b
-     */
-    public void write( byte[] b ) {
-        this.add( b );
+    public void write(byte[] b) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write.
-     *
-     * @param b the b
-     * @param off the off
-     * @param len the len
-     */
-    public void write( byte[] b, int off, int len ) {
-        this.add( b, len );
+    public void write(byte[] b, int off, int len) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write.
-     *
-     * @param b the b
-     */
-    public void write( int b ) {
-        this.addByte( b );
+    public void write(int b) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write boolean.
-     *
-     * @param v the v
-     */
-    public void writeBoolean( boolean v ) {
-        if ( v == true ) {
-            this.addByte( 1 );
-        } else {
-            this.addByte( 0 );
-        }
+    public void writeBoolean(boolean v) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write byte.
-     *
-     * @param v the v
-     */
-    public void writeByte( byte v ) {
-        this.addByte( v );
+    public void writeByte(byte v) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write char.
-     *
-     * @param v the v
-     */
-    public void writeChar( char v ) {
-
-        this.add( v );
+    public void writeChar(char v) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write double.
-     *
-     * @param v the v
-     */
-    public void writeDouble( double v ) {
-        this.add( v );
+    public void writeDouble(double v) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write float.
-     *
-     * @param v the v
-     */
-    public void writeFloat( float v ) {
-        this.add( v );
+    public void writeFloat(float v) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write int.
-     *
-     * @param v the v
-     */
-    public void writeInt( int v ) {
-        this.add( v );
+    public void writeInt(int v) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write large byte array.
-     *
-     * @param bytes the bytes
-     */
-    public void writeLargeByteArray( byte[] bytes ) {
-        this.add( bytes.length );
-        this.add( bytes );
+    public void writeLargeByteArray(byte[] bytes) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write large double array.
-     *
-     * @param values the values
-     */
-    public void writeLargeDoubleArray( double[] values ) {
-        int byteSize = values.length * 8 + 4;
-        this.add( values.length );
-        doWriteDoubleArray( values, byteSize );
-
-
+    public void writeLargeDoubleArray(double[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write large float array.
-     *
-     * @param values the values
-     */
-    public void writeLargeFloatArray( float[] values ) {
-        int byteSize = values.length * 4 + 4;
-        this.add( values.length );
-        doWriteFloatArray( values, byteSize );
-
+    public void writeLargeFloatArray(float[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write large int array.
-     *
-     * @param values the values
-     */
-    public void writeLargeIntArray( int[] values ) {
-        int byteSize = values.length * 4 + 4;
-        this.add( values.length );
-        doWriteIntArray( values, byteSize );
+    public void writeLargeIntArray(int[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write large long array.
-     *
-     * @param values the values
-     */
-    public void writeLargeLongArray( long[] values ) {
-        int byteSize = values.length * 8 + 4;
-        this.add( values.length );
-        doWriteLongArray( values, byteSize );
+    public void writeLargeLongArray(long[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-
-    /**
-     * Write large short array.
-     *
-     * @param values the values
-     */
-    public void writeLargeShortArray( short[] values ) {
-        int byteSize = values.length * 2 + 4;
-        this.add( values.length );
-        doWriteShortArray( values, byteSize );
+    public void writeLargeShortArray(short[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-
-    /**
-     * Write large string.
-     *
-     * @param s the s
-     */
-    public void writeLargeString( String s ) {
-        final byte[] bytes = DynamicByteBufferHelper.bytes( s );
-        this.add( bytes.length );
-        this.add( bytes );
+    public void writeLargeString(String s) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write long.
-     *
-     * @param v the v
-     */
-    public void writeLong( long v ) {
-        this.add( v );
+    public void writeLong(long v) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write medium byte array.
-     *
-     * @param bytes the bytes
-     */
-    public void writeMediumByteArray( byte[] bytes ) {
-        this.addUnsignedShort( bytes.length );
-        this.add( bytes );
+    public void writeMediumByteArray(byte[] bytes) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write medium double array.
-     *
-     * @param values the values
-     */
-    public void writeMediumDoubleArray( double[] values ) {
-        int byteSize = values.length * 8 + 2;
-        this.addUnsignedShort( values.length );
-        doWriteDoubleArray( values, byteSize );
-
+    public void writeMediumDoubleArray(double[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write medium float array.
-     *
-     * @param values the values
-     */
-    public void writeMediumFloatArray( float[] values ) {
-        int byteSize = values.length * 4 + 2;
-        this.addUnsignedShort( values.length );
-        doWriteFloatArray( values, byteSize );
-
+    public void writeMediumFloatArray(float[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write medium int array.
-     *
-     * @param values the values
-     */
-    public void writeMediumIntArray( int[] values ) {
-        int byteSize = values.length * 4 + 2;
-        this.addUnsignedShort( values.length );
-        doWriteIntArray( values, byteSize );
+    public void writeMediumIntArray(int[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write medium long array.
-     *
-     * @param values the values
-     */
-    public void writeMediumLongArray( long[] values ) {
-        int byteSize = values.length * 8 + 2;
-        this.addUnsignedShort( values.length );
-        doWriteLongArray( values, byteSize );
+    public void writeMediumLongArray(long[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write medium short array.
-     *
-     * @param values the values
-     */
-    public void writeMediumShortArray( short[] values ) {
-        int byteSize = values.length * 2 + 2;
-        this.addUnsignedShort( values.length );
-        doWriteShortArray( values, byteSize );
+    public void writeMediumShortArray(short[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write medium string.
-     *
-     * @param s the s
-     */
-    public void writeMediumString( String s ) {
-        final byte[] bytes = DynamicByteBufferHelper.bytes( s );
-        this.addUnsignedShort( bytes.length );
-        this.add( bytes );
+    public void writeMediumString(String s) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write short.
-     *
-     * @param v the v
-     */
-    public void writeShort( short v ) {
-        this.add( v );
+    public void writeShort(short v) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write small byte array.
-     *
-     * @param bytes the bytes
-     */
-    public void writeSmallByteArray( byte[] bytes ) {
-        this.addUnsignedByte( ( short ) bytes.length );
-        this.add( bytes );
+    public void writeSmallByteArray(byte[] bytes) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write small double array.
-     *
-     * @param values the values
-     */
-    public void writeSmallDoubleArray( double[] values ) {
-        int byteSize = values.length * 8 + 1;
-        this.addUnsignedByte( ( short ) values.length );
-        doWriteDoubleArray( values, byteSize );
-
+    public void writeSmallDoubleArray(double[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write small float array.
-     *
-     * @param values the values
-     */
-    public void writeSmallFloatArray( float[] values ) {
-        int byteSize = values.length * 4 + 1;
-        this.addUnsignedByte( ( short ) values.length );
-        doWriteFloatArray( values, byteSize );
+    public void writeSmallFloatArray(float[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write small int array.
-     *
-     * @param values the values
-     */
-    public void writeSmallIntArray( int[] values ) {
-        int byteSize = values.length * 4 + 1;
-        this.addUnsignedByte( ( short ) values.length );
-        doWriteIntArray( values, byteSize );
+    public void writeSmallIntArray(int[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write small long array.
-     *
-     * @param values the values
-     */
-    public void writeSmallLongArray( long[] values ) {
-        int byteSize = values.length * 8 + 1;
-        this.addUnsignedByte( ( short ) values.length );
-        doWriteLongArray( values, byteSize );
+    public void writeSmallLongArray(long[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write small short array.
-     *
-     * @param values the values
-     */
-    public void writeSmallShortArray( short[] values ) {
-        int byteSize = values.length * 2 + 1;
-        this.addUnsignedByte( ( short ) values.length );
-        doWriteShortArray( values, byteSize );
+    public void writeSmallShortArray(short[] values) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write small string.
-     *
-     * @param s the s
-     */
-    public void writeSmallString( String s ) {
-        final byte[] bytes = DynamicByteBufferHelper.bytes( s );
-        this.addUnsignedByte( ( short ) bytes.length );
-        this.add( bytes );
+    public void writeSmallString(String s) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write unsigned byte.
-     *
-     * @param v the v
-     */
-    public void writeUnsignedByte( short v ) {
-        this.addUnsignedByte( v );
+    public void writeUnsignedByte(short v) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write unsigned int.
-     *
-     * @param v the v
-     */
-    public void writeUnsignedInt( long v ) {
-        this.addUnsignedInt( v );
+    public void writeUnsignedInt(long v) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Write unsigned short.
-     *
-     * @param v the v
-     */
-    public void writeUnsignedShort( int v ) {
-        this.addUnsignedShort( v );
+    public void writeUnsignedShort(int v) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
-
 }

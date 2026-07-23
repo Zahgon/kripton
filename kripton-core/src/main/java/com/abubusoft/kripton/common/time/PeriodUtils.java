@@ -3,19 +3,15 @@ package com.abubusoft.kripton.common.time;
 import java.time.Period;
 
 public abstract class PeriodUtils {
-  private PeriodUtils() {
 
-  }
+    private PeriodUtils() {
+    }
 
-  public static Period read(String value) {
-    if (value == null) return null;
+    public static Period read(String value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-    return Period.parse(value);
-  }
-
-  public static String write(Period value) {
-    if (value == null) return null;
-
-    return value.toString();
-  }
+    public static String write(Period value) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

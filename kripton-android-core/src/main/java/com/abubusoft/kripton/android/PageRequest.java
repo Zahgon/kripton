@@ -16,35 +16,33 @@ package com.abubusoft.kripton.android;
  * <code>previousPage</code> work with pages and not with
  * <code>offset</code>.</li>
  * </ul>
- * 
- * @author xcesco
  *
+ * @author xcesco
  */
 public interface PageRequest {
 
-	public static PageRequest build(int pageNumber, int pageSize) {
-		return new PageRequestImpl(pageNumber, pageSize);
-	}
+    public static PageRequest build(int pageNumber, int pageSize) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Set the current offset from start of dataset.
-	 * 
-	 * @return
-	 */
-	int getOffset();
+    /**
+     * Set the current offset from start of dataset.
+     *
+     * @return
+     */
+    int getOffset();
 
-	/**
-	 * Current page
-	 * 
-	 * @return Current page
-	 */
-	int getPageNumber();
+    /**
+     * Current page
+     *
+     * @return Current page
+     */
+    int getPageNumber();
 
-	/**
-	 * Page size used to navigate
-	 * 
-	 * @return Page size used to navigate
-	 */
-	int getPageSize();
-
+    /**
+     * Page size used to navigate
+     *
+     * @return Page size used to navigate
+     */
+    int getPageSize();
 }

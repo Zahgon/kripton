@@ -1,18 +1,20 @@
-/*******************************************************************************
- * Copyright 2015, 2016 Francesco Benincasa.
+/**
+ * ****************************************************************************
+ *  Copyright 2015, 2016 Francesco Benincasa.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ * *****************************************************************************
+ */
 package com.abubusoft.kripton.processor.sqlite.model;
 
 import java.util.ArrayList;
@@ -23,40 +25,24 @@ import java.util.List;
  */
 public class SQLiteModel {
 
-	/** The schemas. */
-	protected List<SQLiteDatabaseSchema> schemas = new ArrayList<SQLiteDatabaseSchema>();
+    /**
+     * The schemas.
+     */
+    protected List<SQLiteDatabaseSchema> schemas = new ArrayList<SQLiteDatabaseSchema>();
 
-	/**
-	 * Schema add.
-	 *
-	 * @param schema the schema
-	 */
-	public void schemaAdd(SQLiteDatabaseSchema schema) {
-		schemas.add(schema);
-	}
+    public void schemaAdd(SQLiteDatabaseSchema schema) {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Gets the schemas.
-	 *
-	 * @return the schemas
-	 */
-	public List<SQLiteDatabaseSchema> getSchemas() {
-		return schemas;
-	}
+    public List<SQLiteDatabaseSchema> getSchemas() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Schema clear.
-	 */
-	public void schemaClear() {
-		schemas.clear();
-	}
+    public void schemaClear() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * Schema count.
-	 *
-	 * @return the int
-	 */
-	public int schemaCount() {
-		return schemas.size();
-	}
+    public int schemaCount() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

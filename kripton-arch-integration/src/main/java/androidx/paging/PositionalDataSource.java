@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.paging;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.arch.core.util.Function;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -57,6 +55,7 @@ public abstract class PositionalDataSource<T> extends DataSource<Integer, T> {
      */
     @SuppressWarnings("WeakerAccess")
     public static class LoadInitialParams {
+
         /**
          * Initial load position requested.
          * <p>
@@ -85,11 +84,7 @@ public abstract class PositionalDataSource<T> extends DataSource<Integer, T> {
          */
         public final boolean placeholdersEnabled;
 
-        public LoadInitialParams(
-                int requestedStartPosition,
-                int requestedLoadSize,
-                int pageSize,
-                boolean placeholdersEnabled) {
+        public LoadInitialParams(int requestedStartPosition, int requestedLoadSize, int pageSize, boolean placeholdersEnabled) {
             this.requestedStartPosition = requestedStartPosition;
             this.requestedLoadSize = requestedLoadSize;
             this.pageSize = pageSize;
@@ -102,12 +97,14 @@ public abstract class PositionalDataSource<T> extends DataSource<Integer, T> {
      */
     @SuppressWarnings("WeakerAccess")
     public static class LoadRangeParams {
+
         /**
          * Start position of data to load.
          * <p>
          * Returned data must start at this position.
          */
         public final int startPosition;
+
         /**
          * Number of items to load.
          * <p>
@@ -134,6 +131,7 @@ public abstract class PositionalDataSource<T> extends DataSource<Integer, T> {
      * @param <T> Type of items being loaded.
      */
     public abstract static class LoadInitialCallback<T> {
+
         /**
          * Called to pass initial load state from a DataSource.
          * <p>
@@ -188,6 +186,7 @@ public abstract class PositionalDataSource<T> extends DataSource<Integer, T> {
      * @param <T> Type of items being loaded.
      */
     public abstract static class LoadRangeCallback<T> {
+
         /**
          * Called to pass loaded data from {@link #loadRange(LoadRangeParams, LoadRangeCallback)}.
          *
@@ -198,12 +197,14 @@ public abstract class PositionalDataSource<T> extends DataSource<Integer, T> {
     }
 
     static class LoadInitialCallbackImpl<T> extends LoadInitialCallback<T> {
+
         final LoadCallbackHelper<T> mCallbackHelper;
+
         private final boolean mCountingEnabled;
+
         private final int mPageSize;
 
-        LoadInitialCallbackImpl(@NonNull PositionalDataSource dataSource, boolean countingEnabled,
-                int pageSize, PageResult.Receiver<T> receiver) {
+        LoadInitialCallbackImpl(@NonNull PositionalDataSource dataSource, boolean countingEnabled, int pageSize, PageResult.Receiver<T> receiver) {
             mCallbackHelper = new LoadCallbackHelper<>(dataSource, PageResult.INIT, null, receiver);
             mCountingEnabled = countingEnabled;
             mPageSize = pageSize;
@@ -214,93 +215,38 @@ public abstract class PositionalDataSource<T> extends DataSource<Integer, T> {
 
         @Override
         public void onResult(@NonNull List<T> data, int position, int totalCount) {
-            if (!mCallbackHelper.dispatchInvalidResultIfInvalid()) {
-                LoadCallbackHelper.validateInitialLoadParams(data, position, totalCount);
-                if (position + data.size() != totalCount
-                        && data.size() % mPageSize != 0) {
-                    throw new IllegalArgumentException("PositionalDataSource requires initial load"
-                            + " size to be a multiple of page size to support internal tiling."
-                            + " loadSize " + data.size() + ", position " + position
-                            + ", totalCount " + totalCount + ", pageSize " + mPageSize);
-                }
-
-                if (mCountingEnabled) {
-                    int trailingUnloadedCount = totalCount - position - data.size();
-                    mCallbackHelper.dispatchResultToReceiver(
-                            new PageResult<>(data, position, trailingUnloadedCount, 0));
-                } else {
-                    // Only occurs when wrapped as contiguous
-                    mCallbackHelper.dispatchResultToReceiver(new PageResult<>(data, position));
-                }
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @Override
         public void onResult(@NonNull List<T> data, int position) {
-            if (!mCallbackHelper.dispatchInvalidResultIfInvalid()) {
-                if (position < 0) {
-                    throw new IllegalArgumentException("Position must be non-negative");
-                }
-                if (data.isEmpty() && position != 0) {
-                    throw new IllegalArgumentException(
-                            "Initial result cannot be empty if items are present in data set.");
-                }
-                if (mCountingEnabled) {
-                    throw new IllegalStateException("Placeholders requested, but totalCount not"
-                            + " provided. Please call the three-parameter onResult method, or"
-                            + " disable placeholders in the PagedList.Config");
-                }
-                mCallbackHelper.dispatchResultToReceiver(new PageResult<>(data, position));
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
 
     static class LoadRangeCallbackImpl<T> extends LoadRangeCallback<T> {
+
         private LoadCallbackHelper<T> mCallbackHelper;
+
         private final int mPositionOffset;
-        LoadRangeCallbackImpl(@NonNull PositionalDataSource dataSource,
-                @PageResult.ResultType int resultType, int positionOffset,
-                Executor mainThreadExecutor, PageResult.Receiver<T> receiver) {
-            mCallbackHelper = new LoadCallbackHelper<>(
-                    dataSource, resultType, mainThreadExecutor, receiver);
+
+        LoadRangeCallbackImpl(@NonNull PositionalDataSource dataSource, @PageResult.ResultType int resultType, int positionOffset, Executor mainThreadExecutor, PageResult.Receiver<T> receiver) {
+            mCallbackHelper = new LoadCallbackHelper<>(dataSource, resultType, mainThreadExecutor, receiver);
             mPositionOffset = positionOffset;
         }
 
         @Override
         public void onResult(@NonNull List<T> data) {
-            if (!mCallbackHelper.dispatchInvalidResultIfInvalid()) {
-                mCallbackHelper.dispatchResultToReceiver(new PageResult<>(
-                        data, 0, 0, mPositionOffset));
-            }
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
     }
 
-    final void dispatchLoadInitial(boolean acceptCount,
-            int requestedStartPosition, int requestedLoadSize, int pageSize,
-            @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<T> receiver) {
-        LoadInitialCallbackImpl<T> callback =
-                new LoadInitialCallbackImpl<>(this, acceptCount, pageSize, receiver);
-
-        LoadInitialParams params = new LoadInitialParams(
-                requestedStartPosition, requestedLoadSize, pageSize, acceptCount);
-        loadInitial(params, callback);
-
-        // If initialLoad's callback is not called within the body, we force any following calls
-        // to post to the UI thread. This constructor may be run on a background thread, but
-        // after constructor, mutation must happen on UI thread.
-        callback.mCallbackHelper.setPostExecutor(mainThreadExecutor);
+    final void dispatchLoadInitial(boolean acceptCount, int requestedStartPosition, int requestedLoadSize, int pageSize, @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<T> receiver) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    final void dispatchLoadRange(@PageResult.ResultType int resultType, int startPosition,
-            int count, @NonNull Executor mainThreadExecutor,
-            @NonNull PageResult.Receiver<T> receiver) {
-        LoadRangeCallback<T> callback = new LoadRangeCallbackImpl<>(
-                this, resultType, startPosition, mainThreadExecutor, receiver);
-        if (count == 0) {
-            callback.onResult(Collections.<T>emptyList());
-        } else {
-            loadRange(new LoadRangeParams(startPosition, count), callback);
-        }
+    final void dispatchLoadRange(@PageResult.ResultType int resultType, int startPosition, int count, @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<T> receiver) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /**
@@ -316,9 +262,7 @@ public abstract class PositionalDataSource<T> extends DataSource<Integer, T> {
      *                 position and total data set size.
      */
     @WorkerThread
-    public abstract void loadInitial(
-            @NonNull LoadInitialParams params,
-            @NonNull LoadInitialCallback<T> callback);
+    public abstract void loadInitial(@NonNull LoadInitialParams params, @NonNull LoadInitialCallback<T> callback);
 
     /**
      * Called to load a range of data from the DataSource.
@@ -333,235 +277,99 @@ public abstract class PositionalDataSource<T> extends DataSource<Integer, T> {
      * @param callback Callback that receives loaded data.
      */
     @WorkerThread
-    public abstract void loadRange(@NonNull LoadRangeParams params,
-            @NonNull LoadRangeCallback<T> callback);
+    public abstract void loadRange(@NonNull LoadRangeParams params, @NonNull LoadRangeCallback<T> callback);
 
     @Override
     boolean isContiguous() {
-        return false;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @NonNull
     ContiguousDataSource<Integer, T> wrapAsContiguousWithoutPlaceholders() {
-        return new ContiguousWithoutPlaceholdersWrapper<>(this);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Helper for computing an initial position in
-     * {@link #loadInitial(LoadInitialParams, LoadInitialCallback)} when total data set size can be
-     * computed ahead of loading.
-     * <p>
-     * The value computed by this function will do bounds checking, page alignment, and positioning
-     * based on initial load size requested.
-     * <p>
-     * Example usage in a PositionalDataSource subclass:
-     * <pre>
-     * class ItemDataSource extends PositionalDataSource&lt;Item> {
-     *     private int computeCount() {
-     *         // actual count code here
-     *     }
-     *
-     *     private List&lt;Item> loadRangeInternal(int startPosition, int loadCount) {
-     *         // actual load code here
-     *     }
-     *
-     *     {@literal @}Override
-     *     public void loadInitial({@literal @}NonNull LoadInitialParams params,
-     *             {@literal @}NonNull LoadInitialCallback&lt;Item> callback) {
-     *         int totalCount = computeCount();
-     *         int position = computeInitialLoadPosition(params, totalCount);
-     *         int loadSize = computeInitialLoadSize(params, position, totalCount);
-     *         callback.onResult(loadRangeInternal(position, loadSize), position, totalCount);
-     *     }
-     *
-     *     {@literal @}Override
-     *     public void loadRange({@literal @}NonNull LoadRangeParams params,
-     *             {@literal @}NonNull LoadRangeCallback&lt;Item> callback) {
-     *         callback.onResult(loadRangeInternal(params.startPosition, params.loadSize));
-     *     }
-     * }</pre>
-     *
-     * @param params Params passed to {@link #loadInitial(LoadInitialParams, LoadInitialCallback)},
-     *               including page size, and requested start/loadSize.
-     * @param totalCount Total size of the data set.
-     * @return Position to start loading at.
-     *
-     * @see #computeInitialLoadSize(LoadInitialParams, int, int)
-     */
-    public static int computeInitialLoadPosition(@NonNull LoadInitialParams params,
-            int totalCount) {
-        int position = params.requestedStartPosition;
-        int initialLoadSize = params.requestedLoadSize;
-        int pageSize = params.pageSize;
-
-        int roundedPageStart = Math.round(position / pageSize) * pageSize;
-
-        // maximum start pos is that which will encompass end of list
-        int maximumLoadPage = ((totalCount - initialLoadSize + pageSize - 1) / pageSize) * pageSize;
-        roundedPageStart = Math.min(maximumLoadPage, roundedPageStart);
-
-        // minimum start position is 0
-        roundedPageStart = Math.max(0, roundedPageStart);
-
-        return roundedPageStart;
+    public static int computeInitialLoadPosition(@NonNull LoadInitialParams params, int totalCount) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-    /**
-     * Helper for computing an initial load size in
-     * {@link #loadInitial(LoadInitialParams, LoadInitialCallback)} when total data set size can be
-     * computed ahead of loading.
-     * <p>
-     * This function takes the requested load size, and bounds checks it against the value returned
-     * by {@link #computeInitialLoadPosition(LoadInitialParams, int)}.
-     * <p>
-     * Example usage in a PositionalDataSource subclass:
-     * <pre>
-     * class ItemDataSource extends PositionalDataSource&lt;Item> {
-     *     private int computeCount() {
-     *         // actual count code here
-     *     }
-     *
-     *     private List&lt;Item> loadRangeInternal(int startPosition, int loadCount) {
-     *         // actual load code here
-     *     }
-     *
-     *     {@literal @}Override
-     *     public void loadInitial({@literal @}NonNull LoadInitialParams params,
-     *             {@literal @}NonNull LoadInitialCallback&lt;Item> callback) {
-     *         int totalCount = computeCount();
-     *         int position = computeInitialLoadPosition(params, totalCount);
-     *         int loadSize = computeInitialLoadSize(params, position, totalCount);
-     *         callback.onResult(loadRangeInternal(position, loadSize), position, totalCount);
-     *     }
-     *
-     *     {@literal @}Override
-     *     public void loadRange({@literal @}NonNull LoadRangeParams params,
-     *             {@literal @}NonNull LoadRangeCallback&lt;Item> callback) {
-     *         callback.onResult(loadRangeInternal(params.startPosition, params.loadSize));
-     *     }
-     * }</pre>
-     *
-     * @param params Params passed to {@link #loadInitial(LoadInitialParams, LoadInitialCallback)},
-     *               including page size, and requested start/loadSize.
-     * @param initialLoadPosition Value returned by
-     *                          {@link #computeInitialLoadPosition(LoadInitialParams, int)}
-     * @param totalCount Total size of the data set.
-     * @return Number of items to load.
-     *
-     * @see #computeInitialLoadPosition(LoadInitialParams, int)
-     */
     @SuppressWarnings("WeakerAccess")
-    public static int computeInitialLoadSize(@NonNull LoadInitialParams params,
-            int initialLoadPosition, int totalCount) {
-        return Math.min(totalCount - initialLoadPosition, params.requestedLoadSize);
+    public static int computeInitialLoadSize(@NonNull LoadInitialParams params, int initialLoadPosition, int totalCount) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @SuppressWarnings("deprecation")
-    static class ContiguousWithoutPlaceholdersWrapper<Value>
-            extends ContiguousDataSource<Integer, Value> {
+    static class ContiguousWithoutPlaceholdersWrapper<Value> extends ContiguousDataSource<Integer, Value> {
+
         @NonNull
         final PositionalDataSource<Value> mSource;
 
-        ContiguousWithoutPlaceholdersWrapper(
-                @NonNull PositionalDataSource<Value> source) {
+        ContiguousWithoutPlaceholdersWrapper(@NonNull PositionalDataSource<Value> source) {
             mSource = source;
         }
 
         @Override
-        public void addInvalidatedCallback(
-                @NonNull InvalidatedCallback onInvalidatedCallback) {
-            mSource.addInvalidatedCallback(onInvalidatedCallback);
+        public void addInvalidatedCallback(@NonNull InvalidatedCallback onInvalidatedCallback) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @Override
-        public void removeInvalidatedCallback(
-                @NonNull InvalidatedCallback onInvalidatedCallback) {
-            mSource.removeInvalidatedCallback(onInvalidatedCallback);
+        public void removeInvalidatedCallback(@NonNull InvalidatedCallback onInvalidatedCallback) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @Override
         public void invalidate() {
-            mSource.invalidate();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @Override
         public boolean isInvalid() {
-            return mSource.isInvalid();
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @NonNull
         @Override
-        public <ToValue> DataSource<Integer, ToValue> mapByPage(
-                @NonNull Function<List<Value>, List<ToValue>> function) {
-            throw new UnsupportedOperationException(
-                    "Inaccessible inner type doesn't support map op");
+        public <ToValue> DataSource<Integer, ToValue> mapByPage(@NonNull Function<List<Value>, List<ToValue>> function) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @NonNull
         @Override
-        public <ToValue> DataSource<Integer, ToValue> map(
-                @NonNull Function<Value, ToValue> function) {
-            throw new UnsupportedOperationException(
-                    "Inaccessible inner type doesn't support map op");
+        public <ToValue> DataSource<Integer, ToValue> map(@NonNull Function<Value, ToValue> function) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @Override
-        void dispatchLoadInitial(@Nullable Integer position, int initialLoadSize, int pageSize,
-                boolean enablePlaceholders, @NonNull Executor mainThreadExecutor,
-                @NonNull PageResult.Receiver<Value> receiver) {
-            final int convertPosition = position == null ? 0 : position;
-
-            // Note enablePlaceholders will be false here, but we don't have a way to communicate
-            // this to PositionalDataSource. This is fine, because only the list and its position
-            // offset will be consumed by the LoadInitialCallback.
-            mSource.dispatchLoadInitial(false, convertPosition, initialLoadSize,
-                    pageSize, mainThreadExecutor, receiver);
+        void dispatchLoadInitial(@Nullable Integer position, int initialLoadSize, int pageSize, boolean enablePlaceholders, @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<Value> receiver) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @Override
-        void dispatchLoadAfter(int currentEndIndex, @NonNull Value currentEndItem, int pageSize,
-                @NonNull Executor mainThreadExecutor,
-                @NonNull PageResult.Receiver<Value> receiver) {
-            int startIndex = currentEndIndex + 1;
-            mSource.dispatchLoadRange(
-                    PageResult.APPEND, startIndex, pageSize, mainThreadExecutor, receiver);
+        void dispatchLoadAfter(int currentEndIndex, @NonNull Value currentEndItem, int pageSize, @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<Value> receiver) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @Override
-        void dispatchLoadBefore(int currentBeginIndex, @NonNull Value currentBeginItem,
-                int pageSize, @NonNull Executor mainThreadExecutor,
-                @NonNull PageResult.Receiver<Value> receiver) {
-
-            int startIndex = currentBeginIndex - 1;
-            if (startIndex < 0) {
-                // trigger empty list load
-                mSource.dispatchLoadRange(
-                        PageResult.PREPEND, startIndex, 0, mainThreadExecutor, receiver);
-            } else {
-                int loadSize = Math.min(pageSize, startIndex + 1);
-                startIndex = startIndex - loadSize + 1;
-                mSource.dispatchLoadRange(
-                        PageResult.PREPEND, startIndex, loadSize, mainThreadExecutor, receiver);
-            }
+        void dispatchLoadBefore(int currentBeginIndex, @NonNull Value currentBeginItem, int pageSize, @NonNull Executor mainThreadExecutor, @NonNull PageResult.Receiver<Value> receiver) {
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
 
         @Override
         Integer getKey(int position, Value item) {
-            return position;
+            throw new UnsupportedOperationException("STUB: not implemented");
         }
-
     }
 
     @NonNull
     @Override
-    public final <V> PositionalDataSource<V> mapByPage(
-            @NonNull Function<List<T>, List<V>> function) {
-        return new WrapperPositionalDataSource<>(this, function);
+    public final <V> PositionalDataSource<V> mapByPage(@NonNull Function<List<T>, List<V>> function) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @NonNull
     @Override
     public final <V> PositionalDataSource<V> map(@NonNull Function<T, V> function) {
-        return mapByPage(createListFunction(function));
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

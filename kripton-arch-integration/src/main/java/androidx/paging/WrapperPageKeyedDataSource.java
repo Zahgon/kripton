@@ -13,83 +13,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.paging;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.arch.core.util.Function;
-
 import java.util.List;
 
 class WrapperPageKeyedDataSource<K, A, B> extends PageKeyedDataSource<K, B> {
+
     private final PageKeyedDataSource<K, A> mSource;
+
     private final Function<List<A>, List<B>> mListFunction;
 
-    WrapperPageKeyedDataSource(PageKeyedDataSource<K, A> source,
-            Function<List<A>, List<B>> listFunction) {
+    WrapperPageKeyedDataSource(PageKeyedDataSource<K, A> source, Function<List<A>, List<B>> listFunction) {
         mSource = source;
         mListFunction = listFunction;
     }
 
     @Override
     public void addInvalidatedCallback(@NonNull InvalidatedCallback onInvalidatedCallback) {
-        mSource.addInvalidatedCallback(onInvalidatedCallback);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     public void removeInvalidatedCallback(@NonNull InvalidatedCallback onInvalidatedCallback) {
-        mSource.removeInvalidatedCallback(onInvalidatedCallback);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     public void invalidate() {
-        mSource.invalidate();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     public boolean isInvalid() {
-        return mSource.isInvalid();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams<K> params,
-            final @NonNull LoadInitialCallback<K, B> callback) {
-        mSource.loadInitial(params, new LoadInitialCallback<K, A>() {
-            @Override
-            public void onResult(@NonNull List<A> data, int position, int totalCount,
-                    @Nullable K previousPageKey, @Nullable K nextPageKey) {
-                callback.onResult(convert(mListFunction, data), position, totalCount,
-                        previousPageKey, nextPageKey);
-            }
-
-            @Override
-            public void onResult(@NonNull List<A> data, @Nullable K previousPageKey,
-                    @Nullable K nextPageKey) {
-                callback.onResult(convert(mListFunction, data), previousPageKey, nextPageKey);
-            }
-        });
+    public void loadInitial(@NonNull LoadInitialParams<K> params, @NonNull final LoadInitialCallback<K, B> callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
-    public void loadBefore(@NonNull LoadParams<K> params,
-            final @NonNull LoadCallback<K, B> callback) {
-        mSource.loadBefore(params, new LoadCallback<K, A>() {
-            @Override
-            public void onResult(@NonNull List<A> data, @Nullable K adjacentPageKey) {
-                callback.onResult(convert(mListFunction, data), adjacentPageKey);
-            }
-        });
+    public void loadBefore(@NonNull LoadParams<K> params, @NonNull final LoadCallback<K, B> callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
-    public void loadAfter(@NonNull LoadParams<K> params,
-            final @NonNull LoadCallback<K, B> callback) {
-        mSource.loadAfter(params, new LoadCallback<K, A>() {
-            @Override
-            public void onResult(@NonNull List<A> data, @Nullable K adjacentPageKey) {
-                callback.onResult(convert(mListFunction, data), adjacentPageKey);
-            }
-        });
+    public void loadAfter(@NonNull LoadParams<K> params, @NonNull final LoadCallback<K, B> callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

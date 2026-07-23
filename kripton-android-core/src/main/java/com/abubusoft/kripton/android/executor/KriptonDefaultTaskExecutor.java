@@ -13,37 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.abubusoft.kripton.android.executor;
 
 import java.util.concurrent.ExecutorService;
-
 import com.abubusoft.kripton.android.KriptonLibrary;
-
 import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.Nullable;
 
 /**
  * The Class KriptonDefaultTaskExecutor.
- *
  */
 public class KriptonDefaultTaskExecutor extends TaskExecutor {
-	
-	/**
-	 * Instantiates a new kripton default task executor.
-	 */
-	public KriptonDefaultTaskExecutor() {
-		mDiskIO = KriptonLibrary.getExecutorService();		
-	}
-			
-    /** The m lock. */
+
+    /**
+     * Instantiates a new kripton default task executor.
+     */
+    public KriptonDefaultTaskExecutor() {
+        mDiskIO = KriptonLibrary.getExecutorService();
+    }
+
+    /**
+     * The m lock.
+     */
     private final Object mLock = new Object();
-    
-    /** The m disk IO. */
+
+    /**
+     * The m disk IO.
+     */
     private ExecutorService mDiskIO;
 
-    /** The m main handler. */
+    /**
+     * The m main handler.
+     */
     @Nullable
     private volatile Handler mMainHandler;
 
@@ -52,7 +54,7 @@ public class KriptonDefaultTaskExecutor extends TaskExecutor {
      */
     @Override
     public void executeOnDiskIO(Runnable runnable) {
-        mDiskIO.execute(runnable);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
@@ -60,15 +62,7 @@ public class KriptonDefaultTaskExecutor extends TaskExecutor {
      */
     @Override
     public void postToMainThread(Runnable runnable) {
-        if (mMainHandler == null) {
-            synchronized (mLock) {
-                if (mMainHandler == null) {
-                    mMainHandler = new Handler(Looper.getMainLooper());
-                }
-            }
-        }
-        //noinspection ConstantConditions
-        mMainHandler.post(runnable);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     /* (non-Javadoc)
@@ -76,6 +70,6 @@ public class KriptonDefaultTaskExecutor extends TaskExecutor {
      */
     @Override
     public boolean isMainThread() {
-        return Looper.getMainLooper().getThread() == Thread.currentThread();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

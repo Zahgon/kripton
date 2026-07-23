@@ -13,36 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.paging;
 
 import static java.lang.annotation.RetentionPolicy.SOURCE;
-
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-
 import java.lang.annotation.Retention;
 import java.util.Collections;
 import java.util.List;
 
 class PageResult<T> {
+
     @SuppressWarnings("unchecked")
-    private static final PageResult INVALID_RESULT =
-            new PageResult(Collections.EMPTY_LIST, 0);
+    private static final PageResult INVALID_RESULT = new PageResult(Collections.EMPTY_LIST, 0);
 
     @SuppressWarnings("unchecked")
     static <T> PageResult<T> getInvalidResult() {
-        return INVALID_RESULT;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
-
     @Retention(SOURCE)
-    @interface ResultType {}
+    @interface ResultType {
+    }
 
     static final int INIT = 0;
 
     // contiguous results
     static final int APPEND = 1;
+
     static final int PREPEND = 2;
 
     // non-contiguous, tile result
@@ -50,10 +48,13 @@ class PageResult<T> {
 
     @NonNull
     public final List<T> page;
+
     @SuppressWarnings("WeakerAccess")
     public final int leadingNulls;
+
     @SuppressWarnings("WeakerAccess")
     public final int trailingNulls;
+
     @SuppressWarnings("WeakerAccess")
     public final int positionOffset;
 
@@ -73,17 +74,15 @@ class PageResult<T> {
 
     @Override
     public String toString() {
-        return "Result " + leadingNulls
-                + ", " + page
-                + ", " + trailingNulls
-                + ", offset " + positionOffset;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     public boolean isInvalid() {
-        return this == INVALID_RESULT;
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     abstract static class Receiver<T> {
+
         @MainThread
         public abstract void onPageResult(@ResultType int type, @NonNull PageResult<T> pageResult);
     }

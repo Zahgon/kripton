@@ -13,68 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.paging;
 
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
-
 import java.util.List;
 
 class WrapperPositionalDataSource<A, B> extends PositionalDataSource<B> {
+
     private final PositionalDataSource<A> mSource;
+
     private final Function<List<A>, List<B>> mListFunction;
 
-    WrapperPositionalDataSource(PositionalDataSource<A> source,
-            Function<List<A>, List<B>> listFunction) {
+    WrapperPositionalDataSource(PositionalDataSource<A> source, Function<List<A>, List<B>> listFunction) {
         mSource = source;
         mListFunction = listFunction;
     }
 
     @Override
     public void addInvalidatedCallback(@NonNull InvalidatedCallback onInvalidatedCallback) {
-        mSource.addInvalidatedCallback(onInvalidatedCallback);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     public void removeInvalidatedCallback(@NonNull InvalidatedCallback onInvalidatedCallback) {
-        mSource.removeInvalidatedCallback(onInvalidatedCallback);
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     public void invalidate() {
-        mSource.invalidate();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
     public boolean isInvalid() {
-        return mSource.isInvalid();
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
-    public void loadInitial(@NonNull LoadInitialParams params,
-            final @NonNull LoadInitialCallback<B> callback) {
-        mSource.loadInitial(params, new LoadInitialCallback<A>() {
-            @Override
-            public void onResult(@NonNull List<A> data, int position, int totalCount) {
-                callback.onResult(convert(mListFunction, data), position, totalCount);
-            }
-
-            @Override
-            public void onResult(@NonNull List<A> data, int position) {
-                callback.onResult(convert(mListFunction, data), position);
-            }
-        });
+    public void loadInitial(@NonNull LoadInitialParams params, @NonNull final LoadInitialCallback<B> callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 
     @Override
-    public void loadRange(@NonNull LoadRangeParams params,
-            final @NonNull LoadRangeCallback<B> callback) {
-        mSource.loadRange(params, new LoadRangeCallback<A>() {
-            @Override
-            public void onResult(@NonNull List<A> data) {
-                callback.onResult(convert(mListFunction, data));
-            }
-        });
+    public void loadRange(@NonNull LoadRangeParams params, @NonNull final LoadRangeCallback<B> callback) {
+        throw new UnsupportedOperationException("STUB: not implemented");
     }
 }

@@ -8,50 +8,36 @@ import androidx.sqlite.db.SupportSQLiteStatement;
  * SQLiteStatement
  */
 class KriptonSQLiteStatement extends KriptonSQLiteProgram implements SupportSQLiteStatement {
-	private final SQLiteStatement safeStatement;
 
-	KriptonSQLiteStatement(SQLiteStatement safeStatement) {
-		super(safeStatement);
-		this.safeStatement = safeStatement;
-	}
+    private final SQLiteStatement safeStatement;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute() {
-		safeStatement.execute();
-	}
+    KriptonSQLiteStatement(SQLiteStatement safeStatement) {
+        super(safeStatement);
+        this.safeStatement = safeStatement;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int executeUpdateDelete() {
-		return safeStatement.executeUpdateDelete();
-	}
+    @Override
+    public void execute() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public long executeInsert() {
-		return safeStatement.executeInsert();
-	}
+    @Override
+    public int executeUpdateDelete() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public long simpleQueryForLong() {
-		return safeStatement.simpleQueryForLong();
-	}
+    @Override
+    public long executeInsert() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String simpleQueryForString() {
-		return safeStatement.simpleQueryForString();
-	}
+    @Override
+    public long simpleQueryForLong() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
+
+    @Override
+    public String simpleQueryForString() {
+        throw new UnsupportedOperationException("STUB: not implemented");
+    }
 }

@@ -66,3 +66,8 @@ build
 /kripton-orm/.settings
 /kripton-shared-preferences/.settings
 /.run/
+
+.aider*
+logs/
+.commit0_scripts/
+.github/workflows/
